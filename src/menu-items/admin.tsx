@@ -18,7 +18,7 @@ const icons = {
 
 const admin: NavItemType = {
   id: 'admin',
-  title: <FormattedMessage id="admin" />,
+  title: <FormattedMessage id="Admin" />,
   icon: icons.IconPhoto,
   type: 'group',
   children: [

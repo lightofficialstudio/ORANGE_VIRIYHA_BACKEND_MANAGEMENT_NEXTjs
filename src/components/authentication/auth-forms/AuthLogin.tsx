@@ -137,7 +137,7 @@ const JWTLogin = ({ loginProp, ...others }: { loginProp?: number }) => {
                 control={
                   <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
                 }
-                label="Keep me logged in"
+                label="จดจำฉันไว้ในระบบ"
               />
             </Grid>
             <Grid item>
