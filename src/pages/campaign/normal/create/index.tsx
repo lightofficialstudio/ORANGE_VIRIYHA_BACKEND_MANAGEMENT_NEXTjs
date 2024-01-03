@@ -14,7 +14,7 @@ import CreateForm from 'components/viriyha_components/form/campaign/normal/creat
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const SamplePage = () => (
-  <Page title="Sample Page">
+  <Page title="Normal campaign create">
     <MainCard title="สร้างแคมเปญ">
       <Typography variant="body2">
        <CreateForm/>

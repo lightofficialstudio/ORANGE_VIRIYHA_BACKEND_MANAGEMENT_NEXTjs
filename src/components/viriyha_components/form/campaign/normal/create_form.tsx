@@ -1,8 +1,11 @@
 import { useDispatch } from 'store';
-import React from 'react';
+import React, { useState } from 'react';
 
 // material-ui
-import { Button, Grid, Stack, TextField , Autocomplete } from '@mui/material';
+import { Button, Grid, Stack, TextField , Autocomplete , CardMedia, Fab, CircularProgress } from '@mui/material';
+import { useTheme , styled } from '@mui/material/styles';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 // project imports
@@ -15,6 +18,8 @@ import { gridSpacing } from 'store/constant';
 // third-party
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import InputLabel from 'ui-component/extended/Form/InputLabel';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 
 // example data
 // autocomplete options
@@ -28,6 +33,24 @@ const top100Films = [
     { label: 'Pulp Fiction', id: 7 }
   ];
 
+  // styles
+const ImageWrapper = styled('div')(({ theme }) => ({
+  position: 'relative',
+  overflow: 'hidden',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  width: 55,
+  height: 55,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: theme.palette.background.default,
+  '& > svg': {
+    verticalAlign: 'sub',
+    marginRight: 6
+  }
+}));
+
 /**
  * 'Enter your email'
  * yup.string Expected 0 arguments, but got 1 */
@@ -40,10 +63,14 @@ const validationSchema = yup.object({
 
 });
 
+
+ 
 // ==============================|| FORM VALIDATION - INSTANT FEEDBACK FORMIK ||============================== //
 
 const InstantFeedback = () => {
   const dispatch = useDispatch();
+  const theme = useTheme();
+
 
   const formik = useFormik({
     initialValues: {
@@ -70,12 +97,76 @@ const InstantFeedback = () => {
     }
   });
 
+   // State to hold the image URLs for preview
+  const [imageSrcs, setImageSrcs] = useState([]);
+
+  // Event handler for file input change
+  const handleFileChange = (e:any) => {
+    const files = Array.from(e.target.files).slice(0, 5); // Get first 5 files if there are more
+    const newImageSrcs = [];
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        newImageSrcs.push(e.target.result);
+        if (newImageSrcs.length === files.length) {
+          setImageSrcs(newImageSrcs); // Update the image srcs state
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
 
 
   return (
     <MainCard title="">
+     
       <form onSubmit={formik.handleSubmit}>
+     
         <Grid container spacing={gridSpacing}>
+        <Grid item xs={12}>
+                    <div>
+                    <TextField
+                        type="file"
+                        id="file-upload"
+                        fullWidth
+                        label="Enter SKU"
+                        sx={{ display: 'none' }}
+                        onChange={handleFileChange}
+                        inputProps={{ multiple: true }} // Allows multiple file selection
+                      />
+                      <InputLabel
+                        htmlFor="file-upload"
+                        sx={{
+                          background: theme.palette.background.default,
+                          py: 3.75,
+                          px: 0,
+                          textAlign: 'center',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          mb: 3,
+                          '& > svg': {
+                            verticalAlign: 'sub',
+                            mr: 0.5
+                          }
+                        }}
+                      >
+                        <CloudUploadIcon /> Drop file here to upload
+                      </InputLabel>
+                    </div>
+                    <Grid container spacing={3} justifyContent="center">
+                        {imageSrcs.map((src, index) => (
+                          <Grid item key={index}>
+                            {/* ... image wrapper and CardMedia for each image ... */}
+                            <ImageWrapper>
+                              <CardMedia component="img" image={src} title={`Product ${index + 1}`} />
+                            </ImageWrapper>
+                          </Grid>
+                        ))}
+                        {/* ... */}
+                      </Grid>
+                  </Grid>
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -90,7 +181,8 @@ const InstantFeedback = () => {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <label htmlFor="campaign_start_date">วันที่เริ่มต้น</label>
+          <InputLabel required>วันที่เริ่มต้น</InputLabel>
+            
           <TextField
               fullWidth
               type="date"
@@ -104,7 +196,7 @@ const InstantFeedback = () => {
               helperText={formik.touched.campaign_start_date && formik.errors.campaign_start_date}
             />          </Grid>
             <Grid item xs={12} md={6}>
-            <label htmlFor="campaign_end_date">วันที่สิ้นสุด</label>
+          <InputLabel required>วันที่สิ้นสุด</InputLabel>
           <TextField
               fullWidth
               type="date"
@@ -156,15 +248,26 @@ const InstantFeedback = () => {
               </Grid>
             </SubCard>
           </Grid>
-         
-          <Grid item xs={12}>
-            <Stack direction="row" justifyContent="flex-end">
+
+          <Grid item xs={12} >
+            <Grid container spacing={2} justifyContent="end">
+<Grid item>
+<Stack direction="row" justifyContent="flex-end">
               <AnimateButton>
                 <Button variant="contained" type="submit">
                   ยืนยัน
                 </Button>
               </AnimateButton>
-            </Stack>
+              </Stack>
+</Grid>
+            
+            <Grid item>
+                  <Button variant="contained"
+                  href="/campaign/normal"
+                  sx={{ background: theme.palette.error.main, '&:hover': { background: theme.palette.error.dark } }}
+                  >ย้อนกลับ</Button>
+                  </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </form>

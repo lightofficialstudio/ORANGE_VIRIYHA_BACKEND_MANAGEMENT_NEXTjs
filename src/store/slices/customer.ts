@@ -69,6 +69,7 @@ export function getOrders() {
   return async () => {
     try {
       const response = await axios.get('/api/customer/order/list');
+      console.log(response);
       dispatch(slice.actions.getOrdersSuccess(response.data.orders));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
