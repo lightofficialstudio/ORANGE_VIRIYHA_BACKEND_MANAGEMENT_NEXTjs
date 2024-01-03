@@ -53,29 +53,29 @@ function MyApp({ Component, pageProps }: AppProps & Props) {
   if (!loading) return <Loader />;
 
   return (
-<main className={LineFont.newfont}>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persister}>
-        <ConfigProvider>
-          <ThemeCustomization>
-            <RTLLayout>
-              <Locales>
-                <NavigationScroll>
-                  <AuthProvider>
-                    <>
-                      <Notistack>
-                        {getLayout(<Component {...pageProps} />)}
-                        <Snackbar />
-                      </Notistack>
-                    </>
-                  </AuthProvider>
-                </NavigationScroll>
-              </Locales>
-            </RTLLayout>
-          </ThemeCustomization>
-        </ConfigProvider>
-      </PersistGate>
-    </Provider>
+    <main className={LineFont.newfont}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persister}>
+          <ConfigProvider>
+            <ThemeCustomization>
+              <RTLLayout>
+                <Locales>
+                  <NavigationScroll>
+                    <AuthProvider>
+                      <>
+                        <Notistack>
+                          {getLayout(<Component {...pageProps} />)}
+                          <Snackbar />
+                        </Notistack>
+                      </>
+                    </AuthProvider>
+                  </NavigationScroll>
+                </Locales>
+              </RTLLayout>
+            </ThemeCustomization>
+          </ConfigProvider>
+        </PersistGate>
+      </Provider>
     </main>
   );
 }

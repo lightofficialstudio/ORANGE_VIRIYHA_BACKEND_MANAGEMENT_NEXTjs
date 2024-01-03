@@ -1,11 +1,5 @@
 // material-ui
-import {
-  Button,
-  Stack,
-  Grid,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Button, Stack, Grid, TextField } from '@mui/material';
 
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
@@ -15,33 +9,37 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
 
 const DescriptionCampaign = () => {
-return (
-  <MainCard title="" content={true}>
-  <Grid container spacing={gridSpacing}>
-  
-  <Grid item sm={6} md={12}>
-    <SubCard title="รายละเอียดสิทธิพิเศษ">
+  return (
+    <MainCard title="" content={true}>
       <Grid container spacing={gridSpacing}>
-        <Grid item xs={12}>
-          <TextField id="outlined-basic1" fullWidth multiline rows={5} label="รายละเอียด" defaultValue="" helperText="ชื่อของสิทธิพิเศษนี้" />
-        </Grid>
-        
-        <Grid item xs={12}>
-          <Stack direction="row">
-            <AnimateButton>
-              <Button variant="contained">แก้ไข</Button>
-            </AnimateButton>
-          </Stack>
+        <Grid item sm={6} md={12}>
+          <SubCard title="รายละเอียดสิทธิพิเศษ">
+            <Grid container spacing={gridSpacing}>
+              <Grid item xs={12}>
+                <TextField
+                  id="outlined-basic1"
+                  fullWidth
+                  multiline
+                  rows={5}
+                  label="รายละเอียด"
+                  defaultValue=""
+                  helperText="ชื่อของสิทธิพิเศษนี้"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Stack direction="row">
+                  <AnimateButton>
+                    <Button variant="contained">แก้ไข</Button>
+                  </AnimateButton>
+                </Stack>
+              </Grid>
+            </Grid>
+          </SubCard>
         </Grid>
       </Grid>
-    </SubCard>
-  </Grid>
-</Grid>
-
-    
-
-  </MainCard>
-)
-}
+    </MainCard>
+  );
+};
 
 export default DescriptionCampaign;

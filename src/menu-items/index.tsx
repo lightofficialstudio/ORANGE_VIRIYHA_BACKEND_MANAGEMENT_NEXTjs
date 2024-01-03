@@ -9,7 +9,7 @@ import support from './support';
 import other from './other';
 import { NavItemType } from 'types';
 // viriyha menu
-import admin from './admin'
+import admin from './admin';
 import campaign from './campaign';
 import report from './report';
 import logs from './logs';
@@ -17,7 +17,7 @@ import logs from './logs';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems: { items: NavItemType[] } = {
-  items: [admin , campaign , report ,dashboard, logs ,application, forms, elements, samplePage, pages, utilities, support, other  ]
+  items: [admin, campaign, report, dashboard, logs, application, forms, elements, samplePage, pages, utilities, support, other]
 };
 
 export default menuItems;

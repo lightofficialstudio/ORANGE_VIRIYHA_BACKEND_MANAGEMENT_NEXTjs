@@ -19,8 +19,6 @@ import { drawerWidth } from 'store/constant';
 import { openDrawer } from 'store/slices/menu';
 import { useDispatch, useSelector } from 'store';
 
-
-
 // assets
 import { IconChevronRight } from '@tabler/icons';
 

@@ -77,8 +77,7 @@ const headCells: HeadCell[] = [
     id: 'id',
     numeric: true,
     label: 'ID',
-    align: 'center',
-
+    align: 'center'
   },
   {
     id: 'name',
@@ -143,16 +142,13 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
     <Box sx={{ flexGrow: 1 }} />
     {numSelected > 0 && (
       <Tooltip title="ลบรายการ">
-        <IconButton size="large" >
+        <IconButton size="large">
           <DeleteIcon fontSize="small" />
         </IconButton>
       </Tooltip>
     )}
   </Toolbar>
 );
-
-
-
 
 // ==============================|| TABLE HEADER ||============================== //
 
@@ -304,7 +300,7 @@ const NormalCampaignPage = () => {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     console.log(newSelected);
-    
+
     setSelected(newSelected);
   };
 
@@ -323,26 +319,24 @@ const NormalCampaignPage = () => {
   return (
     <Page title="จัดการแคมเปญ">
       <MainCard title="Normal Campaign" content={false}>
-        
-      <CardContent>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                )
-              }}
-              onChange={handleSearch}
-              placeholder="ค้นหารายการ"
-              value={search}
-              size='"large"'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-              
+        <CardContent>
+          <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  )
+                }}
+                onChange={handleSearch}
+                placeholder="ค้นหารายการ"
+                value={search}
+                size="medium"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
               <Tooltip title="ลบแบนเนอร์">
                 <IconButton size="large">
                   <DeleteIcon />
@@ -361,111 +355,111 @@ const NormalCampaignPage = () => {
                 </Fab>
               </Tooltip>
             </Grid>
-        </Grid>
-      </CardContent>
+          </Grid>
+        </CardContent>
 
-      {/* table */}
-      <TableContainer>
-        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={rows.length}
-            theme={theme}
-            selected={selected}
-          />
-          <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                /** Make sure no display bugs if row isn't an OrderData object */
-                if (typeof row === 'number') return null;
+        {/* table */}
+        <TableContainer>
+          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+              theme={theme}
+              selected={selected}
+            />
+            <TableBody>
+              {stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  /** Make sure no display bugs if row isn't an OrderData object */
+                  if (typeof row === 'number') return null;
 
-                const isItemSelected = isSelected(row.name);
-                const labelId = `enhanced-table-checkbox-${index}`;
+                  const isItemSelected = isSelected(row.name);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                    <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      onClick={(event) => handleClick(event, row.name)}
-                      sx={{ cursor: 'pointer' }}
-                    >
-                      <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                        {' '}
-                        #{row.id}{' '}
-                      </Typography>
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      onClick={(event) => handleClick(event, row.name)}
-                      sx={{ cursor: 'pointer' }}
-                    >
-                      <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                        {' '}
-                        {row.name}{' '}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>{row.company}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell align="right">{row.qty}</TableCell>
-                    <TableCell align="center">{row.date}</TableCell>
-                    <TableCell align="center">
-                      {row.status === 1 && <Chip label="สำเร็จ" size="small" chipcolor="success" />}
-                      {row.status === 2 && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
-                      {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
-                    </TableCell>
-                    <TableCell align="center" sx={{ pr: 3 }}>
-                      <IconButton color="primary" size="large">
-                        <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                      </IconButton>
-                      <IconButton color="secondary" size="large">
-                        <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                  return (
+                    <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
+                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        onClick={(event) => handleClick(event, row.name)}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+                          {' '}
+                          #{row.id}{' '}
+                        </Typography>
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        onClick={(event) => handleClick(event, row.name)}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+                          {' '}
+                          {row.name}{' '}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>{row.company}</TableCell>
+                      <TableCell>{row.type}</TableCell>
+                      <TableCell align="right">{row.qty}</TableCell>
+                      <TableCell align="center">{row.date}</TableCell>
+                      <TableCell align="center">
+                        {row.status === 1 && <Chip label="สำเร็จ" size="small" chipcolor="success" />}
+                        {row.status === 2 && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
+                        {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
+                      </TableCell>
+                      <TableCell align="center" sx={{ pr: 3 }}>
+                        <IconButton color="primary" size="large">
+                          <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                        </IconButton>
+                        <IconButton color="secondary" size="large">
+                          <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: 53 * emptyRows
+                  }}
+                >
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      {/* table pagination */}
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </MainCard>
+        {/* table pagination */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </MainCard>
     </Page>
   );
 };

@@ -6,8 +6,6 @@ import Head from 'next/head';
 // material-ui
 import { Box, BoxProps } from '@mui/material';
 
-
-
 // ==============================|| Page - SET TITLE & META TAGS ||============================== //
 
 interface Props extends BoxProps {

@@ -12,17 +12,15 @@ import Page from 'components/ui-component/Page';
 import AuthWrapper1 from 'components/authentication/AuthWrapper1';
 import AuthCardWrapper from 'components/authentication/AuthCardWrapper';
 import AuthLogin from 'components/authentication/auth-forms/AuthLogin';
-import Logo from 'ui-component/Logo';
+// import Logo from 'ui-component/Logo';
 import AuthFooter from 'ui-component/cards/AuthFooter';
-import useAuth from 'hooks/useAuth';
-
-
+// import useAuth from 'hooks/useAuth';
 
 // ================================|| AUTH3 - LOGIN ||================================ //
 
 const Login = () => {
   const theme = useTheme();
-  const { isLoggedIn } = useAuth();
+  // const { isLoggedIn } = useAuth();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
@@ -59,9 +57,7 @@ const Login = () => {
                     <Grid item xs={12}>
                       <Divider />
                     </Grid>
-                    <Grid item xs={12}>
-                   
-                    </Grid>
+                    <Grid item xs={12}></Grid>
                   </Grid>
                 </AuthCardWrapper>
               </Grid>

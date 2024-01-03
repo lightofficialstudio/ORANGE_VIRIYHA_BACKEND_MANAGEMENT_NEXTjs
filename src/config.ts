@@ -23,5 +23,4 @@ const config: ConfigProps = {
   container: false
 };
 
-
 export default config;

@@ -2,14 +2,13 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconBrandTabler,  } from '@tabler/icons';
+import { IconBrandTabler } from '@tabler/icons';
 
 // type
 import { NavItemType } from 'types';
 
 const icons = {
-    IconBrandTabler: IconBrandTabler,
-   
+  IconBrandTabler: IconBrandTabler
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -27,9 +26,7 @@ const logs: NavItemType = {
       url: '/logs/error',
       icon: icons.IconBrandTabler,
       breadcrumbs: false
-    },
-    
-   
+    }
   ]
 };
 

@@ -42,7 +42,6 @@ import { getProducts } from 'store/slices/product';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
-import FileCopyIcon from '@mui/icons-material/FileCopyTwoTone';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
@@ -343,7 +342,6 @@ const ProductList = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-              
               <Tooltip title="ลบแบนเนอร์">
                 <IconButton size="large">
                   <DeleteIcon />

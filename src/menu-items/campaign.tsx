@@ -8,8 +8,7 @@ import { IconSquarePlus } from '@tabler/icons';
 import { NavItemType } from 'types';
 
 const icons = {
-    IconSquarePlus: IconSquarePlus,
-    
+  IconSquarePlus: IconSquarePlus
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -29,15 +28,13 @@ const campaign: NavItemType = {
       breadcrumbs: false
     },
     {
-        id: 'special_campaign',
-        title: <FormattedMessage id="Special Campaign" />,
-        type: 'item',
-        url: '/campaign/special',
-        icon: icons.IconSquarePlus,
-        breadcrumbs: false
-      },
-     
-   
+      id: 'special_campaign',
+      title: <FormattedMessage id="Special Campaign" />,
+      type: 'item',
+      url: '/campaign/special',
+      icon: icons.IconSquarePlus,
+      breadcrumbs: false
+    }
   ]
 };
 
