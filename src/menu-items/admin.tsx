@@ -28,7 +28,7 @@ const admin: NavItemType = {
       type: 'item',
       url: '/admin/banners',
       icon: icons.IconPhoto,
-      breadcrumbs: false
+      breadcrumbs: true
     },
     {
         id: 'category_management',
@@ -42,7 +42,7 @@ const admin: NavItemType = {
         id: 'shop_management',
         title: <FormattedMessage id="Shop Management" />,
         type: 'item',
-        url: '/admin/category',
+        url: '/admin/shop',
         icon: icons.IconBuildingStore,
         breadcrumbs: false
       },
@@ -50,7 +50,7 @@ const admin: NavItemType = {
         id: 'user_management',
         title: <FormattedMessage id="User Management" />,
         type: 'item',
-        url: '/admin/category',
+        url: '/admin/users',
         icon: icons.IconUser,
         breadcrumbs: false
       },

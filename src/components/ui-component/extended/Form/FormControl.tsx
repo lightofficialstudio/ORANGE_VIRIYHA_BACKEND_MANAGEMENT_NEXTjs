@@ -16,6 +16,7 @@ interface FormControlProps {
   selected?: string;
   textPrimary?: string;
   textSecondary?: string;
+  defaultValue?: string;
 }
 
 const FormControl = ({
@@ -25,7 +26,8 @@ const FormControl = ({
   iconSecondary,
   placeholder,
   textPrimary,
-  textSecondary
+  textSecondary,
+  defaultValue
 }: FormControlProps) => {
   const theme = useTheme();
   const IconPrimary = iconPrimary!;
@@ -42,6 +44,7 @@ const FormControl = ({
       <OutlinedInput
         placeholder={placeholder}
         type="text"
+        defaultValue={defaultValue}
         label={captionLabel}
         startAdornment={
           <>

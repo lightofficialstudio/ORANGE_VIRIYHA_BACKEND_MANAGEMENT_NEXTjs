@@ -233,8 +233,24 @@ const InstantFeedback = () => {
                  helperText={formik.touched.campaign_condition && formik.errors.campaign_condition}/>
               </Grid>
 
-              <Grid item xs={12} md={6} lg={6}>
-            <SubCard title="ร้านค้าที่เข้าร่วมแคมเปญ">
+          <Grid item xs={12} md={6} lg={6}>
+            <SubCard title="ร้านค้าที่เข้าร่วม">
+              <Grid container direction="column" spacing={3}>
+                <Grid item>
+                  <Autocomplete
+                    
+                    options={top100Films}
+                    getOptionLabel={(option) => option.label}
+                    defaultValue={[top100Films[0], top100Films[4]]}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </Grid>
+              </Grid>
+            </SubCard>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={6}>
+            <SubCard title="สาขาที่เข้าร่วม">
               <Grid container direction="column" spacing={3}>
                 <Grid item>
                   <Autocomplete

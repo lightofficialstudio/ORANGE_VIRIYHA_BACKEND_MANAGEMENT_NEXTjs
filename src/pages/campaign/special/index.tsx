@@ -5,7 +5,6 @@ import { ReactElement } from 'react';
 import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
-  Button,
   CardContent,
   Checkbox,
   Fab,
@@ -220,7 +219,7 @@ function EnhancedTableHead({
         {numSelected <= 0 && (
           <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
             <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-              จัดการ
+              Action
             </Typography>
           </TableCell>
         )}
@@ -356,13 +355,11 @@ const NormalCampaignPage = () => {
               </Tooltip>
 
               {/* product add & dialog */}
-              <Button href="/campaign/normal/create">
-                <Tooltip title="เพิ่มแคมเปญ">
-                  <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
-                    <AddIcon fontSize="small" />
-                  </Fab>
-                </Tooltip>
-              </Button>
+              <Tooltip title="เพิ่มแคมเปญ">
+                <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
+                  <AddIcon fontSize="small" />
+                </Fab>
+              </Tooltip>
             </Grid>
         </Grid>
       </CardContent>
@@ -438,11 +435,9 @@ const NormalCampaignPage = () => {
                       <IconButton color="primary" size="large">
                         <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                       </IconButton>
-                      <Button href={`/campaign/normal/detail/${row.id}`}>
                       <IconButton color="secondary" size="large">
                         <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                       </IconButton>
-                      </Button>
                     </TableCell>
                   </TableRow>
                 );

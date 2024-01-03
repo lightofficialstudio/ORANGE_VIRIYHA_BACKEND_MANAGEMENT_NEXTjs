@@ -1,4 +1,4 @@
-export type NormalCampaign = {
+export type TypeNormalCampaign = {
     id: string;
     name: string;
     company: string;
