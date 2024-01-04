@@ -10,6 +10,8 @@ import { GenericCardProps } from 'types';
 // ==============================|| FORM CONTROL SELECT ||============================== //
 
 interface FormControlSelectProps {
+  id?: string;
+  name?: string;
   captionLabel?: string;
   currencies?: { value: string; label: string }[];
   formState?: string;
@@ -21,6 +23,8 @@ interface FormControlSelectProps {
 }
 
 const FormControlSelect = ({
+  id,
+  name,
   captionLabel,
   currencies,
   formState,
@@ -48,7 +52,8 @@ const FormControlSelect = ({
   return (
     <FormControl fullWidth error={errorState}>
       <TextField
-        id="outlined-select-currency"
+        id={id}
+        name={name}
         select
         fullWidth
         label={captionLabel}

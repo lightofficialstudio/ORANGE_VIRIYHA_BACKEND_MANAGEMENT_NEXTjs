@@ -11,6 +11,7 @@ import {
   Fab,
   Grid,
   IconButton,
+  InputAdornment,
   Table,
   TableBody,
   TableCell,
@@ -19,32 +20,31 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
+  TextField,
   Toolbar,
   Tooltip,
   Typography
 } from '@mui/material';
+import { visuallyHidden } from '@mui/utils';
 
 // project imports
 import Page from 'components/ui-component/Page';
 import Chip from 'ui-component/extended/Chip';
 import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
-import { Products } from 'types/e-commerce';
+import { TypeNormalCampaign } from 'types/viriyha_type/campaign';
 import { useDispatch, useSelector } from 'store';
-import { getProducts } from 'store/slices/product';
-
+import { getOrders } from 'store/slices/customer';
 import CreateCategoryFormDialog from 'components/viriyha_components/modal/create_category_modal';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
+import SearchIcon from '@mui/icons-material/Search';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
-import Avatar from 'ui-component/extended/Avatar';
-
-const prodImage = '/assets/images/e-commerce';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -60,10 +60,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: Products[], comparator: (a: Products, b: Products) => number) {
-  const stabilizedThis = array.map((el: Products, index: number) => [el, index]);
+function stableSort(array: TypeNormalCampaign[], comparator: (a: TypeNormalCampaign, b: TypeNormalCampaign) => number) {
+  const stabilizedThis = array.map((el: TypeNormalCampaign, index: number) => [el, index]);
   stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0] as Products, b[0] as Products);
+    const order = comparator(a[0] as TypeNormalCampaign, b[0] as TypeNormalCampaign);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -71,35 +71,47 @@ function stableSort(array: Products[], comparator: (a: Products, b: Products) =>
 }
 
 // table header options
+
 const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: '#',
+    label: 'ID',
     align: 'center'
   },
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อแบนเนอร์',
+    label: 'ชื่อหมวดหมู่',
     align: 'left'
   },
-
   {
-    id: 'price',
+    id: 'company',
     numeric: true,
-    label: 'จำนวนผู้เข้าชม',
+    label: 'ประเภท',
+    align: 'left'
+  },
+  {
+    id: 'type',
+    numeric: true,
+    label: 'Payment Type',
+    align: 'left'
+  },
+  {
+    id: 'qty',
+    numeric: true,
+    label: 'ผู้ที่สร้าง',
     align: 'right'
   },
   {
-    id: 'created',
-    numeric: false,
+    id: 'date',
+    numeric: true,
     label: 'สร้างเมื่อวันที่',
-    align: 'left'
+    align: 'center'
   },
   {
     id: 'status',
-    numeric: true,
+    numeric: false,
     label: 'สถานะ',
     align: 'center'
   }
@@ -140,7 +152,7 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
 
 // ==============================|| TABLE HEADER ||============================== //
 
-interface ProEnhancedTableHeadProps extends EnhancedTableHeadProps {
+interface OrderListEnhancedTableHeadProps extends EnhancedTableHeadProps {
   theme: Theme;
   selected: string[];
 }
@@ -154,7 +166,7 @@ function EnhancedTableHead({
   onRequestSort,
   theme,
   selected
-}: ProEnhancedTableHeadProps) {
+}: OrderListEnhancedTableHeadProps) {
   const createSortHandler = (property: string) => (event: React.SyntheticEvent<Element, Event>) => {
     onRequestSort(event, property);
   };
@@ -174,7 +186,7 @@ function EnhancedTableHead({
           />
         </TableCell>
         {numSelected > 0 && (
-          <TableCell padding="none" colSpan={7}>
+          <TableCell padding="none" colSpan={8}>
             <EnhancedTableToolbar numSelected={selected.length} />
           </TableCell>
         )}
@@ -193,16 +205,18 @@ function EnhancedTableHead({
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
-                  <Typography component="span" sx={{ display: 'none' }}>
+                  <Box component="span" sx={visuallyHidden}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </Typography>
+                  </Box>
                 ) : null}
               </TableSortLabel>
             </TableCell>
           ))}
         {numSelected <= 0 && (
           <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
-            จัดการ
+            <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+              จัดการ
+            </Typography>
           </TableCell>
         )}
       </TableRow>
@@ -220,12 +234,10 @@ const NormalCampaignPage = () => {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
-  // const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<Products[]>([]);
-  // const { orders } = useSelector((state) => state.customer);
+  const [search, setSearch] = React.useState<string>('');
+  const [rows, setRows] = React.useState<TypeNormalCampaign[]>([]);
+  const { orders } = useSelector((state) => state.customer);
   const [open, setOpen] = React.useState(false);
-  const { products } = useSelector((state) => state.product);
-
   const handleClickOpenDialog = () => {
     setOpen(true);
   };
@@ -234,40 +246,38 @@ const NormalCampaignPage = () => {
   };
 
   React.useEffect(() => {
-    setRows(products);
-  }, [products]);
-
+    dispatch(getOrders());
+  }, [dispatch]);
   React.useEffect(() => {
-    dispatch(getProducts());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  // const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
-  //   const newString = event?.target.value;
-  //   setSearch(newString || '');
+    setRows(orders);
+  }, [orders]);
+  const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
+    const newString = event?.target.value;
+    setSearch(newString || '');
 
-  //   if (newString) {
-  //     const newRows = rows?.filter((row: KeyedObject) => {
-  //       let matches = true;
+    if (newString) {
+      const newRows = rows.filter((row: KeyedObject) => {
+        let matches = true;
 
-  //       const properties = ['name', 'description', 'rating', 'salePrice', 'offerPrice', 'gender'];
-  //       let containsQuery = false;
+        const properties = ['name', 'company', 'type', 'qty', 'id'];
+        let containsQuery = false;
 
-  //       properties.forEach((property) => {
-  //         if (row[property].toString().toLowerCase().includes(newString.toString().toLowerCase())) {
-  //           containsQuery = true;
-  //         }
-  //       });
+        properties.forEach((property) => {
+          if (row[property].toString().toLowerCase().includes(newString.toString().toLowerCase())) {
+            containsQuery = true;
+          }
+        });
 
-  //       if (!containsQuery) {
-  //         matches = false;
-  //       }
-  //       return matches;
-  //     });
-  //     setRows(newRows);
-  //   } else {
-  //     getProducts();
-  //   }
-  // };
+        if (!containsQuery) {
+          matches = false;
+        }
+        return matches;
+      });
+      setRows(newRows);
+    } else {
+      setRows(orders);
+    }
+  };
 
   const handleRequestSort = (event: React.SyntheticEvent<Element, Event>, property: string) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -316,11 +326,11 @@ const NormalCampaignPage = () => {
 
   return (
     <Page title="จัดการแคมเปญ">
-      <MainCard title="Banner Management" content={false}>
+      <MainCard title="Category Management" content={false}>
         <CardContent>
           <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
             <Grid item xs={12} sm={6}>
-              {/* <TextField
+              <TextField
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -332,7 +342,7 @@ const NormalCampaignPage = () => {
                 placeholder="ค้นหารายการ"
                 value={search}
                 size="medium"
-              /> */}
+              />
             </Grid>
             <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
               <Tooltip title="ลบ">
@@ -394,14 +404,16 @@ const NormalCampaignPage = () => {
                         />
                       </TableCell>
                       <TableCell
-                        align="center"
                         component="th"
                         id={labelId}
                         scope="row"
                         onClick={(event) => handleClick(event, row.name)}
                         sx={{ cursor: 'pointer' }}
                       >
-                        <Avatar src={row.image && `${prodImage}/${row.image}`} size="md" variant="rounded" alt="product images" />
+                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+                          {' '}
+                          #{row.id}{' '}
+                        </Typography>
                       </TableCell>
                       <TableCell
                         component="th"
@@ -415,18 +427,15 @@ const NormalCampaignPage = () => {
                           {row.name}{' '}
                         </Typography>
                       </TableCell>
-                      <TableCell align="right">${row.offerPrice} ครั้ง</TableCell>
-                      <TableCell></TableCell>
-
+                      <TableCell>{row.company}</TableCell>
+                      <TableCell>{row.type}</TableCell>
+                      <TableCell align="right">{row.qty}</TableCell>
+                      <TableCell align="center">{row.date}</TableCell>
                       <TableCell align="center">
-                        <Chip
-                          size="small"
-                          label={row.isStock ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}
-                          chipcolor={row.isStock ? 'success' : 'error'}
-                          sx={{ borderRadius: '4px', textTransform: 'capitalize' }}
-                        />
+                        {row.status === 1 && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
+                        {row.status === 2 && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
+                        {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
                       </TableCell>
-
                       <TableCell align="center" sx={{ pr: 3 }}>
                         <IconButton color="primary" size="large">
                           <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
