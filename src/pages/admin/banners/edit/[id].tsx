@@ -29,7 +29,7 @@ const BannerStatus = [
   { status_name: 'ปิดใช้งาน', status_id: 2 }
 ];
 
-const BannerCreatePage = () => {
+const BannerEditPage = () => {
   const router = useRouter();
   const { id } = router.query;
   console.log(id);
@@ -149,8 +149,8 @@ const BannerCreatePage = () => {
   );
 };
 
-BannerCreatePage.getLayout = function getLayout(page: ReactElement) {
+BannerEditPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default BannerCreatePage;
+export default BannerEditPage;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ReactElement } from 'react';
+import Link from 'next/link';
 
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
@@ -43,10 +44,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
-import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
+import NearMeIcon from '@mui/icons-material/NearMe';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
+import ChangeBannerPositionDialog from 'components/viriyha_components/modal/banners/change_position_modal';
 const prodImage = '/assets/images/e-commerce';
 
 // table sort
@@ -79,7 +81,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'ID',
+    label: 'ลำดับ',
     align: 'center'
   },
   {
@@ -100,7 +102,7 @@ const headCells: HeadCell[] = [
     label: 'ประเภท',
     align: 'center'
   },
-  
+
   {
     id: 'qty',
     numeric: true,
@@ -113,7 +115,7 @@ const headCells: HeadCell[] = [
     label: 'สร้างขึ้นเมื่อ',
     align: 'center'
   },
-  
+
   {
     id: 'status',
     numeric: false,
@@ -242,6 +244,15 @@ const ShopManagementPage = () => {
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<ShopManagementType[]>([]);
   const { products } = useSelector((state) => state.product);
+  const [openPositionDialog, setOpenPositionDialog] = React.useState(false);
+  const [position, setPosition] = React.useState('');
+  const handleOpenPositionDialog = (position: string) => {
+    setOpenPositionDialog(true);
+    setPosition(position);
+  };
+  const handleClosePositionDialog = () => {
+    setOpenPositionDialog(false);
+  };
   React.useEffect(() => {
     dispatch(getProducts());
   }, [dispatch]);
@@ -431,8 +442,8 @@ const ShopManagementPage = () => {
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
                           {' '}
                           {row.name}{' '}
-                        </Typography>                      <TableCell>{row.company}</TableCell>
-
+                        </Typography>{' '}
+                        <TableCell>* ขนาด 500 x 500</TableCell>
                       </TableCell>
                       <TableCell>{row.gender}</TableCell>
                       <TableCell align="right">{row.popularity} คน</TableCell>
@@ -440,16 +451,21 @@ const ShopManagementPage = () => {
 
                       <TableCell align="center">
                         {row.isStock === true && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                        {row.isStock === false  && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
+                        {row.isStock === false && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
                       </TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        
-                        <Button href={`/admin/shop/detail/${row.id}`}>
+                        <Link href={`/admin/banners/edit/${row.id}`}>
                           <IconButton color="secondary" size="large">
                             <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>
-                        </Button>
+                        </Link>
+
+                        <ChangeBannerPositionDialog open={openPositionDialog} onClose={handleClosePositionDialog} position={position} />
+
+                        <IconButton color="info" size="large" onClick={() => handleOpenPositionDialog(String(row.id))}>
+                          <NearMeIcon sx={{ fontSize: '1.3rem' }} />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );

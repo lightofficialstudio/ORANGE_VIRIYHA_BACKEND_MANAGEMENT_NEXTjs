@@ -45,6 +45,7 @@ import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
+import ChangeBannerPositionDialog from 'components/viriyha_components/modal/banners/change_position_modal';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -364,7 +365,7 @@ const NormalCampaignPage = () => {
                   </Fab>
                 </Tooltip>
               </Button>
-              <CreateCategoryFormDialog open={open} onClose={handleCloseDialog} />
+              <ChangeBannerPositionDialog open={open} onClose={handleCloseDialog} position="Test" />
             </Grid>
           </Grid>
         </CardContent>
