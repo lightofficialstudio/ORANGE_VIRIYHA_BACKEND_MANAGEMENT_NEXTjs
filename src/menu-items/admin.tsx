@@ -49,10 +49,28 @@ const admin: NavItemType = {
     {
       id: 'user_management',
       title: <FormattedMessage id="User Management" />,
-      type: 'item',
-      url: '/admin/users',
       icon: icons.IconUser,
-      breadcrumbs: false
+      type: 'collapse',
+      children: [
+        {
+          id: 'user_frontend',
+          title: <FormattedMessage id="Frontend Users" />,
+          type: 'item',
+          url: 'https://tabler-icons.io/',
+          external: true,
+          target: true,
+          breadcrumbs: false
+        },
+        {
+          id: 'user_frontend',
+          title: <FormattedMessage id="Backend Users" />,
+          type: 'item',
+          url: 'https://mui.com/material-ui/material-icons/#main-content',
+          external: true,
+          target: true,
+          breadcrumbs: false
+        }
+      ]
     }
   ]
 };

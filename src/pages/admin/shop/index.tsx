@@ -85,13 +85,13 @@ const headCells: HeadCell[] = [
   {
     id: 'image',
     numeric: false,
-    label: 'แบนเนอร์',
+    label: 'รูปภาพ',
     align: 'center'
   },
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อแบนเนอร์',
+    label: 'ชื่อร้านค้า',
     align: 'center'
   },
   {
@@ -104,7 +104,7 @@ const headCells: HeadCell[] = [
   {
     id: 'qty',
     numeric: true,
-    label: 'จำนวนเข้าชม',
+    label: 'จำนวนผู้สนใจ',
     align: 'center'
   },
   {
@@ -323,7 +323,7 @@ const ShopManagementPage = () => {
 
   return (
     <Page title="จัดการแคมเปญ">
-      <MainCard title="Banner Management" content={false}>
+      <MainCard title="Shop Management" content={false}>
         <CardContent>
           <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -354,8 +354,8 @@ const ShopManagementPage = () => {
               </Tooltip>
 
               {/* product add & dialog */}
-              <Button href="/admin/banners/create">
-                <Tooltip title="สร้างแบนเนอร์">
+              <Button href="/campaign/normal/create">
+                <Tooltip title="เพิ่มแคมเปญ">
                   <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                     <AddIcon fontSize="small" />
                   </Fab>
