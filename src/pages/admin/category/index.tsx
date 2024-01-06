@@ -45,7 +45,6 @@ import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
-import ChangeBannerPositionDialog from 'components/viriyha_components/modal/banners/change_position_modal';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -227,7 +226,7 @@ function EnhancedTableHead({
 
 // ==============================|| ORDER LIST ||============================== //
 
-const NormalCampaignPage = () => {
+const CategoryPage = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
@@ -365,7 +364,7 @@ const NormalCampaignPage = () => {
                   </Fab>
                 </Tooltip>
               </Button>
-              <ChangeBannerPositionDialog open={open} onClose={handleCloseDialog} position="Test" />
+              <CreateCategoryFormDialog open={open} onClose={handleCloseDialog} />
             </Grid>
           </Grid>
         </CardContent>
@@ -478,8 +477,8 @@ const NormalCampaignPage = () => {
   );
 };
 
-NormalCampaignPage.getLayout = function getLayout(page: ReactElement) {
+CategoryPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default NormalCampaignPage;
+export default CategoryPage;

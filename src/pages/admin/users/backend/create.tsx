@@ -13,9 +13,10 @@ import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 // import Avatar from 'ui-component/extended/Avatar';
 import GoBackButton from 'components/viriyha_components/button/go_back';
+import Image from 'next/image';
 
 // Avatar
-const Avatar1 = '/assets/images/users/avatar-1.png';
+const Avatar1 = '/assets/images/users/avatar-5.png';
 // autocomplete options
 const ShopCategory = [
   { label: 'The Dark Knight', id: 1 },
@@ -48,23 +49,23 @@ const ShopCreatePage = () => {
     }
   };
   return (
-    <Page title="สร้างร้านค้า">
-      <GoBackButton Link={'/admin/shop'} />
+    <Page title="สร้างผู้ใช้งานจัดการระบบหลังบ้านใหม่">
+      <GoBackButton Link={'/admin/users/backend'} />
       <MainCard>
-        <MainCard title="สร้างร้านค้า" content={true}>
+        <MainCard title="[สร้างผู้ใช้งาน] จัดการระบบหลังบ้าน" content={true}>
           <Grid container spacing={3}>
             <Grid item sm={6} md={4}>
-              <SubCard title="รูปภาพร้านค้า" contentSX={{ textAlign: 'center' }}>
+              <SubCard title="รูปภาพประจำตัว" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <img alt="User 1" src={PreviewImg} style={{ width: 200, height: 200, margin: '0 auto' }} />
+                      <Image alt="User 1" src={PreviewImg} style={{ margin: '0 auto' }} width={200} height={200} />
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
                       *จำกัดขนาด 2MB และ รูปภาพต้องเป็นไฟล์ .jpg .png เท่านั้น <br></br>
-                      *รูปภาพต้องมีขนาดตั้งแต่ 500 x 500 ขึ้นไป
+                      *รูปภาพต้องมีขนาดตั้งแต่ 200 x 200 ขึ้นไป
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -79,7 +80,7 @@ const ShopCreatePage = () => {
               </SubCard>
             </Grid>
             <Grid item sm={6} md={8}>
-              <SubCard title="รายละเอียดร้านค้า">
+              <SubCard title="ข้อมูลผู้ใช้งาน">
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <TextField id="outlined-basic1" fullWidth label="ชื่อร้านค้า" placeholder="เช่น ร้านค้า KFC , Mcdonald" />
@@ -124,7 +125,7 @@ const ShopCreatePage = () => {
                           สร้างร้านค้า
                         </Button>
                       </AnimateButton>
-                      <Link href={'/admin/shop'}>
+                      <Link href={'/admin/users/backend'}>
                         <AnimateButton>
                           <Button variant="contained" color="error">
                             ยกเลิก

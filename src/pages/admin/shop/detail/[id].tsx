@@ -24,10 +24,7 @@ import {
   TextField,
   Toolbar,
   Tooltip,
-  Typography,
-  Tabs,
-  Tab,
-  Button
+  Typography
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 
@@ -40,41 +37,19 @@ import { TypeNormalCampaign } from 'types/viriyha_type/campaign';
 import { useDispatch, useSelector } from 'store';
 import { getOrders } from 'store/slices/customer';
 
-// viriyha components imports
-import DetailCampaignCard from 'components/viriyha_components/form/campaign/normal/detail/detail_campaign';
-import ConditionCampaign from 'components/viriyha_components/form/campaign/normal/detail/condition_campaign';
-import DescriptionCampaign from 'components/viriyha_components/form/campaign/normal/detail/description_campaign';
-
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
-
+import PublishIcon from '@mui/icons-material/Publish';
 import SearchIcon from '@mui/icons-material/Search';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 // types
-import { TabsProps } from 'types';
-import ShopDetail from 'components/viriyha_components/form/shop/shop_detail';
+
 import ShopEdit from 'components/viriyha_components/form/shop/shop_edit';
-import AnimateButton from 'ui-component/extended/AnimateButton';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 
-// tabs
-function TabPanel({ children, value, index, ...other }: TabsProps) {
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
-      {value === index && <Box sx={{ p: 0 }}>{children}</Box>}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`
-  };
-}
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
   if (b[orderBy] < a[orderBy]) {
@@ -111,7 +86,7 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อ-นามสกุล',
+    label: 'ชื่อสาขา',
     align: 'left'
   },
   {
@@ -123,7 +98,7 @@ const headCells: HeadCell[] = [
   {
     id: 'type',
     numeric: true,
-    label: 'Payment Type',
+    label: 'ละติจูด,ลองติจูด',
     align: 'left'
   },
   {
@@ -268,10 +243,7 @@ const ShopDetailPage = () => {
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<TypeNormalCampaign[]>([]);
   const { orders } = useSelector((state) => state.customer);
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
+
   React.useEffect(() => {
     dispatch(getOrders());
   }, [dispatch]);
@@ -387,20 +359,25 @@ const ShopDetailPage = () => {
                     <FilterListIcon />
                   </IconButton>
                 </Tooltip>
-                {/* product add & dialog */}
+
                 <Tooltip title="นำเข้าสาขา">
                   <IconButton size="large">
-                    <AssignmentIndIcon />
+                    <GetAppIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="ส่งออกสาขา">
+                  <IconButton size="large">
+                    <PublishIcon />
                   </IconButton>
                 </Tooltip>
                 {/* product add & dialog */}
-                <Button href={`/admin/shop/detail/create_branch/${id}`}>
+                <Link href={`/admin/shop/detail/create_branch/${id}`}>
                   <Tooltip title="เพิ่มสาขา">
                     <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                       <AddIcon fontSize="small" />
                     </Fab>
                   </Tooltip>
-                </Button>
+                </Link>
               </Grid>
             </Grid>
           </CardContent>

@@ -56,7 +56,7 @@ const admin: NavItemType = {
           id: 'user_frontend',
           title: <FormattedMessage id="Frontend Users" />,
           type: 'item',
-          url: 'https://tabler-icons.io/',
+          url: '/admin/users/frontend',
           external: true,
           target: true,
           breadcrumbs: false
@@ -65,7 +65,7 @@ const admin: NavItemType = {
           id: 'user_frontend',
           title: <FormattedMessage id="Backend Users" />,
           type: 'item',
-          url: 'https://mui.com/material-ui/material-icons/#main-content',
+          url: '/admin/users/backend',
           external: true,
           target: true,
           breadcrumbs: false

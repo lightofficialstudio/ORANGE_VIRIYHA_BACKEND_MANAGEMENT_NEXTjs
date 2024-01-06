@@ -85,15 +85,7 @@ const ShopEdit = () => {
                 disabled
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                id="outlined-basic1"
-                name="shop_branch_name"
-                fullWidth
-                label="ชื่อสาขา"
-                placeholder="เช่น Mcdonald สาขาราชพฤกษ์ , KFC สาขานวลจันทร์"
-              />
-            </Grid>
+            
 
             <Grid item xs={12}>
               <Autocomplete
@@ -105,12 +97,7 @@ const ShopEdit = () => {
                 renderInput={(params) => <TextField {...params} label="สถานะ" />}
               />
             </Grid>
-            <Grid item md={6} xs={12}>
-              <TextField fullWidth label="ละติจูด" name="shop_latitude"></TextField>
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <TextField fullWidth label="ลองติจูด" name="shop_longtitude"></TextField>
-            </Grid>
+           
 
             <Grid item xs={12}>
               <TextField

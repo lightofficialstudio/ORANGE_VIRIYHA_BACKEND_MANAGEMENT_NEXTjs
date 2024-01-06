@@ -5,7 +5,6 @@ import { ReactElement } from 'react';
 import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
-  Button,
   CardContent,
   Checkbox,
   Fab,
@@ -91,18 +90,18 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อร้านค้า',
-    align: 'center'
+    label: 'ชื่อ-นามสกุล',
+    align: 'left'
   },
   {
-    id: 'company',
+    id: 'gender',
     numeric: true,
-    label: 'ประเภท',
+    label: 'เพศ',
     align: 'center'
   },
 
   {
-    id: 'qty',
+    id: 'ตำแหน่ง',
     numeric: true,
     label: 'จำนวนผู้สนใจ',
     align: 'center'
@@ -231,7 +230,7 @@ function EnhancedTableHead({
 
 // ==============================|| ORDER LIST ||============================== //
 
-const ShopManagementPage = () => {
+const UserBackendPage = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
@@ -322,8 +321,8 @@ const ShopManagementPage = () => {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Page title="จัดการแคมเปญ">
-      <MainCard title="Shop Management" content={false}>
+    <Page title="จัดการผู้เข้าใช้งานระบบหลังบ้าน">
+      <MainCard title="User Backend Management" content={false}>
         <CardContent>
           <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -336,7 +335,7 @@ const ShopManagementPage = () => {
                   )
                 }}
                 onChange={handleSearch}
-                placeholder="ค้นหารายการ"
+                placeholder="ค้นหารายชื่อ"
                 value={search}
                 size="medium"
               />
@@ -354,8 +353,8 @@ const ShopManagementPage = () => {
               </Tooltip>
 
               {/* product add & dialog */}
-              <Link href="/admin/shop/create">
-                <Tooltip title="เพิ่มร้านค้า">
+              <Link href="/admin/users/backend/create">
+                <Tooltip title="เพิ่มผู้ใช้งาน">
                   <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                     <AddIcon fontSize="small" />
                   </Fab>
@@ -444,11 +443,11 @@ const ShopManagementPage = () => {
                         {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
                       </TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Button href={`/admin/shop/detail/${row.id}`}>
+                        <Link href={`/admin/shop/detail/${row.id}`}>
                           <IconButton color="secondary" size="large">
                             <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>
-                        </Button>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   );
@@ -481,8 +480,8 @@ const ShopManagementPage = () => {
   );
 };
 
-ShopManagementPage.getLayout = function getLayout(page: ReactElement) {
+UserBackendPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default ShopManagementPage;
+export default UserBackendPage;
