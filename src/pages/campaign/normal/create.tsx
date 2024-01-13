@@ -9,15 +9,15 @@ import Page from 'components/ui-component/Page';
 import MainCard from 'ui-component/cards/MainCard';
 
 // form import
-import CreateForm from 'components/viriyha_components/form/campaign/special/create_form';
+import CreateFormNormalCampaign from 'components/viriyha_components/form/campaign/normal/create_form';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const SamplePage = () => (
   <Page title="Normal campaign create">
-    <MainCard title="สร้างแคมเปญ">
+    <MainCard title="สร้างสิทธิพิเศษธรรมดา">
       <Typography variant="body2">
-        <CreateForm />
+        <CreateFormNormalCampaign />
       </Typography>
     </MainCard>
   </Page>

@@ -129,8 +129,8 @@ const BannerEditPage = () => {
                 <Grid item>
                   <Stack direction="row" spacing={2}>
                     <AnimateButton>
-                      <Button variant="contained" color="primary">
-                        สร้างสาขา
+                      <Button variant="contained" color="info">
+                        แก้ไขแบนเนอร์
                       </Button>
                     </AnimateButton>
                     <AnimateButton>

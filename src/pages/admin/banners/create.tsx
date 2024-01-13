@@ -130,7 +130,7 @@ const BannerCreatePage = () => {
                   <Stack direction="row" spacing={2}>
                     <AnimateButton>
                       <Button variant="contained" color="primary">
-                        สร้างสาขา
+                        สร้างแบนเนอร์
                       </Button>
                     </AnimateButton>
                     <AnimateButton>

@@ -12,6 +12,7 @@ import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
 import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
+import InputLabel from 'ui-component/extended/Form/InputLabel';
 
 // Type
 interface ShopBranchType {
@@ -28,7 +29,7 @@ const ShopStatus = [
   { status_name: 'ปิดให้บริการ', status_id: 2 }
 ];
 
-const ShopCreatePage = () => {
+const ShopCreateBranchPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
@@ -81,17 +82,18 @@ const ShopCreatePage = () => {
               <SubCard title="รายละเอียดสาขา">
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
+                    <InputLabel required>ชื่อร้านค้า</InputLabel>
                     <TextField
                       id="outlined-basic1"
                       name="shop_name"
                       fullWidth
-                      label="ชื่อร้านค้า"
                       placeholder="เช่น ร้านค้า KFC , Mcdonald"
                       value="KFC"
                       disabled
                     />
                   </Grid>
                   <Grid item xs={12}>
+                    <InputLabel required>ชื่อสาขา</InputLabel>
                     <TextField
                       id="outlined-basic1"
                       name="shop_branch_name"
@@ -102,31 +104,32 @@ const ShopCreatePage = () => {
                   </Grid>
 
                   <Grid item xs={12}>
+                    <InputLabel required>สถานะ</InputLabel>
+
                     <Autocomplete
                       options={ShopStatus}
                       getOptionLabel={(option) => option.status_name}
                       onChange={(event: any, value: any) => {
                         SetFormSelectedShopStatus(value);
                       }}
-                      renderInput={(params) => <TextField {...params} label="สถานะ" />}
+                      renderInput={(params) => <TextField {...params} />}
                     />
                   </Grid>
                   <Grid item md={6} xs={12}>
+                    <InputLabel required>ละติจูด</InputLabel>
+
                     <TextField fullWidth label="ละติจูด" name="shop_latitude"></TextField>
                   </Grid>
                   <Grid item md={6} xs={12}>
+                    <InputLabel required>ลองติจูด</InputLabel>
+
                     <TextField fullWidth label="ลองติจูด" name="shop_longtitude"></TextField>
                   </Grid>
 
                   <Grid item xs={12}>
-                    <TextField
-                      multiline
-                      rows={3}
-                      id="outlined-basic8"
-                      fullWidth
-                      label="รายละเอียดร้านค้า"
-                      placeholder="รายละเอียดของร้านค้า เช่น ร้านค้า KFC"
-                    />
+                    <InputLabel required>รายละเอียดร้านค้า</InputLabel>
+
+                    <TextField multiline rows={3} id="outlined-basic8" fullWidth placeholder="รายละเอียดของร้านค้า เช่น ร้านค้า KFC" />
                   </Grid>
                   <Grid item xs={12}>
                     <Stack direction="row" spacing={2}>
@@ -152,8 +155,8 @@ const ShopCreatePage = () => {
   );
 };
 
-ShopCreatePage.getLayout = function getLayout(page: ReactElement) {
+ShopCreateBranchPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default ShopCreatePage;
+export default ShopCreateBranchPage;

@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { ReactElement } from 'react';
 
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
-  Button,
   CardContent,
   Checkbox,
   Fab,
@@ -28,9 +26,8 @@ import {
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
-import Page from 'components/ui-component/Page';
+
 import Chip from 'ui-component/extended/Chip';
-import Layout from 'layout';
 
 import MainCard from 'ui-component/cards/MainCard';
 import { TypeNormalCampaign } from 'types/viriyha_type/campaign';
@@ -42,12 +39,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
-import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
-import Link from 'next/link';
-
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
   if (b[orderBy] < a[orderBy]) {
@@ -84,38 +78,27 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อแคมเปญ',
+    label: 'Code',
     align: 'left'
   },
-  {
-    id: 'company',
-    numeric: true,
-    label: 'ประเภท',
-    align: 'left'
-  },
-  {
-    id: 'type',
-    numeric: true,
-    label: 'Payment Type',
-    align: 'left'
-  },
-  {
-    id: 'qty',
-    numeric: true,
-    label: 'จำนวนผู้สนใจ',
-    align: 'right'
-  },
-  {
-    id: 'date',
-    numeric: true,
-    label: 'สร้างเมื่อวันที่',
-    align: 'center'
-  },
+
   {
     id: 'status',
     numeric: false,
     label: 'สถานะ',
     align: 'center'
+  },
+  {
+    id: 'date',
+    numeric: true,
+    label: 'ใช้งานเมื่อวันที่',
+    align: 'center'
+  },
+  {
+    id: 'use_by',
+    numeric: false,
+    label: 'ถูกใช้งานโดย',
+    align: 'left'
   }
 ];
 
@@ -216,19 +199,16 @@ function EnhancedTableHead({
           ))}
         {numSelected <= 0 && (
           <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
-            <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-              จัดการ
-            </Typography>
+            {/* <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+                Action
+              </Typography> */}
           </TableCell>
         )}
       </TableRow>
     </TableHead>
   );
 }
-
-// ==============================|| ORDER LIST ||============================== //
-
-const NormalCampaignPage = () => {
+const CodeTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
@@ -239,6 +219,10 @@ const NormalCampaignPage = () => {
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<TypeNormalCampaign[]>([]);
   const { orders } = useSelector((state) => state.customer);
+  //   const [value, setValue] = React.useState(0);
+  //   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  //     setValue(newValue);
+  //   };
   React.useEffect(() => {
     dispatch(getOrders());
   }, [dispatch]);
@@ -319,159 +303,154 @@ const NormalCampaignPage = () => {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Page title="จัดการแคมเปญ">
-      <MainCard title="Normal Campaign" content={false}>
-        <CardContent>
-          <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  )
-                }}
-                onChange={handleSearch}
-                placeholder="ค้นหารายการ"
-                value={search}
-                size="medium"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-              <Tooltip title="ลบแบนเนอร์">
-                <IconButton size="large">
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="ตัวกรอง">
-                <IconButton size="large">
-                  <FilterListIcon />
-                </IconButton>
-              </Tooltip>
-
-              {/* product add & dialog */}
-              <Link href={'/campaign/normal/create'}>
-                <Tooltip title="เพิ่มแคมเปญ">
-                  <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
-                    <AddIcon fontSize="small" />
-                  </Fab>
-                </Tooltip>
-              </Link>
-            </Grid>
-          </Grid>
-        </CardContent>
-
-        {/* table */}
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-              theme={theme}
-              selected={selected}
+    <MainCard title="โค้ดสำหรับสิทธิพิเศษนี้" content={false}>
+      <CardContent>
+        <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                )
+              }}
+              onChange={handleSearch}
+              placeholder="ค้นหารายการ"
+              value={search}
+              size="medium"
             />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  /** Make sure no display bugs if row isn't an OrderData object */
-                  if (typeof row === 'number') return null;
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
+            <Tooltip title="ลบผู้ใช้งานสิทธิ์">
+              <IconButton size="large">
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="ตัวกรอง">
+              <IconButton size="large">
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
 
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+            <Tooltip title="นำเข้าโค้ดสิทธิพิเศษ">
+              <IconButton size="large">
+                <AssignmentIndIcon />
+              </IconButton>
+            </Tooltip>
 
-                  return (
-                    <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          #{row.id}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>{row.company}</TableCell>
-                      <TableCell>{row.type}</TableCell>
-                      <TableCell align="right">{row.qty}</TableCell>
-                      <TableCell align="center">{row.date}</TableCell>
-                      <TableCell align="center">
-                        {row.status === 1 && <Chip label="สำเร็จ" size="small" chipcolor="success" />}
-                        {row.status === 2 && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
-                        {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
-                      </TableCell>
-                      <TableCell align="center" sx={{ pr: 3 }}>
+            <Tooltip title="เพิ่มผู้ใช้งานสิทธิ์">
+              <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
+                <AddIcon fontSize="small" />
+              </Fab>
+            </Tooltip>
+          </Grid>
+        </Grid>
+      </CardContent>
+
+      {/* table */}
+      <TableContainer>
+        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+          <EnhancedTableHead
+            numSelected={selected.length}
+            order={order}
+            orderBy={orderBy}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            rowCount={rows.length}
+            theme={theme}
+            selected={selected}
+          />
+          <TableBody>
+            {stableSort(rows, getComparator(order, orderBy))
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row, index) => {
+                /** Make sure no display bugs if row isn't an OrderData object */
+                if (typeof row === 'number') return null;
+
+                const isItemSelected = isSelected(row.name);
+                const labelId = `enhanced-table-checkbox-${index}`;
+
+                return (
+                  <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
+                    <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{
+                          'aria-labelledby': labelId
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      onClick={(event) => handleClick(event, row.name)}
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+                        {' '}
+                        #{row.id}{' '}
+                      </Typography>
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      onClick={(event) => handleClick(event, row.name)}
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+                        {' '}
+                        A0123456789{' '}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell align="center">
+                      {row.status === 1 && <Chip label="ยังไม่ใช้งาน" size="small" chipcolor="success" />}
+                      {row.status === 2 && <Chip label="ใช้งานสิทธิ์แล้ว" size="small" chipcolor="orange" />}
+                      {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
+                    </TableCell>
+                    <TableCell align="center">{row.date}</TableCell>
+                    <TableCell align="left">{row.name}</TableCell>
+
+                    {/* <TableCell align="center" sx={{ pr: 3 }}>
                         <IconButton color="primary" size="large">
                           <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                         </IconButton>
-                        <Button href={`/campaign/normal/detail/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                        <IconButton color="secondary" size="large">
+                          <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                        </IconButton>
+                      </TableCell> */}
+                  </TableRow>
+                );
+              })}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: 53 * emptyRows
+                }}
+              >
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-        {/* table pagination */}
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </MainCard>
-    </Page>
+      {/* table pagination */}
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={rows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </MainCard>
   );
 };
 
-NormalCampaignPage.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
-};
-
-export default NormalCampaignPage;
+export default CodeTable;

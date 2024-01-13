@@ -1,4 +1,3 @@
-import { useDispatch } from 'store';
 import React, { useState, ChangeEvent } from 'react';
 
 // material-ui
@@ -10,25 +9,11 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MainCard from 'ui-component/cards/MainCard';
 import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { openSnackbar } from 'store/slices/snackbar';
 import { gridSpacing } from 'store/constant';
 
 // third-party
-import { useFormik } from 'formik';
-import * as yup from 'yup';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 
-// example data
-// autocomplete options
-const top100Films = [
-  { label: 'The Dark Knight', id: 1 },
-  { label: 'Control with Control', id: 2 },
-  { label: 'Combo with Solo', id: 3 },
-  { label: 'The Dark', id: 4 },
-  { label: 'Fight Club', id: 5 },
-  { label: 'demo@company.com', id: 6 },
-  { label: 'Pulp Fiction', id: 7 }
-];
 
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
@@ -47,47 +32,26 @@ const ImageWrapper = styled('div')(({ theme }) => ({
     marginRight: 6
   }
 }));
-
-/**
- * 'Enter your email'
- * yup.string Expected 0 arguments, but got 1 */
-const validationSchema = yup.object({
-  campaign_name: yup.string().required('จำเป็นต้องใส่ชื่อแคมเปญ'),
-  campaign_description: yup.string().required('จำเป็นต้องใส่รายละเอียด'),
-  campaign_condition: yup.string().required('จำเป็นต้องใส่เงื่อนไข'),
-  campaign_start_date: yup.string().required('จำเป็นต้องใส่วันเริ่มต้นแคมเปญ'),
-  campaign_end_date: yup.string().required('จำเป็นต้องใส่วันสิ้นสุดแคมเปญ')
-});
-
-// ==============================|| FORM VALIDATION - INSTANT FEEDBACK FORMIK ||============================== //
-
-const InstantFeedback = () => {
-  const dispatch = useDispatch();
+const quotaChoose = [
+  { label: 'รายวัน', id: 1 },
+  { label: 'รายสัปดาห์', id: 2 },
+  { label: 'รายเดือน', id: 3 },
+  { label: 'ไม่จำกัด', id: 4 }
+];
+// example data
+// autocomplete options
+const top100Films = [
+  { label: 'The Dark Knight', id: 1 },
+  { label: 'Control with Control', id: 2 },
+  { label: 'Combo with Solo', id: 3 },
+  { label: 'The Dark', id: 4 },
+  { label: 'Fight Club', id: 5 },
+  { label: 'demo@company.com', id: 6 },
+  { label: 'Pulp Fiction', id: 7 }
+];
+const CreateFormNormalCampaign = () => {
   const theme = useTheme();
-
-  const formik = useFormik({
-    initialValues: {
-      campaign_name: '',
-      campaign_description: '',
-      campaign_condition: '',
-      campaign_start_date: '',
-      campaign_end_date: ''
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'On Leave - Submit Success',
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          },
-          close: false
-        })
-      );
-    }
-  });
+  const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
 
   // State to hold the image URLs for preview
   const [imageSrcs, setImageSrcs] = useState<string[]>([]);
@@ -121,9 +85,14 @@ const InstantFeedback = () => {
     });
   };
 
+  // Event handler for quota type change
+  const handleQuotaTypeChange = (event: any, value: any) => {
+    setIsQuotaDisabled(value.id === 4);
+  };
+
   return (
     <MainCard title="">
-      <form onSubmit={formik.handleSubmit}>
+      <form>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12}>
             <div>
@@ -167,79 +136,74 @@ const InstantFeedback = () => {
               {/* ... */}
             </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="campaign_name"
-              name="campaign_name"
-              label="ชื่อแคมเปญ"
-              value={formik.values.campaign_name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.campaign_name && Boolean(formik.errors.campaign_name)}
-              helperText={formik.touched.campaign_name && formik.errors.campaign_name}
-            />
+          <Grid item xs={12} md={6}>
+            <InputLabel required>ชื่อสิทธิพิเศษ</InputLabel>
+            <TextField fullWidth />
           </Grid>
           <Grid item xs={12} md={6}>
             <InputLabel required>วันที่เริ่มต้น</InputLabel>
-            <TextField
-              fullWidth
-              type="date"
-              id="campaign_start_date"
-              name="campaign_start_date"
-              label=""
-              value={formik.values.campaign_start_date}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.campaign_start_date && Boolean(formik.errors.campaign_start_date)}
-              helperText={formik.touched.campaign_start_date && formik.errors.campaign_start_date}
-            />{' '}
+            <TextField fullWidth type="date" id="campaign_start_date" name="campaign_start_date" label="" />{' '}
           </Grid>
           <Grid item xs={12} md={6}>
             <InputLabel required>วันที่สิ้นสุด</InputLabel>
-            <TextField
-              fullWidth
-              type="date"
-              id="campaign_end_date"
-              name="campaign_end_date"
-              label=""
-              value={formik.values.campaign_end_date}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.campaign_end_date && Boolean(formik.errors.campaign_end_date)}
-              helperText={formik.touched.campaign_end_date && formik.errors.campaign_end_date}
-            />{' '}
+            <TextField fullWidth type="date" id="campaign_end_date" name="campaign_end_date" label="" />{' '}
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <InputLabel required>จำนวนสิทธิพิเศษรวมทั้งโครงการ </InputLabel>
+            <TextField fullWidth placeholder="จำนวนคน" disabled={isQuotaDisabled} />
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <InputLabel required>ประเภทสิทธิพิเศษ</InputLabel>
+            <Grid container direction="column" spacing={3}>
+              <Grid item>
+                <Autocomplete
+                  options={quotaChoose}
+                  getOptionLabel={(option) => option.label}
+                  onChange={handleQuotaTypeChange}
+                  defaultValue={quotaChoose[0]}
+                  renderInput={(params) => <TextField {...params} label="ประเภทโควต้า" />}
+                />
+              </Grid>
+            </Grid>{' '}
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <InputLabel required>เป้าหมายสิทธิพิเศษ (Criteria)</InputLabel>
+            <Grid container direction="column" spacing={3}>
+              <Grid item>
+                <Autocomplete
+                  multiple
+                  options={top100Films}
+                  getOptionLabel={(option) => option.label}
+                  defaultValue={[top100Films[0], top100Films[4]]}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item md={6} xs={12}>
+            <InputLabel required>เป้าหมายสิทธิพิเศษ (Segment)</InputLabel>
+            <Grid container direction="column" spacing={3}>
+              <Grid item>
+                <Autocomplete
+                  multiple
+                  options={top100Films}
+                  getOptionLabel={(option) => option.label}
+                  defaultValue={[top100Films[2], top100Films[3]]}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="campaign_description"
-              name="campaign_description"
-              label="รายละเอียด"
-              multiline
-              rows={3}
-              defaultValue=""
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.campaign_description && Boolean(formik.errors.campaign_description)}
-              helperText={formik.touched.campaign_description && formik.errors.campaign_description}
-            />
+            <InputLabel required>รายละเอียด</InputLabel>
+            <TextField fullWidth id="campaign_description" name="campaign_description" multiline rows={3} defaultValue="" />
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="campaign_condition"
-              name="campaign_condition"
-              label="เงื่อนไข"
-              multiline
-              rows={3}
-              defaultValue=""
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.campaign_condition && Boolean(formik.errors.campaign_condition)}
-              helperText={formik.touched.campaign_condition && formik.errors.campaign_condition}
-            />
+            <InputLabel required>เงื่อนไข</InputLabel>
+
+            <TextField fullWidth id="campaign_condition" name="campaign_condition" multiline rows={3} defaultValue="" />
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>
@@ -302,4 +266,4 @@ const InstantFeedback = () => {
   );
 };
 
-export default InstantFeedback;
+export default CreateFormNormalCampaign;

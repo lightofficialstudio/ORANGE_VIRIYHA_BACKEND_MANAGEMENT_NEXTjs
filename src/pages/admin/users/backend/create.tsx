@@ -14,6 +14,7 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 // import Avatar from 'ui-component/extended/Avatar';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 import Image from 'next/image';
+import InputLabel from 'ui-component/extended/Form/InputLabel';
 
 // Avatar
 const Avatar1 = '/assets/images/users/avatar-5.png';
@@ -29,8 +30,8 @@ const ShopCategory = [
 ];
 
 const ShopStatus = [
-  { label: 'เปิดให้บริการ', id: 1 },
-  { label: 'ปิดให้บริการ', id: 2 }
+  { label: 'เปิดใช้งาน', id: 1 },
+  { label: 'ปิดใช้งาน', id: 2 }
 ];
 
 const ShopCreatePage = () => {
@@ -83,22 +84,33 @@ const ShopCreatePage = () => {
               <SubCard title="ข้อมูลผู้ใช้งาน">
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <TextField id="outlined-basic1" fullWidth label="ชื่อร้านค้า" placeholder="เช่น ร้านค้า KFC , Mcdonald" />
+                    <InputLabel required>ชื่อผู้เข้าใช้งานระบบ</InputLabel>
+                    <TextField id="outlined-basic1" fullWidth placeholder="กรุณากรอกชื่อผู้เข้าใช้งาน" />
                   </Grid>
                   <Grid item xs={12}>
+                    <InputLabel required>รหัสผ่าน</InputLabel>
+                    <TextField id="outlined-basic1" fullWidth placeholder="กรุณากรอกรหัสผ่าน" />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputLabel required>อีเมลล์</InputLabel>
+                    <TextField id="outlined-basic1" fullWidth placeholder="กรุณากรอกอีเมลล์" />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <InputLabel required>ระดับสิทธิ์ผู้ใช้งาน</InputLabel>
                     <Autocomplete
                       options={ShopCategory}
                       getOptionLabel={(option) => option.label}
                       defaultValue={ShopCategory[0]}
-                      renderInput={(params) => <TextField {...params} label="หมวดหมู่" />}
+                      renderInput={(params) => <TextField {...params} />}
                     />{' '}
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={12} md={6}>
+                    <InputLabel required>สถานะผู้ใช้งาน</InputLabel>
                     <Autocomplete
                       options={ShopStatus}
                       getOptionLabel={(option) => option.label}
                       defaultValue={ShopStatus[0]}
-                      renderInput={(params) => <TextField {...params} label="สถานะ" />}
+                      renderInput={(params) => <TextField {...params} />}
                     />{' '}
                   </Grid>
                   {/* <Grid item md={6} xs={12}>
@@ -109,14 +121,8 @@ const ShopCreatePage = () => {
                   </Grid> */}
 
                   <Grid item xs={12}>
-                    <TextField
-                      multiline
-                      rows={3}
-                      id="outlined-basic8"
-                      fullWidth
-                      label="รายละเอียดร้านค้า"
-                      placeholder="รายละเอียดของร้านค้า เช่น ร้านค้า KFC"
-                    />
+                    <InputLabel>รายละเอียด</InputLabel>
+                    <TextField multiline rows={3} id="outlined-basic8" fullWidth />
                   </Grid>
                   <Grid item xs={12}>
                     <Stack direction="row" spacing={2}>

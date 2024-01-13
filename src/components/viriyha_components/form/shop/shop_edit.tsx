@@ -9,6 +9,8 @@ import { Button, Stack, Grid, TextField, Typography, Autocomplete } from '@mui/m
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
+import Link from 'next/link';
+import InputLabel from 'ui-component/extended/Form/InputLabel';
 
 // Type
 interface ShopBranchType {
@@ -51,11 +53,11 @@ const ShopEdit = () => {
           <Grid container spacing={2}>
             <Grid container spacing={3} justifyContent="center" alignItems="center">
               <Grid item>
-                <Image alt="User 1" src={PreviewImg} width={200} height={200} style={{ margin: '0 auto' }} />
+                <img alt="User 1" src={PreviewImg} style={{ width: 200, height: 200, margin: '0 auto' }} />
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
+              <Typography variant="subtitle2" align="left" style={{ color: 'red' }}>
                 *จำกัดขนาด 2MB และ รูปภาพต้องเป็นไฟล์ .jpg .png เท่านั้น <br></br>
                 *รูปภาพต้องมีขนาดตั้งแต่ 500 x 500 ขึ้นไป
               </Typography>
@@ -65,7 +67,11 @@ const ShopEdit = () => {
                 {/* <Button variant="contained" size="small">
                         อัพโหลดรูปภาพ
                       </Button> */}
-                <TextField fullWidth label="ที่อยู่รูปภาพ" type="file" name="shop_image" onChange={handleImageChange}></TextField>
+
+                <InputLabel required style={{ textAlign: 'left' }}>
+                  ที่อยู่รูปภาพ
+                </InputLabel>
+                <TextField fullWidth type="file" name="shop_image" onChange={handleImageChange}></TextField>
               </AnimateButton>
             </Grid>
           </Grid>
@@ -75,52 +81,53 @@ const ShopEdit = () => {
         <SubCard title="รายละเอียดร้านค้า">
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField
-                id="outlined-basic1"
-                name="shop_name"
-                fullWidth
-                label="ชื่อร้านค้า"
-                placeholder="เช่น ร้านค้า KFC , Mcdonald"
-                value="KFC"
-                disabled
-              />
+              <InputLabel required>ชื่อร้านค้า</InputLabel>
+              <TextField id="outlined-basic1" fullWidth placeholder="เช่น ร้านค้า KFC , Mcdonald" />
             </Grid>
-            
-
             <Grid item xs={12}>
+              <InputLabel required>หมวดหมู่</InputLabel>
               <Autocomplete
                 options={ShopStatus}
-                getOptionLabel={(option) => option.status_name}
-                onChange={(event: any, value: any) => {
-                  SetFormSelectedShopStatus(value);
-                }}
-                renderInput={(params) => <TextField {...params} label="สถานะ" />}
-              />
+                getOptionLabel={(option) => option.label}
+                defaultValue={ShopStatus[0]}
+                renderInput={(params) => <TextField {...params} />}
+              />{' '}
             </Grid>
-           
+            <Grid item xs={12}>
+              <InputLabel required>สถานะร้านค้า</InputLabel>
+              <Autocomplete
+                options={ShopStatus}
+                getOptionLabel={(option) => option.label}
+                defaultValue={ShopStatus[0]}
+                renderInput={(params) => <TextField {...params} />}
+              />{' '}
+            </Grid>
+            {/* <Grid item md={6} xs={12}>
+                    <TextField fullWidth label="ละติจูด" name="shop_latitude"></TextField>
+                  </Grid>
+                  <Grid item md={6} xs={12}>
+                    <TextField fullWidth label="ลองติจูด" name="shop_longtitude"></TextField>
+                  </Grid> */}
 
             <Grid item xs={12}>
-              <TextField
-                multiline
-                rows={3}
-                id="outlined-basic8"
-                fullWidth
-                label="รายละเอียดร้านค้า"
-                placeholder="รายละเอียดของร้านค้า เช่น ร้านค้า KFC"
-              />
+              <InputLabel required>รายละเอียดร้านค้า</InputLabel>
+
+              <TextField multiline rows={3} id="outlined-basic8" fullWidth placeholder="รายละเอียดของร้านค้า เช่น ร้านค้า KFC" />
             </Grid>
             <Grid item xs={12}>
               <Stack direction="row" spacing={2}>
                 <AnimateButton>
-                  <Button variant="contained" color="warning">
+                  <Button variant="contained" color="info">
                     แก้ไขร้านค้า
                   </Button>
                 </AnimateButton>
-                <AnimateButton>
-                  <Button href={`/admin/shop/detail/${id}`} variant="contained" color="error">
-                    ยกเลิก
-                  </Button>
-                </AnimateButton>
+                <Link href={'/admin/shop'}>
+                  <AnimateButton>
+                    <Button variant="contained" color="error">
+                      ยกเลิก
+                    </Button>
+                  </AnimateButton>
+                </Link>
               </Stack>
             </Grid>
           </Grid>
