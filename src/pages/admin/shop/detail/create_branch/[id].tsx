@@ -98,7 +98,6 @@ const ShopCreateBranchPage = () => {
                       id="outlined-basic1"
                       name="shop_branch_name"
                       fullWidth
-                      label="ชื่อสาขา"
                       placeholder="เช่น Mcdonald สาขาราชพฤกษ์ , KFC สาขานวลจันทร์"
                     />
                   </Grid>
@@ -118,12 +117,12 @@ const ShopCreateBranchPage = () => {
                   <Grid item md={6} xs={12}>
                     <InputLabel required>ละติจูด</InputLabel>
 
-                    <TextField fullWidth label="ละติจูด" name="shop_latitude"></TextField>
+                    <TextField fullWidth name="shop_latitude"></TextField>
                   </Grid>
                   <Grid item md={6} xs={12}>
                     <InputLabel required>ลองติจูด</InputLabel>
 
-                    <TextField fullWidth label="ลองติจูด" name="shop_longtitude"></TextField>
+                    <TextField fullWidth name="shop_longtitude"></TextField>
                   </Grid>
 
                   <Grid item xs={12}>

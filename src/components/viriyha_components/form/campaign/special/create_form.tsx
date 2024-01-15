@@ -137,7 +137,7 @@ const CreateFormSpecialCampaign = () => {
               {/* ... */}
             </Grid>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={12}>
             <InputLabel required>ชื่อสิทธิพิเศษ</InputLabel>
             <TextField fullWidth />
           </Grid>
