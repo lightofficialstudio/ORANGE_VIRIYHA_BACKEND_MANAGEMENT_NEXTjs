@@ -69,13 +69,21 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
           });
         } else {
           dispatch({
-            type: LOGOUT
+            type: LOGIN,
+            payload: {
+              isLoggedIn: true,
+              
+            }
           });
         }
       } catch (err) {
         console.error(err);
         dispatch({
-          type: LOGOUT
+          type: LOGIN,
+          payload: {
+            isLoggedIn: true,
+            
+          }
         });
       }
     };
@@ -84,9 +92,9 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post('/api/account/login', { email, password });
-    const { serviceToken, user } = response.data;
-    setSession(serviceToken);
+    const response = await axios.post('/api/login', { email, password });
+    const { token, user } = response.data;
+    setSession(token);
     dispatch({
       type: LOGIN,
       payload: {

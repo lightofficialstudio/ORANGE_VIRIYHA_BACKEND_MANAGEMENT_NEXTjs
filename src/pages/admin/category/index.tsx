@@ -32,9 +32,9 @@ import Page from 'components/ui-component/Page';
 import Chip from 'ui-component/extended/Chip';
 import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
-import { TypeNormalCampaign } from 'types/viriyha_type/campaign';
+import { CategoryType } from 'types/viriyha_type/category';
 import { useDispatch, useSelector } from 'store';
-import { getOrders } from 'store/slices/customer';
+import { getCategory } from 'store/slices/viriyha/category';
 import CreateCategoryFormDialog from 'components/viriyha_components/modal/create_category_modal';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -60,14 +60,14 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: TypeNormalCampaign[], comparator: (a: TypeNormalCampaign, b: TypeNormalCampaign) => number) {
-  const stabilizedThis = array.map((el: TypeNormalCampaign, index: number) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0] as TypeNormalCampaign, b[0] as TypeNormalCampaign);
+function stableSort(array: CategoryType[], comparator: (a: CategoryType, b: CategoryType) => number) {
+  const stabilizedThis = array?.map((el: CategoryType, index: number) => [el, index]);
+  stabilizedThis?.sort((a, b) => {
+    const order = comparator(a[0] as CategoryType, b[0] as CategoryType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
-  return stabilizedThis.map((el) => el[0]);
+  return stabilizedThis?.map((el) => el[0]);
 }
 
 // table header options
@@ -235,8 +235,8 @@ const CategoryPage = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<TypeNormalCampaign[]>([]);
-  const { orders } = useSelector((state) => state.customer);
+  const [rows, setRows] = React.useState<CategoryType[]>([]);
+  const { category } = useSelector((state) => state.category);
   const [open, setOpen] = React.useState(false);
   const handleClickOpenDialog = () => {
     setOpen(true);
@@ -246,11 +246,11 @@ const CategoryPage = () => {
   };
 
   React.useEffect(() => {
-    dispatch(getOrders());
+    dispatch(getCategory());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(orders);
-  }, [orders]);
+    setRows(category);
+  }, [category]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -259,7 +259,7 @@ const CategoryPage = () => {
       const newRows = rows.filter((row: KeyedObject) => {
         let matches = true;
 
-        const properties = ['name', 'company', 'type', 'qty', 'id'];
+        const properties = ['name', 'id'];
         let containsQuery = false;
 
         properties.forEach((property) => {
@@ -275,7 +275,7 @@ const CategoryPage = () => {
       });
       setRows(newRows);
     } else {
-      setRows(orders);
+      setRows(category);
     }
   };
 
@@ -383,72 +383,71 @@ const CategoryPage = () => {
               selected={selected}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  /** Make sure no display bugs if row isn't an OrderData object */
-                  if (typeof row === 'number') return null;
+              {Array.isArray(rows) &&
+                stableSort(rows, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    /** Make sure no display bugs if row isn't an OrderData object */
+                    if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                    const isItemSelected = isSelected(row.name);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          #{row.id}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>{row.company}</TableCell>
-                      <TableCell>{row.type}</TableCell>
-                      <TableCell align="right">{row.qty}</TableCell>
-                      <TableCell align="center">{row.date}</TableCell>
-                      <TableCell align="center">
-                        {row.status === 1 && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                        {row.status === 2 && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
-                        {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
-                      </TableCell>
-                      <TableCell align="center" sx={{ pr: 3 }}>
-                        <IconButton color="primary" size="large">
-                          <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                        </IconButton>
-                        <Button href={`/campaign/normal/detail/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                    return (
+                      <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
+                        <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              'aria-labelledby': labelId
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          onClick={(event) => handleClick(event, row.name)}
+                          sx={{ cursor: 'pointer' }}
+                        >
+                          <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+                            {' '}
+                            #{row.id}{' '}
+                          </Typography>
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          onClick={(event) => handleClick(event, row.name)}
+                          sx={{ cursor: 'pointer' }}
+                        >
+                          <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
+                            {' '}
+                            {row.name}{' '}
+                          </Typography>
+                        </TableCell>
+
+                        <TableCell align="center">{row.date}</TableCell>
+                        <TableCell align="center">
+                          {row.status === 1 && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
+                          {row.status === 2 && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
+                          {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
+                        </TableCell>
+                        <TableCell align="center" sx={{ pr: 3 }}>
+                          <IconButton color="primary" size="large">
+                            <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                          <Button href={`/campaign/normal/detail/${row.id}`}>
+                            <IconButton color="secondary" size="large">
+                              <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                            </IconButton>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               {emptyRows > 0 && (
                 <TableRow
                   style={{
