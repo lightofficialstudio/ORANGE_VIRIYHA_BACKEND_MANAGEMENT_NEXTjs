@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactElement } from 'react';
-
+import { format } from 'date-fns';
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
@@ -45,6 +45,7 @@ import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
+import Link from 'next/link';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -86,25 +87,13 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
-    id: 'company',
-    numeric: true,
-    label: 'ประเภท',
-    align: 'left'
-  },
-  {
-    id: 'type',
-    numeric: true,
-    label: 'Payment Type',
-    align: 'left'
-  },
-  {
-    id: 'qty',
+    id: 'created_by',
     numeric: true,
     label: 'ผู้ที่สร้าง',
-    align: 'right'
+    align: 'center'
   },
   {
-    id: 'date',
+    id: 'createdAt',
     numeric: true,
     label: 'สร้างเมื่อวันที่',
     align: 'center'
@@ -357,14 +346,13 @@ const CategoryPage = () => {
               </Tooltip>
 
               {/* product add & dialog */}
-              <Button onClick={handleClickOpenDialog}>
+              <Link href={'/admin/category/create'}>
                 <Tooltip title="เพิ่มหมวดหมู่">
                   <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                     <AddIcon fontSize="small" />
                   </Fab>
                 </Tooltip>
-              </Button>
-              <CreateCategoryFormDialog open={open} onClose={handleCloseDialog} />
+              </Link>
             </Grid>
           </Grid>
         </CardContent>
@@ -429,21 +417,20 @@ const CategoryPage = () => {
                           </Typography>
                         </TableCell>
 
-                        <TableCell align="center">{row.date}</TableCell>
+                        <TableCell align="center">{row.createdBy?.username}</TableCell>
+
+                        <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                         <TableCell align="center">
-                          {row.status === 1 && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                          {row.status === 2 && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
-                          {/* {row.status === 3 && <Chip label="Processing" size="small" chipcolor="primary" />} */}
+                          {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
+                          {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
+                          {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                         </TableCell>
                         <TableCell align="center" sx={{ pr: 3 }}>
-                          <IconButton color="primary" size="large">
-                            <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
-                          <Button href={`/campaign/normal/detail/${row.id}`}>
+                          <Link href={`/admin/category/edit/${row.id}`}>
                             <IconButton color="secondary" size="large">
                               <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                             </IconButton>
-                          </Button>
+                          </Link>
                         </TableCell>
                       </TableRow>
                     );

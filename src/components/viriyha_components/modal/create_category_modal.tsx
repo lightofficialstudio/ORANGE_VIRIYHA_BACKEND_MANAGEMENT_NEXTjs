@@ -86,9 +86,9 @@ const CreateCategoryFormDialog = ({ open, onClose }: OpenDialogProps) => {
                     captionLabel="สถานะหมวดหมู่"
                     currencies={ActiveSelection}
                     selected={categoryStatus}
-  onChange={(e) => setCategoryStatus(e.target.value)}
+                    // onChange={(e) => setCategoryStatus(e.target.value)}
                   />
-                  <TextField type="text" value={categoryMadeById} onChange={(e) => setCategoryMadeById(e.target.value)} />
+                  <TextField style={{display:'none'}} hiddenLabel type="text" value={categoryMadeById} onChange={(e) => setCategoryMadeById(e.target.value)}  />
                 </Stack>
               </DialogContent>
               <DialogActions sx={{ pr: 2.5 }}>

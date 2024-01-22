@@ -38,6 +38,13 @@ const quotaChoose = [
   { label: 'รายเดือน', id: 3 },
   { label: 'ไม่จำกัด', id: 4 }
 ];
+
+const maxQuotaPerPerson = [
+  { label: 'คน/วัน', id: 1 },
+  { label: 'คน/สัปดาห์', id: 2 },
+  { label: 'คน/เดือน', id: 3 },
+  { label: 'ไม่จำกัด', id: 4 }
+];
 // example data
 // autocomplete options
 const top100Films = [
@@ -161,7 +168,25 @@ const CreateFormNormalCampaign = () => {
                   getOptionLabel={(option) => option.label}
                   onChange={handleQuotaTypeChange}
                   defaultValue={quotaChoose[0]}
-                  renderInput={(params) => <TextField {...params} label="ประเภทโควต้า" />}
+                  renderInput={(params) => <TextField {...params}  />}
+                />
+              </Grid>
+            </Grid>{' '}
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <InputLabel required>จำกัดจำนวน</InputLabel>
+            <TextField fullWidth placeholder="จำนวนคน" />
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <InputLabel required>การจำกัดของสิทธิพิเศษ</InputLabel>
+            <Grid container direction="column" spacing={3}>
+              <Grid item>
+                <Autocomplete
+                  options={maxQuotaPerPerson}
+                  getOptionLabel={(option) => option.label}
+                  onChange={handleQuotaTypeChange}
+                  defaultValue={maxQuotaPerPerson[0]}
+                  renderInput={(params) => <TextField {...params}  />}
                 />
               </Grid>
             </Grid>{' '}
