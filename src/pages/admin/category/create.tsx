@@ -15,7 +15,9 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 // import value from 'scss/_themes-vars.module.scss';
-
+// Dialog
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Avatar
 const Avatar1 = '/assets/images/users/avatar-2.png';
 // autocomplete options
@@ -26,16 +28,18 @@ const Status = [
 ];
 
 const CategoryCreatePage = () => {
-//   const router = useRouter();
+  //   const router = useRouter();
   //   const { id } = router.query;
   const context = React.useContext(JWTContext);
   const [CategoryImage, SetCategoryImage] = useState('');
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
   const [CategoryName, SetCategoryName] = useState('');
-  const [CategoryLink, SetCategoryLink] = useState('');
   const [CategoryStatus, SetCategoryStatus] = useState('');
-  const [CategoryDescription, SetCategoryDescription] = useState('');
-  const [CategoryMadeById] = useState(context?.user?.id);
+  const CategoryMadeById = context?.user?.id;
+  const [CategoryImageFile, SetCategoryImageFile] = useState<File | null>(null);
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -43,6 +47,7 @@ const CategoryCreatePage = () => {
       const reader = new FileReader();
       const fileName = file.name;
       SetCategoryImage(fileName);
+      SetCategoryImageFile(file);
       console.log(fileName);
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target) {
@@ -53,22 +58,36 @@ const CategoryCreatePage = () => {
     }
   };
 
-  const handeSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = {
-      name: CategoryName,
-      status: CategoryStatus,
-      image: CategoryImage,
-      link: CategoryLink,
-      description: CategoryDescription,
-      madeById: CategoryMadeById
-    };
-    console.log(formData);
+  const handleCloseSuccessDialog = () => {
+    setOpenSuccessDialog(false);
+  };
+
+  const handeSumbit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('name', CategoryName);
+    formData.append('status', CategoryStatus);
+    formData.append('categoryImage', CategoryImageFile ?? '');
+    formData.append('createdById', CategoryMadeById ?? '');
+
     try {
-        const response = await axiosServices.post('/api/category', formData);
-        console.log(response);
-    } catch (error : any) {
-        console.log('ERROR! MESSAGE : ' + error);
+      const response = await axiosServices.post('/api/category/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(response);
+      if (response.status === 200) {
+        setOpenSuccessDialog(true);
+        window.location.href = '/admin/category';
+      } else {
+        setOpenErrorDialog(true);
+        setErrorMessage(response.statusText);
+      }
+    } catch (error: any) {
+      setOpenErrorDialog(true);
+      console.log(error.message);
+      setErrorMessage(error.message);
     }
   };
   return (
@@ -77,7 +96,7 @@ const CategoryCreatePage = () => {
       <MainCard>
         <MainCard title="สร้างหมวดหมู่" content={true}>
           <Grid container spacing={3}>
-            <Grid item md={12}>
+            <Grid item xs={6} md={4}>
               <SubCard title="รูปภาพหมวดหมู่" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
@@ -103,7 +122,7 @@ const CategoryCreatePage = () => {
                 </Grid>
               </SubCard>
             </Grid>
-            <Grid item md={12}>
+            <Grid item xs={6} md={8}>
               <SubCard title="รายละเอียดแบนเนอร์">
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
@@ -118,18 +137,6 @@ const CategoryCreatePage = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={12}>
-                    <InputLabel required>ลิงก์สิทธิพิเศษที่เชื่อมต่อ</InputLabel>
-                    <TextField
-                      id="outlined-basic1"
-                      name="shop_branch_name"
-                      fullWidth
-                      onChange={(event: any) => {
-                        SetCategoryLink(event.target.value);
-                      }}
-                      placeholder="เช่น https://www.viriyah.co.th/privilege/1234567890"
-                    />
-                  </Grid>
 
                   <Grid item xs={12}>
                     <InputLabel required>สถานะ</InputLabel>
@@ -140,20 +147,6 @@ const CategoryCreatePage = () => {
                         SetCategoryStatus(value.status);
                       }}
                       renderInput={(params) => <TextField {...params} />}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <InputLabel>รายละเอียด</InputLabel>
-                    <TextField
-                      onChange={(event: any) => {
-                        SetCategoryDescription(event.target.value);
-                      }}
-                      multiline
-                      rows={3}
-                      id="outlined-basic8"
-                      fullWidth
-                      placeholder="เช่น ร้านค้า KFC สาขานวลจันทร์ มีสิทธิพิเศษ ซื้อ 1 แถม 1 ทุกวันจันทร์ ถึง วันศุกร์ ตั้งแต่เวลา 10.00 - 14.00 น. สำหรับสมาชิกที่มีสิทธิพิเศษเท่านั้น"
                     />
                   </Grid>
                 </Grid>
@@ -178,6 +171,8 @@ const CategoryCreatePage = () => {
           </Grid>
         </MainCard>
       </MainCard>
+      <SuccessDialog open={openSuccessDialog} handleClose={handleCloseSuccessDialog} />
+      <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
     </Page>
   );
 };

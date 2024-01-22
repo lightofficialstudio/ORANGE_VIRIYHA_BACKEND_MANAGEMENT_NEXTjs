@@ -29,6 +29,7 @@ const CategoryCreatePage = () => {
   const { id } = router.query;
   console.log(id);
   const context = React.useContext(JWTContext);
+  const baseUrl = process.env.REACT_APP_API_URL + 'image/category/';
   const [CategoryImage, SetCategoryImage] = useState('');
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
   const [CategoryName, SetCategoryName] = useState('');
@@ -46,7 +47,7 @@ const CategoryCreatePage = () => {
         SetCategoryLink(response.data.link);
         SetCategoryStatus(response.data.status);
         SetCategoryDescription(response.data.description);
-        SetPreviewImg(response.data.image);
+        SetPreviewImg(baseUrl + response.data.image); // Extract the image URL from the imageResponse object
       } catch (error: any) {
         console.log('ERROR! MESSAGE : ' + error);
       }
@@ -94,7 +95,7 @@ const CategoryCreatePage = () => {
       <MainCard>
         <MainCard title="สร้างหมวดหมู่" content={true}>
           <Grid container spacing={3}>
-            <Grid item md={12}>
+            <Grid item xs={6} md={4}>
               <SubCard title="รูปภาพหมวดหมู่" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
@@ -120,7 +121,7 @@ const CategoryCreatePage = () => {
                 </Grid>
               </SubCard>
             </Grid>
-            <Grid item md={12}>
+            <Grid item xs={6} md={8}>
               <SubCard title="รายละเอียดแบนเนอร์">
                 <Grid container spacing={2}>
                   <Grid item xs={12}>

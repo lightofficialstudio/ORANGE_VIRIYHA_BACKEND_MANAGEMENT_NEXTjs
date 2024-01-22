@@ -15,11 +15,12 @@ const withTM = require('next-transpile-modules')([
 const nextConfig = withTM({
   reactStrictMode: true,
   images: {
-    domains: ['flagcdn.com']
+    domains: ['flagcdn.com', 'localhost'], // เพิ่ม 'localhost' เข้าไปในรายการ domains
   },
+  
   env: {
     REACT_APP_VERSION: process.env.REACT_APP_VERSION,
-    REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+    REACT_APP_API_URL: process.env.VIRIYHA_APP_API_URL,
 
     REACT_APP_FIREBASE_API_KEY: process.env.REACT_APP_FIREBASE_API_KEY,
     REACT_APP_FIREBASE_AUTH_DOMAIN: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
