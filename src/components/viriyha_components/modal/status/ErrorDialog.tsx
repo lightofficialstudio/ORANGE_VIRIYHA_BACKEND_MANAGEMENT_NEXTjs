@@ -19,7 +19,9 @@ export default function ErrorDialog({ open, handleClose, errorMessage }: ErrorDi
           <>
             <DialogTitle fontSize={18}>เกิดข้อผิดพลาดขึ้น!</DialogTitle>
             <DialogContent>
-              <DialogContentText><b>ข้อความที่เกิดข้อผิดพลาดขึ้นคือ </b> : </DialogContentText>
+              <DialogContentText>
+                <b>ข้อความที่เกิดข้อผิดพลาดขึ้นคือ </b> :{' '}
+              </DialogContentText>
               <DialogContentText>{errorMessage}!</DialogContentText>
             </DialogContent>
             <DialogActions>

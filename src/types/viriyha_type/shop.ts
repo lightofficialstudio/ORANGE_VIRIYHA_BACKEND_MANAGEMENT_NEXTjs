@@ -1,18 +1,19 @@
+import { UserType } from './users';
+
+export interface ShopStateProps {
+  shop: ShopManagementType[];
+  error: object | string | null;
+}
+
 export type ShopManagementType = {
-  id: string | number | undefined;
+  id: number;
   image: string;
   name: string;
-  description?: string;
-  rating?: number;
-  discount?: number;
-  salePrice?: number;
-  offerPrice?: number;
-  gender?: string;
-  categories?: string[];
-  colors?: string[];
-  popularity?: number;
-  date?: number;
-  created: Date;
-  isStock?: boolean;
-  new?: number;
+  description: string;
+  address: string;
+  status: string;
+  createdById: number;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: UserType;
 };

@@ -34,8 +34,8 @@ const ChangeBannerPositionDialog = ({ open, onClose, position }: OpenDialogProps
   const theme = useTheme();
   const [openError, setOpenError] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
- console.log(position);
- 
+  console.log(position);
+
   const handleCloseError = () => {
     setOpenError(false);
   };

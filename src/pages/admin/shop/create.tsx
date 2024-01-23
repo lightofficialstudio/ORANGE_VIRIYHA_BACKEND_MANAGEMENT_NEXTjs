@@ -1,45 +1,52 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { ReactElement } from 'react';
-import Link from 'next/link';
-
+import Image from 'next/image';
+// import { useRouter } from 'next/router';
+import JWTContext from 'contexts/JWTContext';
 import { Grid, TextField, Typography, Button, Autocomplete, Stack } from '@mui/material';
-
+import axiosServices from 'utils/axios';
 // project imports
 import Page from 'components/ui-component/Page';
 import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
 import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-// import Avatar from 'ui-component/extended/Avatar';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
-
+// import value from 'scss/_themes-vars.module.scss';
+// Dialog
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Avatar
-const Avatar1 = '/assets/images/users/avatar-1.png';
+const Avatar1 = '/assets/images/users/avatar-2.png';
 // autocomplete options
-const ShopCategory = [
-  { label: 'The Dark Knight', id: 1 },
-  { label: 'Control with Control', id: 2 },
-  { label: 'Combo with Solo', id: 3 },
-  { label: 'The Dark', id: 4 },
-  { label: 'Fight Club', id: 5 },
-  { label: 'demo@company.com', id: 6 },
-  { label: 'Pulp Fiction', id: 7 }
-];
 
-const ShopStatus = [
-  { label: 'เปิดให้บริการ', id: 1 },
-  { label: 'ปิดให้บริการ', id: 2 }
+const StatusOption = [
+  { status_name: 'เปิดใช้งาน', status: 'ACTIVE' },
+  { status_name: 'ปิดใช้งาน', status: 'INACTIVE' }
 ];
 
 const ShopCreatePage = () => {
+  //   const router = useRouter();
+  //   const { id } = router.query;
+  const context = React.useContext(JWTContext);
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
+  const [Name, setName] = useState('');
+  const [ImageShop, setImageShop] = useState<File | null>(null);
+  const [Status, setStatus] = useState('');
+  const MadeById = context?.user?.id;
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
     if (file) {
       const reader = new FileReader();
+      const fileName = file.name;
+      setImageShop(file);
+      console.log(fileName);
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target) {
           SetPreviewImg(e.target.result as string);
@@ -48,22 +55,55 @@ const ShopCreatePage = () => {
       reader.readAsDataURL(file);
     }
   };
+
+  const handleCloseSuccessDialog = () => {
+    setOpenSuccessDialog(false);
+  };
+
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('name', Name);
+    formData.append('status', Status);
+    formData.append('shopImage', ImageShop ?? '');
+    formData.append('createdById', MadeById ?? '');
+
+    try {
+      const response = await axiosServices.post('/api/shop/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(response);
+      if (response.status === 200) {
+        setOpenSuccessDialog(true);
+        window.location.href = '/admin/shop';
+      } else {
+        setOpenErrorDialog(true);
+        setErrorMessage(response.statusText);
+      }
+    } catch (error: any) {
+      setOpenErrorDialog(true);
+      console.log(error.message);
+      setErrorMessage(error.message);
+    }
+  };
   return (
-    <Page title="สร้างร้านค้า">
-      <GoBackButton Link={'/admin/shop'} />
+    <Page title="สร้างร้านค้าใหม่">
+      <GoBackButton Link={`/admin/category/`} />
       <MainCard>
-        <MainCard title="สร้างร้านค้า" content={true}>
+        <MainCard title="สร้างร้านค้าใหม่" content={true}>
           <Grid container spacing={3}>
-            <Grid item sm={6} md={4}>
-              <SubCard title="รูปภาพร้านค้า" contentSX={{ textAlign: 'center' }}>
+            <Grid item xs={6} md={4}>
+              <SubCard title="รูปภาพ" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <img alt="User 1" src={PreviewImg} style={{ width: 200, height: 200, margin: '0 auto' }} />
+                      <Image alt="User 1" src={PreviewImg} width={200} height={200} style={{ margin: '0 auto' }} />
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography variant="subtitle2" align="left" style={{ color: 'red' }}>
+                    <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
                       *จำกัดขนาด 2MB และ รูปภาพต้องเป็นไฟล์ .jpg .png เท่านั้น <br></br>
                       *รูปภาพต้องมีขนาดตั้งแต่ 500 x 500 ขึ้นไป
                     </Typography>
@@ -73,75 +113,68 @@ const ShopCreatePage = () => {
                       {/* <Button variant="contained" size="small">
                         อัพโหลดรูปภาพ
                       </Button> */}
-
-                      <InputLabel required style={{ textAlign: 'left' }}>
-                        ที่อยู่รูปภาพ
-                      </InputLabel>
-                      <TextField fullWidth type="file" name="shop_image" onChange={handleImageChange}></TextField>
+                      <InputLabel style={{ textAlign: 'left' }}>รูปภาพ</InputLabel>
+                      <TextField fullWidth type="file" name="shopImage" onChange={handleImageChange}></TextField>
                     </AnimateButton>
                   </Grid>
                 </Grid>
               </SubCard>
             </Grid>
-            <Grid item sm={6} md={8}>
-              <SubCard title="รายละเอียดร้านค้า">
+            <Grid item xs={6} md={8}>
+              <SubCard title="สร้างร้านค้าใหม่">
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <InputLabel required>ชื่อร้านค้า</InputLabel>
-                    <TextField id="outlined-basic1" fullWidth placeholder="เช่น ร้านค้า KFC , Mcdonald" />
+                    <TextField
+                      fullWidth
+                      placeholder="เช่น KFC"
+                      onChange={(event: any) => {
+                        setName(event.target.value);
+                      }}
+                    />
                   </Grid>
-                  <Grid item xs={12}>
-                    <InputLabel required>หมวดหมู่</InputLabel>
-                    <Autocomplete
-                      options={ShopCategory}
-                      getOptionLabel={(option) => option.label}
-                      defaultValue={ShopCategory[0]}
-                      renderInput={(params) => <TextField {...params} />}
-                    />{' '}
-                  </Grid>
-                  <Grid item xs={12}>
-                    <InputLabel required>สถานะร้านค้า</InputLabel>
-                    <Autocomplete
-                      options={ShopStatus}
-                      getOptionLabel={(option) => option.label}
-                      defaultValue={ShopStatus[0]}
-                      renderInput={(params) => <TextField {...params} />}
-                    />{' '}
-                  </Grid>
-                  {/* <Grid item md={6} xs={12}>
-                    <TextField fullWidth label="ละติจูด" name="shop_latitude"></TextField>
-                  </Grid>
-                  <Grid item md={6} xs={12}>
-                    <TextField fullWidth label="ลองติจูด" name="shop_longtitude"></TextField>
-                  </Grid> */}
 
                   <Grid item xs={12}>
-                    <InputLabel required>รายละเอียดร้านค้า</InputLabel>
-
-                    <TextField multiline rows={3} id="outlined-basic8" fullWidth placeholder="รายละเอียดของร้านค้า เช่น ร้านค้า KFC" />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Stack direction="row" spacing={2}>
-                      <AnimateButton>
-                        <Button variant="contained" color="primary">
-                          สร้างร้านค้า
-                        </Button>
-                      </AnimateButton>
-                      <Link href={'/admin/shop'}>
-                        <AnimateButton>
-                          <Button variant="contained" color="error">
-                            ยกเลิก
-                          </Button>
-                        </AnimateButton>
-                      </Link>
-                    </Stack>
+                    <InputLabel required>สถานะ</InputLabel>
+                    <Autocomplete
+                      options={StatusOption}
+                      getOptionLabel={(option) => option.status_name}
+                      onChange={(event: any, value: any) => {
+                        setStatus(value.status);
+                      }}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
                   </Grid>
                 </Grid>
               </SubCard>
+              <Grid container justifyContent="right" alignItems="center" sx={{ mt: 3 }}>
+                <Grid item>
+                  <Stack direction="row" spacing={2}>
+                    <AnimateButton>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={(e) => {
+                          handleSubmit(e);
+                        }}
+                      >
+                        สร้างร้านค้า
+                      </Button>
+                    </AnimateButton>
+                    <AnimateButton>
+                      <Button href={`/admin/banners/`} variant="contained" color="error">
+                        ยกเลิก
+                      </Button>
+                    </AnimateButton>
+                  </Stack>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </MainCard>
       </MainCard>
+      <SuccessDialog open={openSuccessDialog} handleClose={handleCloseSuccessDialog} />
+      <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
     </Page>
   );
 };

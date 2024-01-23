@@ -1,8 +1,8 @@
 // next import
 import * as React from 'react';
 import { useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
+// import Image from 'next/image';
+// import { useRouter } from 'next/router';
 // material-ui
 import { Button, Stack, Grid, TextField, Typography, Autocomplete } from '@mui/material';
 
@@ -11,28 +11,27 @@ import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import Link from 'next/link';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
+import Image from 'next/image';
 
 // Type
-interface ShopBranchType {
-  status_id: number;
-  status_name: string;
-}
+// interface ShopBranchType {
+//   status_id: number;
+//   status_name: string;
+// }
 
 // Avatar
 const Avatar1 = '/assets/images/users/avatar-2.png';
 // autocomplete options
 
 const ShopStatus = [
-  { status_name: 'เปิดให้บริการ', status_id: 1 },
-  { status_name: 'ปิดให้บริการ', status_id: 2 }
+  { status_name: 'เปิดให้บริการ', value: 1 },
+  { status_name: 'ปิดให้บริการ', value: 2 }
 ];
 
 const ShopEdit = () => {
-  const router = useRouter();
-  const { id } = router.query;
+  // const router = useRouter();
+  // const { id } = router.query;
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
-  const [FormSelectedShopStatus, SetFormSelectedShopStatus] = useState<ShopBranchType[]>([]);
-  console.log(FormSelectedShopStatus);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -53,7 +52,7 @@ const ShopEdit = () => {
           <Grid container spacing={2}>
             <Grid container spacing={3} justifyContent="center" alignItems="center">
               <Grid item>
-                <img alt="User 1" src={PreviewImg} style={{ width: 200, height: 200, margin: '0 auto' }} />
+                <Image alt="User 1" src={PreviewImg} style={{ margin: '0 auto' }} width={200} height={200} />
               </Grid>
             </Grid>
             <Grid item xs={12}>
@@ -88,7 +87,7 @@ const ShopEdit = () => {
               <InputLabel required>หมวดหมู่</InputLabel>
               <Autocomplete
                 options={ShopStatus}
-                getOptionLabel={(option) => option.label}
+                getOptionLabel={(option) => option.status_name}
                 defaultValue={ShopStatus[0]}
                 renderInput={(params) => <TextField {...params} />}
               />{' '}
@@ -97,7 +96,7 @@ const ShopEdit = () => {
               <InputLabel required>สถานะร้านค้า</InputLabel>
               <Autocomplete
                 options={ShopStatus}
-                getOptionLabel={(option) => option.label}
+                getOptionLabel={(option) => option.status_name}
                 defaultValue={ShopStatus[0]}
                 renderInput={(params) => <TextField {...params} />}
               />{' '}

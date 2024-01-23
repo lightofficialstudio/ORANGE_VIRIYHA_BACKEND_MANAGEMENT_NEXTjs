@@ -1,5 +1,5 @@
 // material-ui
-import { Button, Stack, Grid, TextField, Typography , Autocomplete } from '@mui/material';
+import { Button, Stack, Grid, TextField, Typography, Autocomplete } from '@mui/material';
 
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
@@ -14,14 +14,14 @@ import FormControl from 'ui-component/extended/Form/FormControl';
 const Avatar1 = '/assets/images/users/avatar-1.png';
 // autocomplete options
 const top100Films = [
-    { label: 'The Dark Knight', id: 1 },
-    { label: 'Control with Control', id: 2 },
-    { label: 'Combo with Solo', id: 3 },
-    { label: 'The Dark', id: 4 },
-    { label: 'Fight Club', id: 5 },
-    { label: 'demo@company.com', id: 6 },
-    { label: 'Pulp Fiction', id: 7 }
-  ];
+  { label: 'The Dark Knight', id: 1 },
+  { label: 'Control with Control', id: 2 },
+  { label: 'Combo with Solo', id: 3 },
+  { label: 'The Dark', id: 4 },
+  { label: 'Fight Club', id: 5 },
+  { label: 'demo@company.com', id: 6 },
+  { label: 'Pulp Fiction', id: 7 }
+];
 
 const ShopDetail = () => {
   return (
@@ -34,11 +34,9 @@ const ShopDetail = () => {
                 <Grid item>
                   <Avatar alt="User 1" src={Avatar1} sx={{ width: 100, height: 100, margin: '0 auto' }} />
                 </Grid>
-
-               
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="subtitle2" align="center" style={{color:'red'}}>
+                <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
                   *จำกัดขนาด 2MB และ รูปภาพต้องเป็นไฟล์ .jpg .png เท่านั้น <br></br>
                   *รูปภาพต้องมีขนาดตั้งแต่ 500 x 500 ขึ้นไป
                 </Typography>
@@ -60,12 +58,13 @@ const ShopDetail = () => {
                 <TextField id="outlined-basic1" fullWidth label="ชื่อร้านค้า" defaultValue="KFC" />
               </Grid>
               <Grid item xs={12}>
-              <Autocomplete
-                    options={top100Films}
-                    getOptionLabel={(option) => option.label}
-                    defaultValue={top100Films[0]}
-                    renderInput={(params) => <TextField {...params} label="หมวดหมู่"/>}
-                  />              </Grid>
+                <Autocomplete
+                  options={top100Films}
+                  getOptionLabel={(option) => option.label}
+                  defaultValue={top100Films[0]}
+                  renderInput={(params) => <TextField {...params} label="หมวดหมู่" />}
+                />{' '}
+              </Grid>
               <Grid item md={6} xs={12}>
                 <TextField type="date" id="outlined-basic4" fullWidth label="วันที่เริ่มต้น" defaultValue="2024-03-01" />
               </Grid>

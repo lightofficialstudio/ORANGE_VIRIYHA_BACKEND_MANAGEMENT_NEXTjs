@@ -6,23 +6,23 @@ import Page from 'components/ui-component/Page';
 import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
 // project tables
-import CategoryTable from 'components/viriyha_components/table/CategoryTable';
+import LocationTable from 'components/viriyha_components/table/LocationTable';
 
 // ==============================|| ORDER LIST ||============================== //
 
-const CategoryPage = () => {
+const LocationPage = () => {
   return (
-    <Page title="จัดการแคมเปญ">
-      <MainCard title="Category Management" content={false}>
+    <Page title="Location Transaction">
+      <MainCard title="Location Transaction" content={false}>
         {/* table */}
-        <CategoryTable />
+        <LocationTable />
       </MainCard>
     </Page>
   );
 };
 
-CategoryPage.getLayout = function getLayout(page: ReactElement) {
+LocationPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default CategoryPage;
+export default LocationPage;

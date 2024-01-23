@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent } from 'react';
+import dynamic from 'next/dynamic';
 
 // material-ui
 import { Button, Grid, Stack, TextField, Autocomplete, CardMedia } from '@mui/material';
@@ -13,7 +14,10 @@ import { gridSpacing } from 'store/constant';
 
 // third-party
 import InputLabel from 'ui-component/extended/Form/InputLabel';
-
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false
+});
+import 'react-quill/dist/quill.snow.css';
 
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
@@ -168,7 +172,7 @@ const CreateFormNormalCampaign = () => {
                   getOptionLabel={(option) => option.label}
                   onChange={handleQuotaTypeChange}
                   defaultValue={quotaChoose[0]}
-                  renderInput={(params) => <TextField {...params}  />}
+                  renderInput={(params) => <TextField {...params} />}
                 />
               </Grid>
             </Grid>{' '}
@@ -186,7 +190,7 @@ const CreateFormNormalCampaign = () => {
                   getOptionLabel={(option) => option.label}
                   onChange={handleQuotaTypeChange}
                   defaultValue={maxQuotaPerPerson[0]}
-                  renderInput={(params) => <TextField {...params}  />}
+                  renderInput={(params) => <TextField {...params} />}
                 />
               </Grid>
             </Grid>{' '}
@@ -222,13 +226,20 @@ const CreateFormNormalCampaign = () => {
           </Grid>
           <Grid item xs={12}>
             <InputLabel required>รายละเอียด</InputLabel>
-            <TextField fullWidth id="campaign_description" name="campaign_description" multiline rows={3} defaultValue="" />
+            <ReactQuill
+              onChange={(value) => {
+                console.log(value);
+              }}
+            />
           </Grid>
 
           <Grid item xs={12}>
             <InputLabel required>เงื่อนไข</InputLabel>
-
-            <TextField fullWidth id="campaign_condition" name="campaign_condition" multiline rows={3} defaultValue="" />
+            <ReactQuill
+              onChange={(value) => {
+                console.log(value);
+              }}
+            />{' '}
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>

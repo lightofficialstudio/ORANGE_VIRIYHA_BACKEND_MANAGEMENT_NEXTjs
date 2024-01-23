@@ -17,6 +17,7 @@ import kanbanReducer from './slices/kanban';
 import menuReducer from './slices/menu';
 // viriyha imports
 import categoryReducer from './slices/viriyha/category';
+import shopReducer from './slices/viriyha/shop';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -40,7 +41,8 @@ const reducer = combineReducers({
   user: userReducer,
   menu: menuReducer,
   // viriyha
-  category : categoryReducer,
+  category: categoryReducer,
+  shop: shopReducer
 });
 
 export default reducer;

@@ -53,7 +53,7 @@ const CategoryCreatePage = () => {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, baseUrl]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -71,7 +71,7 @@ const CategoryCreatePage = () => {
     }
   };
 
-  const handeSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const formData = {
       name: CategoryName,
@@ -181,7 +181,13 @@ const CategoryCreatePage = () => {
                 <Grid item>
                   <Stack direction="row" spacing={2}>
                     <AnimateButton>
-                      <Button variant="contained" color="primary" onClick={handeSumbit}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={(e) => {
+                          handleSubmit(e);
+                        }}
+                      >
                         สร้างหมวดหมู่
                       </Button>
                     </AnimateButton>

@@ -1,11 +1,9 @@
+import { UserType } from './users';
+
 export interface CategoryStateProps {
   category: CategoryType[];
   error: object | string | null;
 }
-
-type UserType = {
-  username: string;
-};
 
 export type CategoryType = {
   id: string;

@@ -24,7 +24,9 @@ import { CalendarStateProps } from './calendar';
 import { MailStateProps } from './mail';
 import { UserStateProps } from './user';
 import { SnackbarProps } from './snackbar';
+// viriyha type
 import { CategoryStateProps } from './viriyha_type/category';
+import { ShopStateProps } from './viriyha_type/shop';
 
 export type ArrangementOrder = 'asc' | 'desc' | undefined;
 
@@ -127,6 +129,7 @@ export interface DefaultRootStateProps {
   user: UserStateProps;
   // viriyha
   category: CategoryStateProps;
+  shop: ShopStateProps;
 }
 
 export interface ColorProps {

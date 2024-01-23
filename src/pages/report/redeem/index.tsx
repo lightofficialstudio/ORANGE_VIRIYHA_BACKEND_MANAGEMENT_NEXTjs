@@ -6,23 +6,23 @@ import Page from 'components/ui-component/Page';
 import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
 // project tables
-import CategoryTable from 'components/viriyha_components/table/CategoryTable';
+import RedeemTransactionTable from 'components/viriyha_components/table/RedeemTransationTable';
 
 // ==============================|| ORDER LIST ||============================== //
 
-const CategoryPage = () => {
+const RedeemTransactionPage = () => {
   return (
-    <Page title="จัดการแคมเปญ">
-      <MainCard title="Category Management" content={false}>
+    <Page title="Redeen Transaction">
+      <MainCard title="Redeen Transaction" content={false}>
         {/* table */}
-        <CategoryTable />
+        <RedeemTransactionTable />
       </MainCard>
     </Page>
   );
 };
 
-CategoryPage.getLayout = function getLayout(page: ReactElement) {
+RedeemTransactionPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default CategoryPage;
+export default RedeemTransactionPage;
