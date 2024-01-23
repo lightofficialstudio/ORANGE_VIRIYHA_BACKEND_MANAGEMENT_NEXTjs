@@ -40,7 +40,6 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
-import Avatar from 'ui-component/extended/Avatar';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -74,12 +73,6 @@ const headCells: HeadCell[] = [
     numeric: true,
     label: 'ID',
     align: 'left'
-  },
-  {
-    id: 'image',
-    numeric: false,
-    label: 'รูปภาพ',
-    align: 'center'
   },
   {
     id: 'name',
@@ -216,7 +209,7 @@ function EnhancedTableHead({
 
 // ==============================|| ORDER LIST ||============================== //
 
-const ShopListTable = () => {
+const FrontendUserTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
@@ -227,7 +220,6 @@ const ShopListTable = () => {
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<ShopManagementType[]>([]);
   const { shop } = useSelector((state) => state.shop);
-  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/shop/';
 
   React.useEffect(() => {
     dispatch(getShopList());
@@ -386,7 +378,6 @@ const ShopListTable = () => {
                           }}
                         />
                       </TableCell>
-
                       <TableCell
                         component="th"
                         id={labelId}
@@ -398,16 +389,6 @@ const ShopListTable = () => {
                           {' '}
                           #{row.id}{' '}
                         </Typography>
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="product images" />
                       </TableCell>
                       <TableCell
                         component="th"
@@ -467,4 +448,4 @@ const ShopListTable = () => {
   );
 };
 
-export default ShopListTable;
+export default FrontendUserTable;

@@ -29,7 +29,7 @@ const CategoryCreatePage = () => {
   const { id } = router.query;
   console.log(id);
   const context = React.useContext(JWTContext);
-  const baseUrl = process.env.REACT_APP_API_URL + 'image/category/';
+  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category/';
   const [CategoryImage, SetCategoryImage] = useState('');
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
   const [CategoryName, SetCategoryName] = useState('');

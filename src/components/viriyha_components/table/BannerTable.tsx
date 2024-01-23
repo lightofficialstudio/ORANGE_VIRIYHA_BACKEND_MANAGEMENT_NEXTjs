@@ -216,7 +216,7 @@ function EnhancedTableHead({
 
 // ==============================|| ORDER LIST ||============================== //
 
-const ShopListTable = () => {
+const BannerTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
@@ -467,4 +467,4 @@ const ShopListTable = () => {
   );
 };
 
-export default ShopListTable;
+export default BannerTable;

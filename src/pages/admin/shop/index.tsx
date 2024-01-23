@@ -6,7 +6,7 @@ import Page from 'components/ui-component/Page';
 import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
 // project tables
-import ShopListTable from 'components/viriyha_components/table/ShopListTable';
+import BannerTable from 'components/viriyha_components/table/BannerTable';
 
 // ==============================|| ORDER LIST ||============================== //
 
@@ -15,7 +15,7 @@ const ShopPage = () => {
     <Page title="Shop List">
       <MainCard title="Shop List" content={false}>
         {/* table */}
-        <ShopListTable />
+        <BannerTable />
       </MainCard>
     </Page>
   );
