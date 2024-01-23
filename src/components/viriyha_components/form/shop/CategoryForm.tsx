@@ -23,29 +23,43 @@ const StatusOption = [
   { status_name: 'ปิดใช้งาน', status: 'INACTIVE' }
 ];
 
-type BranchFormProps = {
+type CategoryFormProps = {
   titleMessage: string;
+  confirmMessage?: string;
+  categoryId?: string;
 };
 
-const BranchForm = ({ titleMessage }: BranchFormProps) => {
+const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryFormProps) => {
   //   const router = useRouter();
   //   const { id } = router.query;
   const context = React.useContext(JWTContext);
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
   const [Name, setName] = useState('');
-  const [ImageShop, setImageShop] = useState<File | null>(null);
+  const [ImageFile, setImageFile] = useState<File | null>(null);
   const [Status, setStatus] = useState('');
   const MadeById = context?.user?.id;
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
+  const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category';
+
+  React.useEffect(() => {
+    if (categoryId) {
+      axiosServices.get(`/api/category/${categoryId}`).then((response) => {
+        console.log(response);
+        setName(response.data.name);
+        setStatus(response.data.status);
+        SetPreviewImg(`${imgUrl}/${response.data.image}`);
+      });
+    }
+  }, [categoryId, imgUrl]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
     if (file) {
       const reader = new FileReader();
       const fileName = file.name;
-      setImageShop(file);
+      setImageFile(file);
       console.log(fileName);
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target) {
@@ -65,19 +79,28 @@ const BranchForm = ({ titleMessage }: BranchFormProps) => {
     const formData = new FormData();
     formData.append('name', Name);
     formData.append('status', Status);
-    formData.append('shopImage', ImageShop ?? '');
+    formData.append('categoryImage', ImageFile ?? '');
     formData.append('createdById', MadeById ?? '');
 
     try {
-      const response = await axiosServices.post('/api/shop/create', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      let response;
+      if (categoryId) {
+        response = await axiosServices.put(`/api/category/update/${categoryId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      } else {
+        response = await axiosServices.post('/api/category/create', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      }
       console.log(response);
       if (response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = '/admin/shop';
+        window.location.href = '/admin/category';
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response.statusText);
@@ -123,10 +146,11 @@ const BranchForm = ({ titleMessage }: BranchFormProps) => {
               <SubCard title={titleMessage}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <InputLabel required>ชื่อร้านค้า</InputLabel>
+                    <InputLabel required>ชื่อหมวดหมู่</InputLabel>
                     <TextField
                       fullWidth
                       placeholder="เช่น KFC"
+                      value={Name}
                       onChange={(event: any) => {
                         setName(event.target.value);
                       }}
@@ -137,9 +161,10 @@ const BranchForm = ({ titleMessage }: BranchFormProps) => {
                     <InputLabel required>สถานะ</InputLabel>
                     <Autocomplete
                       options={StatusOption}
-                      getOptionLabel={(option) => option.status_name}
-                      onChange={(event: any, value: any) => {
-                        setStatus(value.status);
+                      getOptionLabel={(option) => (option ? option.status_name : '')}
+                      value={StatusOption.find((option) => option.status === Status) || null}
+                      onChange={(event, newValue) => {
+                        setStatus(newValue ? newValue.status : '');
                       }}
                       renderInput={(params) => <TextField {...params} />}
                     />
@@ -157,7 +182,7 @@ const BranchForm = ({ titleMessage }: BranchFormProps) => {
                           handleSubmit(e);
                         }}
                       >
-                        สร้างร้านค้า
+                        {confirmMessage}
                       </Button>
                     </AnimateButton>
                     <AnimateButton>
@@ -178,4 +203,4 @@ const BranchForm = ({ titleMessage }: BranchFormProps) => {
   );
 };
 
-export default BranchForm;
+export default CategoryForm;

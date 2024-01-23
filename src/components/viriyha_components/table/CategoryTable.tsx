@@ -39,6 +39,7 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
+import Avatar from 'ui-component/extended/Avatar';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -71,6 +72,12 @@ const headCells: HeadCell[] = [
     id: 'id',
     numeric: true,
     label: 'ID',
+    align: 'left'
+  },
+  {
+    id: 'image',
+    numeric: false,
+    label: 'รูปภาพ',
     align: 'center'
   },
   {
@@ -219,6 +226,7 @@ const CategoryTable = () => {
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<CategoryType[]>([]);
   const { category } = useSelector((state) => state.category);
+  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category/';
 
   React.useEffect(() => {
     dispatch(getCategory());
@@ -377,6 +385,10 @@ const CategoryTable = () => {
                           }}
                         />
                       </TableCell>
+                      <TableCell align="center">
+                        <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="category images" />
+                      </TableCell>
+
                       <TableCell
                         component="th"
                         id={labelId}

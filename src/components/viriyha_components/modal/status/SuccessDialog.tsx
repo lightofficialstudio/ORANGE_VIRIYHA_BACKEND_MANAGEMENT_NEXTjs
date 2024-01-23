@@ -11,9 +11,9 @@ export default function SuccessDialog({ open, handleClose }: { open: boolean; ha
       <Dialog fullWidth={fullWidth} maxWidth={maxWidth} open={open} onClose={handleClose}>
         {open && (
           <>
-            <DialogTitle>ทำรายการสำเร็จ</DialogTitle>
+            <DialogTitle>ยินดีด้วย!</DialogTitle>
             <DialogContent>
-              <DialogContentText>คุณได้สร้างข้อมูลใหม่เรียบร้อยแล้ว!</DialogContentText>
+              <DialogContentText>คุณได้ทำรายการสำเร็จแล้ว!</DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>ปิด</Button>

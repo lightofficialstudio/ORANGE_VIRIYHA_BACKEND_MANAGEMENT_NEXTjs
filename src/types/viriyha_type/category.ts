@@ -13,6 +13,7 @@ export type CategoryType = {
   orders: number;
   date: string;
   status: string;
+  image: string;
   createdAt: string;
   updatedAt: string;
   createdBy: UserType; // ใช้ type UserType ที่สร้างขึ้น
