@@ -21,6 +21,14 @@ const dashboard: NavItemType = {
   type: 'group',
   children: [
     {
+      id: 'viriyha_dashboard',
+      title: <FormattedMessage id="Dashboard" />,
+      type: 'item',
+      url: '/dashboard/',
+      icon: icons.IconDashboard,
+      breadcrumbs: false
+    },
+    {
       id: 'default',
       title: <FormattedMessage id="default" />,
       type: 'item',
@@ -28,14 +36,15 @@ const dashboard: NavItemType = {
       icon: icons.IconDashboard,
       breadcrumbs: false
     },
-    {
-      id: 'analytics',
-      title: <FormattedMessage id="analytics" />,
-      type: 'item',
-      url: '/dashboard/analytics',
-      icon: icons.IconDeviceAnalytics,
-      breadcrumbs: false
-    }
+    
+    // {
+    //   id: 'analytics',
+    //   title: <FormattedMessage id="analytics" />,
+    //   type: 'item',
+    //   url: '/dashboard/analytics',
+    //   icon: icons.IconDeviceAnalytics,
+    //   breadcrumbs: false
+    // }
   ]
 };
 

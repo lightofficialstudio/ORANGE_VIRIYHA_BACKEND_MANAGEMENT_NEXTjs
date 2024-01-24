@@ -1,7 +1,7 @@
 // react
 import { useState } from 'react';
 // material-ui
-import { Button, Grid, TextField, Typography, Autocomplete } from '@mui/material';
+import { Button, Grid, TextField, Typography, Autocomplete, FormControlLabel, Radio, RadioGroup, FormControl } from '@mui/material';
 
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
@@ -9,6 +9,8 @@ import Avatar from 'ui-component/extended/Avatar';
 import MainCard from 'ui-component/cards/MainCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
+import { useTheme } from '@mui/material/styles';
+
 // icon
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 // Avatar
@@ -29,8 +31,17 @@ const top100Films = [
   { label: 'demo@company.com', id: 6 },
   { label: 'Pulp Fiction', id: 7 }
 ];
+
+const maxQuotaPerPerson = [
+  { label: 'คน/วัน', id: 1 },
+  { label: 'คน/สัปดาห์', id: 2 },
+  { label: 'คน/เดือน', id: 3 },
+  { label: 'ไม่จำกัด', id: 4 }
+];
 const DetailCampaignCard = () => {
+  const theme = useTheme();
   const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
+  const [valueColor, setValueColor] = useState('default');
 
   // Event handler for quota type change
   const handleQuotaTypeChange = (event: any, value: any) => {
@@ -101,7 +112,25 @@ const DetailCampaignCard = () => {
                       options={quotaChoose}
                       getOptionLabel={(option) => option.label}
                       onChange={handleQuotaTypeChange}
-                      renderInput={(params) => <TextField {...params} label="ประเภทโควต้า" />}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </Grid>
+                </Grid>{' '}
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <InputLabel required>จำกัดจำนวน</InputLabel>
+                <TextField fullWidth placeholder="จำนวนคน" />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <InputLabel required>การจำกัดของสิทธิพิเศษ</InputLabel>
+                <Grid container direction="column" spacing={3}>
+                  <Grid item>
+                    <Autocomplete
+                      options={maxQuotaPerPerson}
+                      getOptionLabel={(option) => option.label}
+                      onChange={handleQuotaTypeChange}
+                      defaultValue={maxQuotaPerPerson[0]}
+                      renderInput={(params) => <TextField {...params} />}
                     />
                   </Grid>
                 </Grid>{' '}
@@ -134,6 +163,76 @@ const DetailCampaignCard = () => {
                     />
                   </Grid>
                 </Grid>
+              </Grid>
+
+              <Grid item xs={12} md={6} lg={6}>
+                <Grid container direction="column" spacing={3}>
+                  <Grid item>
+                    <InputLabel required>ร้านค้าที่เข้าร่วม</InputLabel>
+                    <Autocomplete
+                      options={top100Films}
+                      getOptionLabel={(option) => option.label}
+                      defaultValue={top100Films[0]}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item xs={12} md={6} lg={6}>
+                <Grid container direction="column" spacing={3}>
+                  <Grid item>
+                    <InputLabel required>สาขา</InputLabel>
+                    <Grid item>
+                      <FormControl>
+                        <RadioGroup
+                          row
+                          aria-label="shopIncludeExclude"
+                          value={valueColor}
+                          onChange={(e) => setValueColor(e.target.value)}
+                          name="row-radio-buttons-group"
+                        >
+                          <FormControlLabel
+                            value="include"
+                            control={
+                              <Radio
+                                sx={{
+                                  color: theme.palette.success.main,
+                                  '&.Mui-checked': { color: theme.palette.success.main }
+                                }}
+                              />
+                            }
+                            label="สาขาที่เข้าร่วม"
+                          />
+                          <FormControlLabel
+                            value="exclude"
+                            control={
+                              <Radio
+                                sx={{
+                                  color: theme.palette.error.main,
+                                  '&.Mui-checked': { color: theme.palette.error.main }
+                                }}
+                              />
+                            }
+                            label="สาขาที่ยกเว้น"
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                    </Grid>
+                    <Autocomplete
+                      multiple
+                      options={top100Films}
+                      getOptionLabel={(option) => option.label}
+                      defaultValue={[top100Films[0], top100Films[4]]}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item md={12} xs={12} sx={{ textAlign: 'right' }}>
+                <AnimateButton>
+                  <Button variant="contained">แก้ไข</Button>
+                </AnimateButton>
               </Grid>
             </Grid>
           </SubCard>

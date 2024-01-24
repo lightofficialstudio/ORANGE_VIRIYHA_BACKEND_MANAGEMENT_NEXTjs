@@ -1,5 +1,6 @@
+import dynamic from 'next/dynamic';
 // material-ui
-import { Button, Stack, Grid, TextField } from '@mui/material';
+import { Button, Stack, Grid } from '@mui/material';
 
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
@@ -7,23 +8,24 @@ import SubCard from 'ui-component/cards/SubCard';
 import MainCard from 'ui-component/cards/MainCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
+// third-party
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false
+});
+import 'react-quill/dist/quill.snow.css';
 
-const DescriptionCampaign = () => {
+const ConditionCampaign = () => {
   return (
     <MainCard title="" content={true}>
       <Grid container spacing={gridSpacing}>
         <Grid item sm={6} md={12}>
-          <SubCard title="รายละเอียดสิทธิพิเศษ">
+          <SubCard title="เงื่อนไขสิทธิพิเศษ">
             <Grid container spacing={gridSpacing}>
               <Grid item xs={12}>
-                <TextField
-                  id="outlined-basic1"
-                  fullWidth
-                  multiline
-                  rows={5}
-                  label="รายละเอียด"
-                  defaultValue=""
-                  helperText="ชื่อของสิทธิพิเศษนี้"
+                <ReactQuill
+                  onChange={(value) => {
+                    console.log(value);
+                  }}
                 />
               </Grid>
 
@@ -42,4 +44,4 @@ const DescriptionCampaign = () => {
   );
 };
 
-export default DescriptionCampaign;
+export default ConditionCampaign;

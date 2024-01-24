@@ -9,7 +9,7 @@ import Page from 'components/ui-component/Page';
 import MainCard from 'ui-component/cards/MainCard';
 
 // form import
-import CreateFormNormalCampaign from 'components/viriyha_components/form/campaign/normal/create_form';
+import CreateFormNormalCampaign from 'components/viriyha_components/form/campaign/normal/CampaignNormalCreateForm';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 

@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent } from 'react';
 import dynamic from 'next/dynamic';
 
 // material-ui
-import { Button, Grid, Stack, TextField, Autocomplete, CardMedia } from '@mui/material';
+import { Button, Grid, Stack, TextField, Autocomplete, CardMedia, FormControlLabel, Radio, RadioGroup, FormControl } from '@mui/material';
 import { useTheme, styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
@@ -63,6 +63,7 @@ const top100Films = [
 const CreateFormNormalCampaign = () => {
   const theme = useTheme();
   const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
+  const [valueColor, setValueColor] = useState('default');
 
   // State to hold the image URLs for preview
   const [imageSrcs, setImageSrcs] = useState<string[]>([]);
@@ -258,7 +259,45 @@ const CreateFormNormalCampaign = () => {
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>
-            <SubCard title="สาขาที่เข้าร่วม">
+            <SubCard title="สาขา">
+              <Grid item>
+                <FormControl>
+                  <RadioGroup
+                    row
+                    aria-label="shopIncludeExclude"
+                    value={valueColor}
+                    onChange={(e) => setValueColor(e.target.value)}
+                    name="row-radio-buttons-group"
+                    
+                  >
+                    <FormControlLabel
+                      value="include"
+                      control={
+                        <Radio
+                          sx={{
+                            color: theme.palette.success.main,
+                            '&.Mui-checked': { color: theme.palette.success.main }
+                          }}
+                        />
+                      }
+                      label="สาขาที่เข้าร่วม"
+                      
+                    />
+                    <FormControlLabel
+                      value="exclude"
+                      control={
+                        <Radio
+                          sx={{
+                            color: theme.palette.error.main,
+                            '&.Mui-checked': { color: theme.palette.error.main }
+                          }}
+                        />
+                      }
+                      label="สาขาที่ยกเว้น"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
               <Grid container direction="column" spacing={3}>
                 <Grid item>
                   <Autocomplete

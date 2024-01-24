@@ -13,16 +13,18 @@ import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
 
 // viriyha components imports
-import CodeTable from 'components/viriyha_components/form/campaign/code_table';
-import DetailCampaignCard from 'components/viriyha_components/form/campaign/normal/detail/detail_campaign';
-import ConditionCampaign from 'components/viriyha_components/form/campaign/normal/detail/condition_campaign';
-import DescriptionCampaign from 'components/viriyha_components/form/campaign/normal/detail/description_campaign';
+import DetailCampaignCard from 'components/viriyha_components/form/campaign/normal/detail/CampaignDetail';
+import ConditionCampaign from 'components/viriyha_components/form/campaign/normal/detail/CampaignCondition';
+import DescriptionCampaign from 'components/viriyha_components/form/campaign/normal/detail/CampaignDescription';
 
 // assets
 
 // types
 import { TabsProps } from 'types';
 import GoBackButton from 'components/viriyha_components/button/go_back';
+
+// table
+import CampaignQuotaTable from 'components/viriyha_components/table/CampaignQuotaTable';
 
 // tabs
 function TabPanel({ children, value, index, ...other }: TabsProps) {
@@ -95,7 +97,9 @@ const NormalCampaignPage = () => {
         </div>
       </MainCard>
       <Grid item xs={12} lg={10} sx={{ mt: 3 }}>
-        <CodeTable />
+        <MainCard title="ตารางโควต้า">
+          <CampaignQuotaTable />
+        </MainCard>
       </Grid>
     </Page>
   );
