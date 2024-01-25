@@ -27,6 +27,7 @@ import { SnackbarProps } from './snackbar';
 // viriyha type
 import { CategoryStateProps } from './viriyha_type/category';
 import { ShopStateProps } from './viriyha_type/shop';
+import { BannerStateProps } from './viriyha_type/banner';
 
 export type ArrangementOrder = 'asc' | 'desc' | undefined;
 
@@ -130,6 +131,7 @@ export interface DefaultRootStateProps {
   // viriyha
   category: CategoryStateProps;
   shop: ShopStateProps;
+  banner : BannerStateProps;
 }
 
 export interface ColorProps {

@@ -12,8 +12,8 @@ import BackendUserTable from 'components/viriyha_components/table/BackendUserTab
 
 const BackendUserPage = () => {
   return (
-    <Page title="Shop List">
-      <MainCard title="Shop List" content={false}>
+    <Page title="User Backend">
+      <MainCard title="User Backend" content={false}>
         {/* table */}
         <BackendUserTable />
       </MainCard>

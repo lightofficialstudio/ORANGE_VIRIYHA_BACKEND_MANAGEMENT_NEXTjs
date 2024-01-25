@@ -29,14 +29,15 @@ import { visuallyHidden } from '@mui/utils';
 import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
-import { ShopManagementType } from '../../../types/viriyha_type/shop';
-import { getShopList } from 'store/slices/viriyha/shop';
+import { BannerManagementType } from 'types/viriyha_type/banner';
+import { getBannerList } from 'store/slices/viriyha/banner';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import ControlCameraIcon from '@mui/icons-material/ControlCamera';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
@@ -56,10 +57,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: ShopManagementType[], comparator: (a: ShopManagementType, b: ShopManagementType) => number) {
-  const stabilizedThis = array?.map((el: ShopManagementType, index: number) => [el, index]);
+function stableSort(array: BannerManagementType[], comparator: (a: BannerManagementType, b: BannerManagementType) => number) {
+  const stabilizedThis = array?.map((el: BannerManagementType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as ShopManagementType, b[0] as ShopManagementType);
+    const order = comparator(a[0] as BannerManagementType, b[0] as BannerManagementType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -76,6 +77,12 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
+    id: 'position',
+    numeric: true,
+    label: 'ตำแหน่ง',
+    align: 'right'
+  },
+  {
     id: 'image',
     numeric: false,
     label: 'รูปภาพ',
@@ -84,14 +91,20 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อร้านค้า',
+    label: 'ชื่อแบนเนอร์',
+    align: 'left'
+  },
+  {
+    id: 'link',
+    numeric: false,
+    label: 'ลิงก์แบนเนอร์',
     align: 'left'
   },
   {
     id: 'createdAt',
     numeric: true,
     label: 'สร้างเมื่อวันที่',
-    align: 'center'
+    align: 'right'
   },
   {
     id: 'created_by',
@@ -225,16 +238,16 @@ const BannerTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<ShopManagementType[]>([]);
-  const { shop } = useSelector((state) => state.shop);
-  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/shop/';
+  const [rows, setRows] = React.useState<BannerManagementType[]>([]);
+  const { banner } = useSelector((state) => state.banner);
+  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner/';
 
   React.useEffect(() => {
-    dispatch(getShopList());
+    dispatch(getBannerList());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(shop);
-  }, [shop]);
+    setRows(banner);
+  }, [banner]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -259,7 +272,7 @@ const BannerTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(shop);
+      setRows(banner);
     }
   };
 
@@ -338,10 +351,9 @@ const BannerTable = () => {
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
-
             {/* product add & dialog */}
-            <Link href={'/admin/shop/create'}>
-              <Tooltip title="เพิ่มหมวดหมู่">
+            <Link href={'/admin/banners/create'}>
+              <Tooltip title="เพิ่มข้อมูล">
                 <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                   <AddIcon fontSize="small" />
                 </Fab>
@@ -399,43 +411,37 @@ const BannerTable = () => {
                           #{row.id}{' '}
                         </Typography>
                       </TableCell>
-                      <TableCell
-                        align="center"
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
+                      <TableCell align="right">{row.position}</TableCell>
+
+                      <TableCell align="center">
                         <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="product images" />
                       </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
-                        </Typography>
-                      </TableCell>
 
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
+                      <TableCell align="left">{row.name}</TableCell>
+
+                      <TableCell align="left">{row.link}</TableCell>
 
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
+                      <TableCell align="center">{row.createdBy?.username}</TableCell>
+
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/shop/detail/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
+                        <Link href={`/admin/banners/edit/${row.id}`}>
+                          <Tooltip title="แก้ไขข้อมูล">
+                            <IconButton color="secondary" size="large">
+                              <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                            </IconButton>
+                          </Tooltip>
                         </Link>
+                        <Tooltip title="จัดการตำแหน่ง">
+                          <IconButton color="secondary" size="large">
+                            <ControlCameraIcon sx={{ fontSize: '1.3rem' }} />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   );
