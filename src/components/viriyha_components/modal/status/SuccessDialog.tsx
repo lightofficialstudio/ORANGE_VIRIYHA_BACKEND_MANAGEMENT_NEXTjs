@@ -1,7 +1,6 @@
 import * as React from 'react';
-
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogProps, DialogTitle } from '@mui/material';
-
+import Swal from 'sweetalert2';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogProps, DialogTitle } from '@mui/material';
 export default function SuccessDialog({ open, handleClose }: { open: boolean; handleClose: () => void }) {
   const [fullWidth] = React.useState(true);
   const [maxWidth] = React.useState<DialogProps['maxWidth']>('sm');
@@ -13,7 +12,12 @@ export default function SuccessDialog({ open, handleClose }: { open: boolean; ha
           <>
             <DialogTitle>ยินดีด้วย!</DialogTitle>
             <DialogContent>
-              <DialogContentText>คุณได้ทำรายการสำเร็จแล้ว!</DialogContentText>
+              <DialogContentText>
+                {' '}
+                <Alert variant="filled" severity="success">
+                  <b>คุณทำรายการสำเร็จ! </b> 
+                </Alert>
+              </DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>ปิด</Button>

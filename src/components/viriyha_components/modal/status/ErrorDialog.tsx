@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogProps, DialogTitle } from '@mui/material';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogProps, DialogTitle } from '@mui/material';
 
 type ErrorDialogProps = {
   open: boolean;
@@ -20,9 +20,10 @@ export default function ErrorDialog({ open, handleClose, errorMessage }: ErrorDi
             <DialogTitle fontSize={18}>เกิดข้อผิดพลาดขึ้น!</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                <b>ข้อความที่เกิดข้อผิดพลาดขึ้นคือ </b> :{' '}
+                <Alert variant="filled" severity="error">
+                  <b>ข้อความที่เกิดข้อผิดพลาดขึ้นคือ </b> : {errorMessage}!
+                </Alert>
               </DialogContentText>
-              <DialogContentText>{errorMessage}!</DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>ปิด</Button>

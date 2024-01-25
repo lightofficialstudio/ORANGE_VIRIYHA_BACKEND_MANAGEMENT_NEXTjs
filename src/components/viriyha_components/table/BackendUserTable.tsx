@@ -37,7 +37,6 @@ import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import ControlCameraIcon from '@mui/icons-material/ControlCamera';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
@@ -352,7 +351,7 @@ const BannerTable = () => {
               </IconButton>
             </Tooltip>
             {/* product add & dialog */}
-            <Link href={'/admin/banners/create'}>
+            <Link href={'/admin/users/backend/create'}>
               <Tooltip title="เพิ่มข้อมูล">
                 <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                   <AddIcon fontSize="small" />

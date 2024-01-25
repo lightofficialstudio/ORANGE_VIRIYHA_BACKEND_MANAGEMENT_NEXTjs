@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
 // material-ui
@@ -18,7 +18,9 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false
 });
 import 'react-quill/dist/quill.snow.css';
-
+import axiosServices from 'utils/axios';
+// types
+import { CategoryType } from 'types/viriyha_type/category';
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -64,6 +66,26 @@ const CreateFormNormalCampaign = () => {
   const theme = useTheme();
   const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
   const [valueColor, setValueColor] = useState('default');
+  const [ArrayCategory, setArrayCategory] = useState<CategoryType[]>([]);
+
+  useEffect(() => {
+    // Fetch and set the ArrayCategory data in the useEffect hook
+    const fetchCategory = async () => {
+      const res = await axiosServices.get('/api/category');
+      try {
+        const categoryArray = res.data.map((item: CategoryType) => ({
+          id: item.id,
+          name: item.name
+        }));
+        setArrayCategory(categoryArray);
+        console.log(categoryArray);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchCategory();
+  }, []);
 
   // State to hold the image URLs for preview
   const [imageSrcs, setImageSrcs] = useState<string[]>([]);
@@ -106,52 +128,93 @@ const CreateFormNormalCampaign = () => {
     <MainCard title="">
       <form>
         <Grid container spacing={gridSpacing}>
-          <Grid item xs={12}>
-            <div>
-              <TextField
-                type="file"
-                id="file-upload"
-                fullWidth
-                label="Enter SKU"
-                sx={{ display: 'none' }}
-                onChange={handleFileChange}
-                inputProps={{ multiple: true }} // Allows multiple file selection
-              />
-              <InputLabel
-                htmlFor="file-upload"
-                sx={{
-                  background: theme.palette.background.default,
-                  py: 3.75,
-                  px: 0,
-                  textAlign: 'center',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  mb: 3,
-                  '& > svg': {
-                    verticalAlign: 'sub',
-                    mr: 0.5
-                  }
-                }}
-              >
-                <CloudUploadIcon /> Drop file here to upload
-              </InputLabel>
-            </div>
-            <Grid container spacing={3} justifyContent="center">
-              {imageSrcs.map((src, index) => (
-                <Grid item key={index}>
-                  {/* ... image wrapper and CardMedia for each image ... */}
-                  <ImageWrapper>
-                    <CardMedia component="img" image={src} title={`Product ${index + 1}`} />
-                  </ImageWrapper>
+          <Grid item xs={12} md={6} lg={6}>
+            <SubCard title="ร้านค้าที่เข้าร่วม">
+              <Grid container direction="column" spacing={3}>
+                <Grid item>
+                  <Autocomplete
+                    options={top100Films}
+                    getOptionLabel={(option) => option.label}
+                    defaultValue={top100Films[0]}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
                 </Grid>
-              ))}
-              {/* ... */}
-            </Grid>
+              </Grid>
+            </SubCard>
           </Grid>
+
+          <Grid item xs={12} md={6} lg={6}>
+            <SubCard title="สาขา">
+              <Grid item>
+                <FormControl>
+                  <RadioGroup
+                    row
+                    aria-label="shopIncludeExclude"
+                    value={valueColor}
+                    onChange={(e) => setValueColor(e.target.value)}
+                    name="row-radio-buttons-group"
+                  >
+                    <FormControlLabel
+                      value="include"
+                      control={
+                        <Radio
+                          sx={{
+                            color: theme.palette.success.main,
+                            '&.Mui-checked': { color: theme.palette.success.main }
+                          }}
+                        />
+                      }
+                      label="สาขาที่เข้าร่วม"
+                    />
+                    <FormControlLabel
+                      value="exclude"
+                      control={
+                        <Radio
+                          sx={{
+                            color: theme.palette.error.main,
+                            '&.Mui-checked': { color: theme.palette.error.main }
+                          }}
+                        />
+                      }
+                      label="สาขาที่ยกเว้น"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+              <Grid container direction="column" spacing={3}>
+                <Grid item>
+                  <Autocomplete
+                    multiple
+                    options={top100Films}
+                    getOptionLabel={(option) => option.label}
+                    defaultValue={[top100Films[0], top100Films[4]]}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </Grid>
+              </Grid>
+            </SubCard>
+          </Grid>
+
           <Grid item xs={12} md={12}>
             <InputLabel required>ชื่อสิทธิพิเศษ</InputLabel>
             <TextField fullWidth />
           </Grid>
+
+          <Grid item md={6} xs={12}>
+            <InputLabel required>หมวดหมู่สิทธิพิเศษ</InputLabel>
+            <Grid container direction="column" spacing={3}>
+              <Grid item>
+                <Autocomplete
+                  options={ArrayCategory}
+                  getOptionLabel={(option) => option.name}
+                  onChange={handleQuotaTypeChange}
+                  defaultValue={ArrayCategory[0]}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </Grid>
+            </Grid>{' '}
+          </Grid>
+          <Grid xs={6} md={6} />
           <Grid item xs={12} md={6}>
             <InputLabel required>วันที่เริ่มต้น</InputLabel>
             <TextField fullWidth type="date" id="campaign_start_date" name="campaign_start_date" label="" />{' '}
@@ -243,71 +306,46 @@ const CreateFormNormalCampaign = () => {
             />{' '}
           </Grid>
 
-          <Grid item xs={12} md={6} lg={6}>
-            <SubCard title="ร้านค้าที่เข้าร่วม">
-              <Grid container direction="column" spacing={3}>
-                <Grid item>
-                  <Autocomplete
-                    options={top100Films}
-                    getOptionLabel={(option) => option.label}
-                    defaultValue={top100Films[0]}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </Grid>
-              </Grid>
-            </SubCard>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={6}>
-            <SubCard title="สาขา">
-              <Grid item>
-                <FormControl>
-                  <RadioGroup
-                    row
-                    aria-label="shopIncludeExclude"
-                    value={valueColor}
-                    onChange={(e) => setValueColor(e.target.value)}
-                    name="row-radio-buttons-group"
-                    
-                  >
-                    <FormControlLabel
-                      value="include"
-                      control={
-                        <Radio
-                          sx={{
-                            color: theme.palette.success.main,
-                            '&.Mui-checked': { color: theme.palette.success.main }
-                          }}
-                        />
-                      }
-                      label="สาขาที่เข้าร่วม"
-                      
-                    />
-                    <FormControlLabel
-                      value="exclude"
-                      control={
-                        <Radio
-                          sx={{
-                            color: theme.palette.error.main,
-                            '&.Mui-checked': { color: theme.palette.error.main }
-                          }}
-                        />
-                      }
-                      label="สาขาที่ยกเว้น"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-              <Grid container direction="column" spacing={3}>
-                <Grid item>
-                  <Autocomplete
-                    multiple
-                    options={top100Films}
-                    getOptionLabel={(option) => option.label}
-                    defaultValue={[top100Films[0], top100Films[4]]}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </Grid>
+          <Grid item xs={12}>
+            <SubCard title="อัพโหลดรูปภาพ">
+              <div>
+                <TextField
+                  type="file"
+                  id="file-upload"
+                  fullWidth
+                  label="Enter SKU"
+                  sx={{ display: 'none' }}
+                  onChange={handleFileChange}
+                  inputProps={{ multiple: true }} // Allows multiple file selection
+                />
+                <InputLabel
+                  htmlFor="file-upload"
+                  sx={{
+                    background: theme.palette.background.default,
+                    py: 3.75,
+                    px: 0,
+                    textAlign: 'center',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    mb: 3,
+                    '& > svg': {
+                      verticalAlign: 'sub',
+                      mr: 0.5
+                    }
+                  }}
+                >
+                  <CloudUploadIcon /> คลิกเพื่ออัพโหลดรูปภาพ
+                </InputLabel>
+              </div>
+              <Grid container spacing={3} justifyContent="center">
+                {imageSrcs.map((src, index) => (
+                  <Grid item key={index}>
+                    <ImageWrapper>
+                      <CardMedia component="img" image={src} title={`Product ${index + 1}`} />
+                    </ImageWrapper>
+                  </Grid>
+                ))}
+                {/* ... */}
               </Grid>
             </SubCard>
           </Grid>
