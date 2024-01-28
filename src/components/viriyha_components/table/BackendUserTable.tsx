@@ -29,8 +29,8 @@ import { visuallyHidden } from '@mui/utils';
 import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
-import { BannerManagementType } from 'types/viriyha_type/banner';
-import { getBannerList } from 'store/slices/viriyha/banner';
+import { User_BackendType } from 'types/viriyha_type/backend_user';
+import { getUserBackend } from 'store/slices/viriyha/user_backend';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
@@ -56,10 +56,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: BannerManagementType[], comparator: (a: BannerManagementType, b: BannerManagementType) => number) {
-  const stabilizedThis = array?.map((el: BannerManagementType, index: number) => [el, index]);
+function stableSort(array: User_BackendType[], comparator: (a: User_BackendType, b: User_BackendType) => number) {
+  const stabilizedThis = array?.map((el: User_BackendType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as BannerManagementType, b[0] as BannerManagementType);
+    const order = comparator(a[0] as User_BackendType, b[0] as User_BackendType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -237,16 +237,16 @@ const BannerTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<BannerManagementType[]>([]);
-  const { banner } = useSelector((state) => state.banner);
+  const [rows, setRows] = React.useState<User_BackendType[]>([]);
+  const { user_backend } = useSelector((state) => state.user_backend);
   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner/';
 
   React.useEffect(() => {
-    dispatch(getBannerList());
+    dispatch(getUserBackend());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(banner);
-  }, [banner]);
+    setRows(user_backend);
+  }, [user_backend]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -271,7 +271,7 @@ const BannerTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(banner);
+      setRows(user_backend);
     }
   };
 
@@ -414,10 +414,10 @@ const BannerTable = () => {
                         <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="product images" />
                       </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.link}</TableCell>
+                      <TableCell align="left">{row.email}</TableCell>
                       <TableCell align="left">Programmer</TableCell>
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
+                      <TableCell align="center">{row.role}</TableCell>
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}

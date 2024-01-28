@@ -42,6 +42,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   const [Name, setName] = useState('');
   const [Username, setUsername] = useState('');
   const [Password, setPassword] = useState('');
+  const [Phonenumber, setPhonenumber] = useState('');
   const [Email, setEmail] = useState('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
   const [Status, setStatus] = useState('');
@@ -59,9 +60,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
         setUsername(response.data.username);
         setEmail(response.data.email);
         setName(response.data.name);
+        setPhonenumber(response.data.phonenumber);
         setStatus(response.data.status);
         setRole(response.data.role);
         SetPreviewImg(`${imgUrl}/${response.data.image}`);
+        setDescription(response.data.description);
       });
     }
   }, [primaryId, imgUrl]);
@@ -102,6 +105,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
     formData.append('email', Email);
     formData.append('password', Password);
     formData.append('name', Name);
+    formData.append('phonenumber', Phonenumber);
     formData.append('status', Status);
     formData.append('role', Role);
     formData.append('description', Description);
@@ -136,8 +140,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
       setErrorMessage(error.message);
     }
   };
-
-
 
   return (
     <>
@@ -211,6 +213,33 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       }}
                     />
                   </Grid>
+
+                  <Grid item xs={12}>
+                    <InputLabel>ชื่อ-นามสกุล</InputLabel>
+                    <TextField
+                      fullWidth
+                      error={!!error}
+                      placeholder="สมชาย ใจดี"
+                      value={Name}
+                      onChange={(event: any) => {
+                        setName(event.target.value);
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <InputLabel>เบอร์โทร</InputLabel>
+                    <TextField
+                      fullWidth
+                      error={!!error}
+                      placeholder="089-123-4567"
+                      value={Phonenumber}
+                      onChange={(event: any) => {
+                        setPhonenumber(event.target.value);
+                      }}
+                    />
+                  </Grid>
+                  
                   <Grid item xs={6}>
                     <InputLabel required>ระดับสิทธิ์ผู้ใช้งาน</InputLabel>
                     <Autocomplete

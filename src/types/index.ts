@@ -28,6 +28,7 @@ import { SnackbarProps } from './snackbar';
 import { CategoryStateProps } from './viriyha_type/category';
 import { ShopStateProps } from './viriyha_type/shop';
 import { BannerStateProps } from './viriyha_type/banner';
+import { UserBackendStateProps } from './viriyha_type/backend_user';
 
 export type ArrangementOrder = 'asc' | 'desc' | undefined;
 
@@ -131,7 +132,8 @@ export interface DefaultRootStateProps {
   // viriyha
   category: CategoryStateProps;
   shop: ShopStateProps;
-  banner : BannerStateProps;
+  banner: BannerStateProps;
+  user_backend: UserBackendStateProps;
 }
 
 export interface ColorProps {
