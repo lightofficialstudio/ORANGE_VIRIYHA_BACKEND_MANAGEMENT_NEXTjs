@@ -1,6 +1,5 @@
 import * as React from 'react';
-
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogProps, DialogTitle } from '@mui/material';
+import Swal from 'sweetalert2';
 
 type ErrorDialogProps = {
   open: boolean;
@@ -9,28 +8,22 @@ type ErrorDialogProps = {
 };
 
 export default function ErrorDialog({ open, handleClose, errorMessage }: ErrorDialogProps) {
-  const [fullWidth] = React.useState(true);
-  const [maxWidth] = React.useState<DialogProps['maxWidth']>('sm');
+  React.useEffect(() => {
+    if (open) {
+      Swal.fire({
+        title: 'เกิดข้อผิดพลาด!',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'เข้าใจแล้ว',
+        confirmButtonColor: '#2196f3'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          handleClose();
+        }
+      });
+    }
+  }, [open, errorMessage, handleClose]);
 
-  return (
-    <>
-      <Dialog fullWidth={fullWidth} maxWidth={maxWidth} open={open} onClose={handleClose}>
-        {open && (
-          <>
-            <DialogTitle fontSize={18}>เกิดข้อผิดพลาดขึ้น!</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                <Alert variant="filled" severity="error">
-                  <b>ข้อความที่เกิดข้อผิดพลาดขึ้นคือ </b> : {errorMessage}!
-                </Alert>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>ปิด</Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
-    </>
-  );
+  // The ErrorDialog component doesn't need to render anything
+  return null;
 }
