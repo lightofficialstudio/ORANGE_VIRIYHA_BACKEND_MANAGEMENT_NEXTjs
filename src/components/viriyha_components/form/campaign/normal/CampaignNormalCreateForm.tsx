@@ -21,6 +21,7 @@ import 'react-quill/dist/quill.snow.css';
 import axiosServices from 'utils/axios';
 // types
 import { CategoryType } from 'types/viriyha_type/category';
+import { ShopManagementType } from 'types/viriyha_type/shop';
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -51,26 +52,22 @@ const maxQuotaPerPerson = [
   { label: 'คน/เดือน', id: 3 },
   { label: 'ไม่จำกัด', id: 4 }
 ];
-// example data
-// autocomplete options
+
 const top100Films = [
-  { label: 'The Dark Knight', id: 1 },
-  { label: 'Control with Control', id: 2 },
-  { label: 'Combo with Solo', id: 3 },
-  { label: 'The Dark', id: 4 },
-  { label: 'Fight Club', id: 5 },
-  { label: 'demo@company.com', id: 6 },
-  { label: 'Pulp Fiction', id: 7 }
+  { label: 'เพศชาย', id: 1 },
+  { label: 'เพศหญิง', id: 2 }
 ];
+
 const CreateFormNormalCampaign = () => {
   const theme = useTheme();
   const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
   const [valueColor, setValueColor] = useState('default');
   const [ArrayCategory, setArrayCategory] = useState<CategoryType[]>([]);
+  const [ArrayShop, setArrayShop] = useState<ShopManagementType[]>([]);
+  const [ArrayBranchList, setArrayBranchList] = useState<any[]>([{ id: '0', name: 'Please select a branch' }]);
 
   useEffect(() => {
-    // Fetch and set the ArrayCategory data in the useEffect hook
-    const fetchCategory = async () => {
+    const CategoryList = async () => {
       const res = await axiosServices.get('/api/category');
       try {
         const categoryArray = res.data.map((item: CategoryType) => ({
@@ -84,13 +81,26 @@ const CreateFormNormalCampaign = () => {
       }
     };
 
-    fetchCategory();
+    const ShopList = async () => {
+      const res = await axiosServices.get('/api/shop');
+      try {
+        const shopArray = res.data.map((item: CategoryType) => ({
+          id: item.id,
+          name: item.name
+        }));
+        setArrayShop(shopArray);
+        console.log(shopArray);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    CategoryList();
+    ShopList();
   }, []);
 
-  // State to hold the image URLs for preview
   const [imageSrcs, setImageSrcs] = useState<string[]>([]);
 
-  // Event handler for file input change
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return; // No files selected
@@ -119,9 +129,22 @@ const CreateFormNormalCampaign = () => {
     });
   };
 
-  // Event handler for quota type change
   const handleQuotaTypeChange = (event: any, value: any) => {
     setIsQuotaDisabled(value.id === 4);
+  };
+
+  const handleShopChange = async (event: any, value: any) => {
+    const res = await axiosServices.get(`/api/branch/${value.id}`);
+    try {
+      const branchArray = res.data.map((item: any) => ({
+        id: item.id,
+        name: item.name
+      }));
+      setArrayBranchList(branchArray);
+      console.log(branchArray);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -133,9 +156,9 @@ const CreateFormNormalCampaign = () => {
               <Grid container direction="column" spacing={3}>
                 <Grid item>
                   <Autocomplete
-                    options={top100Films}
-                    getOptionLabel={(option) => option.label}
-                    defaultValue={top100Films[0]}
+                    options={ArrayShop}
+                    getOptionLabel={(option) => option.name}
+                    onChange={handleShopChange}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Grid>
@@ -185,9 +208,8 @@ const CreateFormNormalCampaign = () => {
                 <Grid item>
                   <Autocomplete
                     multiple
-                    options={top100Films}
-                    getOptionLabel={(option) => option.label}
-                    defaultValue={[top100Films[0], top100Films[4]]}
+                    options={ArrayBranchList}
+                    getOptionLabel={(option) => option.name}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Grid>
@@ -197,7 +219,7 @@ const CreateFormNormalCampaign = () => {
 
           <Grid item xs={12} md={12}>
             <InputLabel required>ชื่อสิทธิพิเศษ</InputLabel>
-            <TextField fullWidth />
+            <TextField required inputProps={{ maxLength: 12 }} fullWidth />
           </Grid>
 
           <Grid item md={6} xs={12}>
@@ -262,7 +284,7 @@ const CreateFormNormalCampaign = () => {
           <Grid item md={6} xs={12}>
             <InputLabel required>เป้าหมายสิทธิพิเศษ (Criteria)</InputLabel>
             <Grid container direction="column" spacing={3}>
-              <Grid item>
+              {/* <Grid item>
                 <Autocomplete
                   multiple
                   options={top100Films}
@@ -270,14 +292,14 @@ const CreateFormNormalCampaign = () => {
                   defaultValue={[top100Films[0], top100Films[4]]}
                   renderInput={(params) => <TextField {...params} />}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
 
           <Grid item md={6} xs={12}>
             <InputLabel required>เป้าหมายสิทธิพิเศษ (Segment)</InputLabel>
             <Grid container direction="column" spacing={3}>
-              <Grid item>
+              {/* <Grid item>
                 <Autocomplete
                   multiple
                   options={top100Films}
@@ -285,7 +307,7 @@ const CreateFormNormalCampaign = () => {
                   defaultValue={[top100Films[2], top100Films[3]]}
                   renderInput={(params) => <TextField {...params} />}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
           <Grid item xs={12}>

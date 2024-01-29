@@ -25,7 +25,7 @@ const ShopDetailPage = () => {
       {/* table */}
       <Grid mt={5}></Grid>
       <MainCard title="Branch List" content={false}>
-        <BranchListTable />
+        <BranchListTable shopId={id as string} />
       </MainCard>
     </Page>
   );

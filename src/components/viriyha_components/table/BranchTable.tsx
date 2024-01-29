@@ -29,12 +29,13 @@ import { visuallyHidden } from '@mui/utils';
 import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
-import { ShopManagementType } from '../../../types/viriyha_type/shop';
-import { getShopList } from 'store/slices/viriyha/shop';
+import { BranchType } from 'types/viriyha_type/branch';
+import { getBranchFromShopBy } from 'store/slices/viriyha/branch';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
-
+import FileOpenIcon from '@mui/icons-material/FileOpen';
+import IosShareIcon from '@mui/icons-material/IosShare';
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
@@ -55,10 +56,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: ShopManagementType[], comparator: (a: ShopManagementType, b: ShopManagementType) => number) {
-  const stabilizedThis = array?.map((el: ShopManagementType, index: number) => [el, index]);
+function stableSort(array: BranchType[], comparator: (a: BranchType, b: BranchType) => number) {
+  const stabilizedThis = array?.map((el: BranchType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as ShopManagementType, b[0] as ShopManagementType);
+    const order = comparator(a[0] as BranchType, b[0] as BranchType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -77,14 +78,8 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อร้านค้า',
+    label: 'ชื่อสาขา',
     align: 'left'
-  },
-  {
-    id: 'createdAt',
-    numeric: true,
-    label: 'สร้างเมื่อวันที่',
-    align: 'center'
   },
   {
     id: 'created_by',
@@ -97,6 +92,12 @@ const headCells: HeadCell[] = [
     numeric: false,
     label: 'สถานะ',
     align: 'center'
+  },
+  {
+    id: 'createdAt',
+    numeric: true,
+    label: 'สร้างเมื่อวันที่',
+    align: 'right'
   }
 ];
 
@@ -208,8 +209,8 @@ function EnhancedTableHead({
 }
 
 // ==============================|| ORDER LIST ||============================== //
-
-const BranchListTable = () => {
+type BranchListTableProps = { shopId: string };
+const BranchListTable = ({ shopId }: BranchListTableProps) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
@@ -218,15 +219,15 @@ const BranchListTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<ShopManagementType[]>([]);
-  const { shop } = useSelector((state) => state.shop);
-
+  const [rows, setRows] = React.useState<BranchType[]>([]);
+  const { branch } = useSelector((state) => state.branch);
+  const paramShopId = parseInt(shopId);
   React.useEffect(() => {
-    dispatch(getShopList());
-  }, [dispatch]);
+    dispatch(getBranchFromShopBy(paramShopId));
+  }, [dispatch, paramShopId]);
   React.useEffect(() => {
-    setRows(shop);
-  }, [shop]);
+    setRows(branch);
+  }, [branch]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -251,7 +252,7 @@ const BranchListTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(shop);
+      setRows(branch);
     }
   };
 
@@ -325,6 +326,16 @@ const BranchListTable = () => {
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
+            <Tooltip title="นำเข้าเอกสาร">
+              <IconButton size="large">
+                <FileOpenIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="ส่งออกเอกสาร">
+              <IconButton size="large">
+                <IosShareIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="ตัวกรอง">
               <IconButton size="large">
                 <FilterListIcon />
@@ -332,8 +343,8 @@ const BranchListTable = () => {
             </Tooltip>
 
             {/* product add & dialog */}
-            <Link href={'/admin/shop/create'}>
-              <Tooltip title="เพิ่มหมวดหมู่">
+            <Link href={`/admin/shop/detail/create_branch/${shopId}`}>
+              <Tooltip title="เพิ่มสาขา">
                 <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                   <AddIcon fontSize="small" />
                 </Fab>
@@ -402,17 +413,15 @@ const BranchListTable = () => {
                           {row.name}{' '}
                         </Typography>
                       </TableCell>
-
                       <TableCell align="center">{row.createdBy?.username}</TableCell>
-
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
+                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/shop/detail/${row.id}`}>
+                        <Link href={`/admin/shop/detail/edit_branch/${row.id}`}>
                           <IconButton color="secondary" size="large">
                             <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>
