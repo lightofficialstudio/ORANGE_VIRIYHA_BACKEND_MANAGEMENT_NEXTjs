@@ -6,7 +6,7 @@ export interface ShopStateProps {
 }
 
 export type ShopManagementType = {
-  id: number;
+  id: string;
   image: string;
   name: string;
   description: string;
