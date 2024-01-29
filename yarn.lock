@@ -1295,6 +1295,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@sweetalert2/themes@^5.0.16":
+  version "5.0.16"
+  resolved "https://registry.yarnpkg.com/@sweetalert2/themes/-/themes-5.0.16.tgz#8f048d60c3273443aed8e832fdb8e9c1f7a12c0e"
+  integrity sha512-0RR8WcJO/4iDjrHPYPNAgpM79pN3ogWhS8qCBspH73mehUzExx+kni1cP5aS/AFBhhiKuM77S8CRXJSGh/bXHg==
+
 "@tabler/icons@^1.119.0":
   version "1.119.0"
   resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-1.119.0.tgz#8c590bc5a563c8673a78ccd451bedabd584b376e"

@@ -75,6 +75,11 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
   };
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!Name || !Status) {
+      setOpenErrorDialog(true);
+      setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
+    }
     event.preventDefault();
     const formData = new FormData();
     formData.append('name', Name);

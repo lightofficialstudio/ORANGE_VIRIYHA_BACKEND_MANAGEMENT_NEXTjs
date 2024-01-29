@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Swal from 'sweetalert2';
+import '@sweetalert2/themes/material-ui/material-ui.scss';
 
 type ErrorDialogProps = {
   open: boolean;
@@ -15,7 +16,7 @@ export default function ErrorDialog({ open, handleClose, errorMessage }: ErrorDi
         text: errorMessage,
         icon: 'error',
         confirmButtonText: 'เข้าใจแล้ว',
-        confirmButtonColor: '#2196f3'
+        confirmButtonColor: '#f44336'
       }).then((result) => {
         if (result.isConfirmed) {
           handleClose();

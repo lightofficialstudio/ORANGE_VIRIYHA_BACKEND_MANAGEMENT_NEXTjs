@@ -1,12 +1,13 @@
 import * as React from 'react';
 import Swal from 'sweetalert2';
+import '@sweetalert2/themes/material-ui/material-ui.scss';
 
-type ErrorDialogProps = {
+type SucessDialogProps = {
   open: boolean;
   handleClose: () => void;
 };
 
-export default function ErrorDialog({ open, handleClose }: ErrorDialogProps) {
+export default function SucessDialog({ open, handleClose }: SucessDialogProps) {
   React.useEffect(() => {
     if (open) {
       Swal.fire({
@@ -14,7 +15,7 @@ export default function ErrorDialog({ open, handleClose }: ErrorDialogProps) {
         text: 'รายการนี้ทำสำเร็จ!',
         icon: 'success',
         confirmButtonText: 'เข้าใจแล้ว',
-        confirmButtonColor: '#2196f3'
+        confirmButtonColor: '#3f51b5'
       }).then((result) => {
         if (result.isConfirmed) {
           handleClose();
@@ -23,6 +24,6 @@ export default function ErrorDialog({ open, handleClose }: ErrorDialogProps) {
     }
   }, [open, handleClose]);
 
-  // The ErrorDialog component doesn't need to render anything
+  // The SucessDialog component doesn't need to render anything
   return null;
 }

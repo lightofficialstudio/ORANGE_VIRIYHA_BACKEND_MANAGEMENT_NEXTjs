@@ -32,6 +32,7 @@
     "@mui/x-data-grid": "^5.17.18",
     "@mui/x-date-pickers": "^5.0.13",
     "@reduxjs/toolkit": "^1.9.1",
+    "@sweetalert2/themes": "^5.0.16",
     "@tabler/icons": "^1.119.0",
     "amazon-cognito-identity-js": "^6.1.2",
     "apexcharts": "^3.36.3",
