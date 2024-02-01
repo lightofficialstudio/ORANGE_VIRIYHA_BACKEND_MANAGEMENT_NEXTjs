@@ -88,6 +88,12 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
+    id: 'phoneNumber',
+    numeric: false,
+    label: 'เบอร์มือถือ',
+    align: 'left'
+  },
+  {
     id: 'email',
     numeric: false,
     label: 'อีเมลล์',
@@ -414,8 +420,12 @@ const BannerTable = () => {
                         <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="product images" />
                       </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="left">{row.phonenumber}</TableCell>
                       <TableCell align="left">{row.email}</TableCell>
-                      <TableCell align="left">Programmer</TableCell>
+                      <TableCell align="left">
+                        {row.role === `ADMIN` && <Chip label="แอดมินผู้ดูแลระบบ" size="medium" chipcolor="primary" variant="outlined" />}
+                        {row.role === `BACKEND_USER` && <Chip label="ผู้ใช้งานระบบ" size="medium" chipcolor="success" variant="outlined" />}
+                      </TableCell>
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">{row.role}</TableCell>
                       <TableCell align="center">
@@ -424,7 +434,7 @@ const BannerTable = () => {
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/users/backend/edit/${row.id}`}>
+                        <Link href={`/admin/users/backend/detail/${row.id}`}>
                           <Tooltip title="แก้ไขข้อมูล">
                             <IconButton color="secondary" size="large">
                               <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />

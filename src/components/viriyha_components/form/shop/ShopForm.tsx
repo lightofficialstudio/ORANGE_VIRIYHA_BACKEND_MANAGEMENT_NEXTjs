@@ -14,8 +14,8 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 // Dialog
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
-// Avatar
-const Avatar1 = '/assets/images/users/avatar-2.png';
+// Mockup Logo
+const MockupLogo = '/assets/mockup/shop.png';
 // autocomplete options
 
 const StatusOption = [
@@ -33,7 +33,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
   //   const router = useRouter();
   //   const { id } = router.query;
   const context = React.useContext(JWTContext);
-  const [PreviewImg, SetPreviewImg] = useState(Avatar1);
+  const [PreviewImg, SetPreviewImg] = useState(MockupLogo);
   const [Name, setName] = useState('');
   const [ImageShop, setImageShop] = useState<File | null>(null);
   const [Status, setStatus] = useState('');

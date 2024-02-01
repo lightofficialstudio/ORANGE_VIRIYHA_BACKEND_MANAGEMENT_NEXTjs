@@ -12,7 +12,7 @@ import BackendUserForm from 'components/viriyha_components/form/user/BackendUser
 
 const BannerCreatePage = () => {
   return (
-    <Page title="สร้างแบนเนอร์">
+    <Page title="สร้างผู้ใช้งานใหม่">
       <GoBackButton Link={`/admin/users/backend/`} />
       <MainCard>
         <BackendUserForm titleMessage={'สร้างผู้ใช้ใหม่'} confirmMessage={'สร้างข้อมูล'} />

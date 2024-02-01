@@ -15,8 +15,8 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 // Dialog
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
-// Avatar
-const Avatar1 = '/assets/images/users/avatar-2.png';
+// Mockup Logo
+const MockupLogo = '/assets/mockup/user.png';
 // autocomplete options
 
 const EnumStatus = [
@@ -38,7 +38,7 @@ type CategoryFormProps = {
 const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormProps) => {
   const [error, setError] = useState('');
   // const context = React.useContext(JWTContext);
-  const [PreviewImg, SetPreviewImg] = useState(Avatar1);
+  const [PreviewImg, SetPreviewImg] = useState(MockupLogo);
   const [Name, setName] = useState('');
   const [Username, setUsername] = useState('');
   const [Password, setPassword] = useState('');
@@ -55,7 +55,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
 
   React.useEffect(() => {
     if (primaryId) {
-      axiosServices.get(`/api/category/${primaryId}`).then((response) => {
+      axiosServices.get(`/api/user_backend/${primaryId}`).then((response) => {
         console.log(response);
         setUsername(response.data.username);
         setEmail(response.data.email);
@@ -63,7 +63,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
         setPhonenumber(response.data.phonenumber);
         setStatus(response.data.status);
         setRole(response.data.role);
-        SetPreviewImg(`${imgUrl}/${response.data.image}`);
+        if (response.data.image) {
+          SetPreviewImg(`${imgUrl}/${response.data.image}`);
+        }
         setDescription(response.data.description);
       });
     }
@@ -239,7 +241,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       }}
                     />
                   </Grid>
-                  
+
                   <Grid item xs={6}>
                     <InputLabel required>ระดับสิทธิ์ผู้ใช้งาน</InputLabel>
                     <Autocomplete

@@ -87,14 +87,14 @@ const headCells: HeadCell[] = [
     id: 'name',
     numeric: false,
     label: 'ชื่อร้านค้า',
-    align: 'left'
+    align: 'center'
   },
 
   {
     id: 'created_by',
     numeric: true,
     label: 'ผู้ที่สร้าง',
-    align: 'center'
+    align: 'right'
   },
   {
     id: 'createdAt',
@@ -452,7 +452,7 @@ const ShopListTable = () => {
                       </TableCell>
                       <TableCell align="center">{row.name}</TableCell>
 
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
+                      <TableCell align="right">{row.createdBy?.username}</TableCell>
 
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">

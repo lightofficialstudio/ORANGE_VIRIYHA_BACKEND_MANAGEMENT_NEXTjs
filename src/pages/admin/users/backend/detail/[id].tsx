@@ -11,11 +11,11 @@ import BackendUserForm from 'components/viriyha_components/form/user/BackendUser
 // Type
 
 const BannerCreatePage = () => {
-    const router = useRouter();
-    const { id } = router.query;
+  const router = useRouter();
+  const { id } = router.query;
   return (
     <Page title="สร้างแบนเนอร์">
-      <GoBackButton Link={`/admin/banners/`} />
+      <GoBackButton Link={`/admin/users/backend/`} />
       <MainCard>
         <BackendUserForm titleMessage={'สร้างผู้ใช้ใหม่'} confirmMessage={'สร้างข้อมูล'} primaryId={id as string} />
       </MainCard>
