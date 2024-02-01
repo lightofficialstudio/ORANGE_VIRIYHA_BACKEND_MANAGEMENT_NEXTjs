@@ -5,8 +5,6 @@ import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
   CardContent,
-  Checkbox,
-  Fab,
   Grid,
   IconButton,
   InputAdornment,
@@ -32,13 +30,9 @@ import { useDispatch, useSelector } from 'store';
 import { getCategory } from 'store/slices/viriyha/category';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
-import AddIcon from '@mui/icons-material/AddTwoTone';
-import Link from 'next/link';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -76,20 +70,32 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อหมวดหมู่',
+    label: 'ชื่อสิทธิพิเศษ',
     align: 'left'
   },
   {
-    id: 'created_by',
-    numeric: true,
-    label: 'ผู้ที่สร้าง',
+    id: 'code',
+    numeric: false,
+    label: 'โค้ดที่ถูกใช้งาน',
     align: 'center'
   },
   {
-    id: 'createdAt',
+    id: 'code_used_byName',
     numeric: true,
-    label: 'สร้างเมื่อวันที่',
+    label: 'โค้ดถูกใช้งานโดย',
     align: 'center'
+  },
+  {
+    id: 'code_used_byPhone',
+    numeric: true,
+    label: 'เบอร์มือถือที่ใช้งาน',
+    align: 'center'
+  },
+  {
+    id: 'code_used_date',
+    numeric: true,
+    label: 'วันที่ใช้งาน',
+    align: 'right'
   },
   {
     id: 'status',
@@ -156,17 +162,6 @@ function EnhancedTableHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" sx={{ pl: 3 }}>
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts'
-            }}
-          />
-        </TableCell>
         {numSelected > 0 && (
           <TableCell padding="none" colSpan={8}>
             <EnhancedTableToolbar numSelected={selected.length} />
@@ -194,13 +189,13 @@ function EnhancedTableHead({
               </TableSortLabel>
             </TableCell>
           ))}
-        {numSelected <= 0 && (
+        {/* {numSelected <= 0 && (
           <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
             <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
               จัดการ
             </Typography>
           </TableCell>
-        )}
+        )} */}
       </TableRow>
     </TableHead>
   );
@@ -213,7 +208,6 @@ const RedeemTransactionTable = () => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('calories');
-  const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
@@ -260,33 +254,6 @@ const RedeemTransactionTable = () => {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.name);
-      setSelected(newSelectedId);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    console.log(newSelected);
-
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
     setPage(newPage);
   };
@@ -296,19 +263,33 @@ const RedeemTransactionTable = () => {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const generateRandomCode = () => {
+    const parts = [];
+    for (let i = 0; i < 4; i++) {
+      let part = '';
+      for (let j = 0; j < 4; j++) {
+        const randomChar = Math.random().toString(36).charAt(2);
+        part += randomChar;
+      }
+      parts.push(part);
+    }
+    return parts.join('-');
+  };
+
+  const randomCode = generateRandomCode();
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
     <>
       <CardContent>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
+        <Grid container justifyContent="space-between" spacing={0}>
           <Grid item xs={12} sm={6}>
             <TextField
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
+                    <SearchIcon fontSize="medium" />
                   </InputAdornment>
                 )
               }}
@@ -318,27 +299,6 @@ const RedeemTransactionTable = () => {
               size="medium"
             />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-            <Tooltip title="ลบ">
-              <IconButton size="large">
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="ตัวกรอง">
-              <IconButton size="large">
-                <FilterListIcon />
-              </IconButton>
-            </Tooltip>
-
-            {/* product add & dialog */}
-            <Link href={'/admin/category/create'}>
-              <Tooltip title="เพิ่มหมวดหมู่">
-                <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
-                  <AddIcon fontSize="small" />
-                </Fab>
-              </Tooltip>
-            </Link>
-          </Grid>
         </Grid>
       </CardContent>
 
@@ -346,14 +306,16 @@ const RedeemTransactionTable = () => {
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
           <EnhancedTableHead
-            numSelected={selected.length}
             order={order}
             orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={rows.length}
             theme={theme}
-            selected={selected}
+            selected={[]}
+            onSelectAllClick={function (e: React.ChangeEvent<HTMLInputElement>): void {
+              throw new Error('Function not implemented.');
+            }}
+            numSelected={0}
           />
           <TableBody>
             {Array.isArray(rows) &&
@@ -362,60 +324,18 @@ const RedeemTransactionTable = () => {
                 .map((row, index) => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
-
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
                   return (
-                    <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          #{row.id}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
-                        </Typography>
-                      </TableCell>
-
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
-
+                    <TableRow hover tabIndex={-1} key={index}>
+                      <TableCell align="center">{row.id}</TableCell>
+                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="center">{randomCode}</TableCell>
+                      <TableCell align="center">นายสมชาย ใจดี</TableCell>
+                      <TableCell align="center">081-345-7890</TableCell>
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">
-                        {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                        {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
+                        {row.status === `ACTIVE` && <Chip label="ถูกใช้งานแล้ว" size="small" chipcolor="orange" />}
+                        {row.status === `INACTIVE` && <Chip label="ยังไม่ถูกใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
-                      </TableCell>
-                      <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/category/edit/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
-                        </Link>
                       </TableCell>
                     </TableRow>
                   );

@@ -43,7 +43,7 @@ const report: NavItemType = {
       id: 'report_redeem',
       title: <FormattedMessage id="Redeem Transaction" />,
       type: 'item',
-      url: '/report/attempt',
+      url: '/report/redeem',
       icon: icons.IconLayersIntersect,
       breadcrumbs: false
     },

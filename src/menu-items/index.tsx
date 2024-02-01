@@ -17,7 +17,7 @@ import logs from './logs';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems: { items: NavItemType[] } = {
-  items: [dashboard,admin, campaign, report, logs, application, forms, elements, samplePage, pages, utilities, support, other]
+  items: [dashboard, admin, campaign, report, logs, application, forms, elements, samplePage, pages, utilities, support, other]
   // items: [admin, campaign, report, dashboard, logs]
 };
 
