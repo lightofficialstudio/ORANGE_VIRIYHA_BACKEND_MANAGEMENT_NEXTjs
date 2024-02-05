@@ -29,8 +29,8 @@ import { visuallyHidden } from '@mui/utils';
 import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
-import { ShopManagementType } from '../../../types/viriyha_type/shop';
-import { getShopList } from 'store/slices/viriyha/shop';
+import { SegmentType } from 'types/viriyha_type/segment';
+import { getSegment } from 'store/slices/viriyha/segment';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
@@ -57,10 +57,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: ShopManagementType[], comparator: (a: ShopManagementType, b: ShopManagementType) => number) {
-  const stabilizedThis = array?.map((el: ShopManagementType, index: number) => [el, index]);
+function stableSort(array: SegmentType[], comparator: (a: SegmentType, b: SegmentType) => number) {
+  const stabilizedThis = array?.map((el: SegmentType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as ShopManagementType, b[0] as ShopManagementType);
+    const order = comparator(a[0] as SegmentType, b[0] as SegmentType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -83,22 +83,16 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
-    id: 'created_by',
-    numeric: true,
-    label: 'ผู้ที่สร้าง',
-    align: 'right'
+    id: 'status',
+    numeric: false,
+    label: 'สถานะ',
+    align: 'center'
   },
   {
     id: 'createdAt',
     numeric: true,
     label: 'สร้างเมื่อวันที่',
     align: 'right'
-  },
-  {
-    id: 'status',
-    numeric: false,
-    label: 'สถานะ',
-    align: 'center'
   }
 ];
 
@@ -220,17 +214,17 @@ const SegmentTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<ShopManagementType[]>([]);
+  const [rows, setRows] = React.useState<SegmentType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
-  const { shop } = useSelector((state) => state.shop);
+  const { segment } = useSelector((state) => state.segment);
   //   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/shop/';
 
   React.useEffect(() => {
-    dispatch(getShopList());
+    dispatch(getSegment());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(shop);
-  }, [shop]);
+    setRows(segment);
+  }, [segment]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -255,7 +249,7 @@ const SegmentTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(shop);
+      setRows(segment);
     }
   };
 
@@ -329,7 +323,7 @@ const SegmentTable = () => {
           };
           axiosServices.post(`/api/shop/delete`, { ids: selected }, header);
           Swal.fire('ลบรายการนี้เรียบร้อยแล้ว!', '', 'success');
-          dispatch(getShopList());
+          dispatch(getSegment());
           setSelected([]);
         } catch (error: any) {
           setErrorMessage(error.message);
@@ -439,15 +433,15 @@ const SegmentTable = () => {
                         </Typography>
                       </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="right">{row.createdBy?.username}</TableCell>
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
+                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
+
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/shop/detail/${row.id}`}>
+                        <Link href={`/admin/segment/edit/${row.id}`}>
                           <IconButton color="secondary" size="large">
                             <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>

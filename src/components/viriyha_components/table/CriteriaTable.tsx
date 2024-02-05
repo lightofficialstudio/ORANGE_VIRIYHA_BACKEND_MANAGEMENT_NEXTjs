@@ -29,8 +29,8 @@ import { visuallyHidden } from '@mui/utils';
 import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
-import { ShopManagementType } from '../../../types/viriyha_type/shop';
-import { getShopList } from 'store/slices/viriyha/shop';
+import { CriteriaType } from 'types/viriyha_type/criteria';
+import { getCriteria } from 'store/slices/viriyha/criteria';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
@@ -57,10 +57,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: ShopManagementType[], comparator: (a: ShopManagementType, b: ShopManagementType) => number) {
-  const stabilizedThis = array?.map((el: ShopManagementType, index: number) => [el, index]);
+function stableSort(array: CriteriaType[], comparator: (a: CriteriaType, b: CriteriaType) => number) {
+  const stabilizedThis = array?.map((el: CriteriaType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as ShopManagementType, b[0] as ShopManagementType);
+    const order = comparator(a[0] as CriteriaType, b[0] as CriteriaType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -79,26 +79,20 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อ Criteria',
+    label: 'ชื่อ Segment',
     align: 'left'
-  },
-  {
-    id: 'created_by',
-    numeric: true,
-    label: 'ผู้ที่สร้าง',
-    align: 'right'
-  },
-  {
-    id: 'createdAt',
-    numeric: true,
-    label: 'สร้างเมื่อวันที่',
-    align: 'right'
   },
   {
     id: 'status',
     numeric: false,
     label: 'สถานะ',
     align: 'center'
+  },
+  {
+    id: 'createdAt',
+    numeric: true,
+    label: 'สร้างเมื่อวันที่',
+    align: 'right'
   }
 ];
 
@@ -220,17 +214,17 @@ const CriteriaTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<ShopManagementType[]>([]);
+  const [rows, setRows] = React.useState<CriteriaType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
-  const { shop } = useSelector((state) => state.shop);
+  const { criteria } = useSelector((state) => state.criteria);
   //   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/shop/';
 
   React.useEffect(() => {
-    dispatch(getShopList());
+    dispatch(getCriteria());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(shop);
-  }, [shop]);
+    setRows(criteria);
+  }, [criteria]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -255,7 +249,7 @@ const CriteriaTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(shop);
+      setRows(criteria);
     }
   };
 
@@ -327,9 +321,9 @@ const CriteriaTable = () => {
               'Content-Type': 'application/json'
             }
           };
-          axiosServices.post(`/api/shop/delete`, { ids: selected }, header);
+          axiosServices.post(`/api/criteria/delete`, { ids: selected }, header);
           Swal.fire('ลบรายการนี้เรียบร้อยแล้ว!', '', 'success');
-          dispatch(getShopList());
+          dispatch(getCriteria());
           setSelected([]);
         } catch (error: any) {
           setErrorMessage(error.message);
@@ -439,15 +433,14 @@ const CriteriaTable = () => {
                         </Typography>
                       </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="right">{row.createdBy?.username}</TableCell>
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
+                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/criteria/detail/${row.id}`}>
+                        <Link href={`/admin/criteria/edit/${row.id}`}>
                           <IconButton color="secondary" size="large">
                             <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>

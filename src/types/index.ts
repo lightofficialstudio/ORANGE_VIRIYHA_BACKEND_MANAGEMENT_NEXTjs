@@ -30,6 +30,8 @@ import { ShopStateProps } from './viriyha_type/shop';
 import { BannerStateProps } from './viriyha_type/banner';
 import { UserBackendStateProps } from './viriyha_type/backend_user';
 import { BranchStateProps } from './viriyha_type/branch';
+import { SegmentStateProps } from './viriyha_type/segment';
+import { CriteriaStateProps } from './viriyha_type/criteria';
 
 export type ArrangementOrder = 'asc' | 'desc' | undefined;
 
@@ -136,6 +138,8 @@ export interface DefaultRootStateProps {
   banner: BannerStateProps;
   user_backend: UserBackendStateProps;
   branch: BranchStateProps;
+  segment: SegmentStateProps;
+  criteria: CriteriaStateProps;
 }
 
 export interface ColorProps {

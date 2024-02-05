@@ -21,6 +21,8 @@ import shopReducer from './slices/viriyha/shop';
 import bannerReducer from './slices/viriyha/banner';
 import user_backendReducer from './slices/viriyha/user_backend';
 import branchReducer from './slices/viriyha/branch';
+import segmentReducer from './slices/viriyha/segment';
+import criteriaReducer from './slices/viriyha/criteria';
 // ==============================|| COMBINE REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -47,7 +49,9 @@ const reducer = combineReducers({
   shop: shopReducer,
   banner: bannerReducer,
   user_backend: user_backendReducer,
-  branch: branchReducer
+  branch: branchReducer,
+  segment: segmentReducer,
+  criteria: criteriaReducer
 });
 
 export default reducer;

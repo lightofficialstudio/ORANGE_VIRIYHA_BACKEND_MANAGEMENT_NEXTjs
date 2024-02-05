@@ -40,7 +40,7 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
 
   React.useEffect(() => {
     if (primaryId) {
-      axiosServices.get(`/api/shop/${primaryId}`).then((response) => {
+      axiosServices.get(`/api/criteria/${primaryId}`).then((response) => {
         console.log(response);
         setName(response.data.name);
         setStatus(response.data.status);
@@ -67,22 +67,22 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
     try {
       let response;
       if (primaryId) {
-        response = await axiosServices.put(`/api/segment/update/${primaryId}`, formData, {
+        response = await axiosServices.put(`/api/criteria/update/${primaryId}`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'application/json'
           }
         });
       } else {
-        response = await axiosServices.post('/api/segment/create', formData, {
+        response = await axiosServices.post('/api/criteria/create', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'application/json'
           }
         });
       }
       console.log(response);
       if (response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = '/admin/shop';
+        window.location.href = '/admin/criteria';
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response.statusText);
@@ -102,7 +102,7 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
               <SubCard title={false}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <InputLabel required>ชื่อ Segment</InputLabel>
+                    <InputLabel required>ชื่อ Criteria</InputLabel>
                     <TextField
                       fullWidth
                       placeholder="เช่น Bronze หรือ Silver หรือ Gold หรือ Platinum หรือ Diamond หรือ VIP หรือ ฯลฯ"
@@ -142,7 +142,7 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
                       </Button>
                     </AnimateButton>
                     <AnimateButton>
-                      <Button href={`/admin/segment/`} variant="contained" color="error">
+                      <Button href={`/admin/criteria/`} variant="contained" color="error">
                         ยกเลิก
                       </Button>
                     </AnimateButton>

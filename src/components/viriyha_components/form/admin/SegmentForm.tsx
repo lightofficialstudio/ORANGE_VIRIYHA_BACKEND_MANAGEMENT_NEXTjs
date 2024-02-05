@@ -28,8 +28,6 @@ type SegmentFormProps = {
 };
 
 const SegmentForm = ({ titleMessage, confirmMessage, primaryId }: SegmentFormProps) => {
-  //   const router = useRouter();
-  //   const { id } = router.query;
   const context = React.useContext(JWTContext);
   const [Name, setName] = useState('');
   const [Status, setStatus] = useState('');
@@ -40,7 +38,7 @@ const SegmentForm = ({ titleMessage, confirmMessage, primaryId }: SegmentFormPro
 
   React.useEffect(() => {
     if (primaryId) {
-      axiosServices.get(`/api/shop/${primaryId}`).then((response) => {
+      axiosServices.get(`/api/segment/${primaryId}`).then((response) => {
         console.log(response);
         setName(response.data.name);
         setStatus(response.data.status);
@@ -69,20 +67,20 @@ const SegmentForm = ({ titleMessage, confirmMessage, primaryId }: SegmentFormPro
       if (primaryId) {
         response = await axiosServices.put(`/api/segment/update/${primaryId}`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'application/json'
           }
         });
       } else {
         response = await axiosServices.post('/api/segment/create', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'application/json'
           }
         });
       }
       console.log(response);
       if (response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = '/admin/shop';
+        window.location.href = '/admin/segment';
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response.statusText);
