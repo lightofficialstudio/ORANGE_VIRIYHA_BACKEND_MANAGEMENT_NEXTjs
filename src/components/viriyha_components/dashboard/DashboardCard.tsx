@@ -61,11 +61,13 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-interface EarningCardProps {
+interface DashboardCardProps {
   isLoading: boolean;
+  titleMessage: string;
+  param: string;
 }
 
-const DashboardCard = ({ isLoading }: EarningCardProps) => {
+const DashboardCard = ({ isLoading, titleMessage, param }: DashboardCardProps) => {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState<Element | ((element: Element) => Element) | null | undefined>(null);
@@ -176,7 +178,7 @@ const DashboardCard = ({ isLoading }: EarningCardProps) => {
                     color: theme.palette.mode === 'dark' ? theme.palette.text.secondary : theme.palette.secondary[200]
                   }}
                 >
-                  การใช้งานโค้ดวันนี้
+                  {titleMessage}
                 </Typography>
               </Grid>
             </Grid>

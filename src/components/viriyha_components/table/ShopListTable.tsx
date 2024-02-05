@@ -440,7 +440,6 @@ const ShopListTable = () => {
                           }}
                         />
                       </TableCell>
-
                       <TableCell>
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
                           {' '}
@@ -451,9 +450,7 @@ const ShopListTable = () => {
                         <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="product images" />
                       </TableCell>
                       <TableCell align="center">{row.name}</TableCell>
-
                       <TableCell align="right">{row.createdBy?.username}</TableCell>
-
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}

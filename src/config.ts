@@ -7,17 +7,17 @@ import { ConfigProps } from 'types/config';
 // like '/berry-material-react/react/default'
 export const BASE_PATH = '';
 
-export const DASHBOARD_PATH = '/dashboard/default';
+export const DASHBOARD_PATH = '/dashboard/web-analytics';
 export const HORIZONTAL_MAX_ITEM = 7;
 
 const config: ConfigProps = {
   layout: LAYOUT_CONST.VERTICAL_LAYOUT,
   drawerType: LAYOUT_CONST.DEFAULT_DRAWER,
   fontFamily: 'LineSeedTH', // เปลี่ยนเป็น 'LineSeedTH'
-  borderRadius: 8,
+  borderRadius: 20,
   outlinedFilled: true,
   navType: 'light',
-  presetColor: 'default',
+  presetColor: 'theme6',
   locale: 'en',
   rtlLayout: false,
   container: false

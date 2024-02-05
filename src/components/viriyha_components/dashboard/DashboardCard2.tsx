@@ -192,9 +192,9 @@ const DashboardCard2 = ({ isLoading }: TotalOrderLineChartCardProps) => {
                     <Grid container alignItems="center">
                       <Grid item>
                         {timeValue ? (
-                          <Typography sx={{ fontSize: '33px', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>25,324 โค้ด</Typography>
+                          <Typography sx={{ fontSize: '33px', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>253,324 ครั้ง</Typography>
                         ) : (
-                          <Typography sx={{ fontSize: '33px', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>961 โค้ด</Typography>
+                          <Typography sx={{ fontSize: '33px', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>961,324 ครั้ง</Typography>
                         )}
                       </Grid>
                       <Grid item>
@@ -217,7 +217,7 @@ const DashboardCard2 = ({ isLoading }: TotalOrderLineChartCardProps) => {
                             color: theme.palette.mode === 'dark' ? theme.palette.text.secondary : theme.palette.primary[200]
                           }}
                         >
-                          เฉลี่ยการใช้งานโค้ด
+                          การเข้าชมเว็บไซต์
                         </Typography>
                       </Grid>
                     </Grid>

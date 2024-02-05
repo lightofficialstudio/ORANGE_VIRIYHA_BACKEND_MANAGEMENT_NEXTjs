@@ -40,6 +40,9 @@ import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, H
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
 import Avatar from 'ui-component/extended/Avatar';
+import ControlCameraIcon from '@mui/icons-material/ControlCamera';
+import Swal from 'sweetalert2';
+import axiosServices from 'utils/axios';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -75,16 +78,22 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
+    id: 'position',
+    numeric: true,
+    label: 'ตำแหน่ง',
+    align: 'right'
+  },
+  {
     id: 'image',
     numeric: false,
     label: 'รูปภาพ',
-    align: 'center'
+    align: 'left'
   },
   {
     id: 'name',
     numeric: false,
     label: 'ชื่อหมวดหมู่',
-    align: 'left'
+    align: 'center'
   },
   {
     id: 'created_by',
@@ -96,7 +105,7 @@ const headCells: HeadCell[] = [
     id: 'createdAt',
     numeric: true,
     label: 'สร้างเมื่อวันที่',
-    align: 'center'
+    align: 'right'
   },
   {
     id: 'status',
@@ -225,6 +234,7 @@ const CategoryTable = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<CategoryType[]>([]);
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
   const { category } = useSelector((state) => state.category);
   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category/';
 
@@ -270,7 +280,7 @@ const CategoryTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.name);
+      const newSelectedId = rows.map((n) => n.id);
       setSelected(newSelectedId);
       return;
     }
@@ -304,7 +314,67 @@ const CategoryTable = () => {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (selected.length === 0) {
+      Swal.fire({
+        title: 'โปรดเลือกรายการที่ต้องการลบก่อน!',
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: 'เข้าใจแล้ว'
+      });
+      return;
+    }
+    Swal.fire({
+      title: 'ต้องการลบรายการ?',
+      text: 'โปรดระวังการลบข้อมูลเป็นเรื่องที่ละเอียดอ่อน คุณไม่สามารถกู้ข้อมูลที่ลบไปแล้วได้!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ลบทันที!',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          const header = {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+          axiosServices.post(`/api/category/deleteMany`, { ids: selected }, header).then((response: any) => {
+            if (response.data) {
+              Swal.fire({
+                title: 'คุณทำรายการสำเร็จ',
+                text: response.data.message,
+                icon: 'success',
+                confirmButtonText: 'รับทราบ!'
+              });
+            }
+          });
+          setTimeout(() => {
+            dispatch(getCategory());
+          }, 1000);
+          setSelected([]);
+        } catch (error: any) {
+          setErrorMessage(error.message);
+          Swal.fire({
+            title: 'เกิดข้อผิดพลาดในการลบรายการนี้!',
+            text: errorMessage,
+            icon: 'error',
+            showCancelButton: false,
+            confirmButtonText: 'รับทราบ!'
+          });
+        }
+      } else {
+        Swal.fire({
+          title: 'การลบรายการถูกยกเลิก',
+          text: '',
+          icon: 'error',
+          confirmButtonText: 'รับทราบ'
+        });
+      }
+    });
+  };
+
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
@@ -329,7 +399,11 @@ const CategoryTable = () => {
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
             <Tooltip title="ลบ">
               <IconButton size="large">
-                <DeleteIcon />
+                <DeleteIcon
+                  onClick={(e: any) => {
+                    handleDelete(e);
+                  }}
+                />
               </IconButton>
             </Tooltip>
             <Tooltip title="ตัวกรอง">
@@ -371,12 +445,12 @@ const CategoryTable = () => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
+                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.id)}>
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}
@@ -385,37 +459,15 @@ const CategoryTable = () => {
                           }}
                         />
                       </TableCell>
+                      <TableCell align="left">{row.id}</TableCell>
+                      <TableCell align="right">{row.id}</TableCell>
                       <TableCell align="center">
                         <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="category images" />
                       </TableCell>
 
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          #{row.id}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
-                        </Typography>
-                      </TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
 
                       <TableCell align="center">{row.createdBy?.username}</TableCell>
-
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
@@ -424,10 +476,17 @@ const CategoryTable = () => {
                       </TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
                         <Link href={`/admin/category/edit/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
+                          <Tooltip title="แก้ไขข้อมูล">
+                            <IconButton color="secondary" size="large">
+                              <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                            </IconButton>
+                          </Tooltip>
                         </Link>
+                        <Tooltip title="จัดการตำแหน่ง">
+                          <IconButton color="secondary" size="large">
+                            <ControlCameraIcon sx={{ fontSize: '1.3rem' }} />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   );

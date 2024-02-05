@@ -27,7 +27,7 @@ const Dashboard = () => {
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item lg={6} md={6} sm={6} xs={12}>
-              <DashboardCard isLoading={isLoading} />
+              <DashboardCard isLoading={isLoading} param={'23,423'} titleMessage={'การเข้าชมเว็บไซต์ทั้งหมด'} />
             </Grid>
             <Grid item lg={6} md={6} sm={6} xs={12}>
               <DashboardCard2 isLoading={isLoading} />
@@ -62,24 +62,6 @@ const Dashboard = () => {
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
                   <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์ทั้งหมด'} paramClick={'802,532'} />
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Grid container spacing={gridSpacing}>
-            <Grid item xs={12} md={8}>
-              <DashboardGraph titleMessage={'กราฟการใช้งานโค้ด'} />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Grid container spacing={gridSpacing}>
-                <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardCard3 isLoading={isLoading} titleMessage={'โค้ดที่ใช้งานแล้ว วันนี้'} paramClick={'23,423'} />
-                </Grid>
-                <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardLightCard isLoading={isLoading} titleMessage={'โค้ดที่ยังไม่ถูกใช้งาน วันนี้'} paramClick={'802,532'} />
                 </Grid>
               </Grid>
             </Grid>

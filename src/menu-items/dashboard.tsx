@@ -21,22 +21,30 @@ const dashboard: NavItemType = {
   type: 'group',
   children: [
     {
-      id: 'viriyha_dashboard',
-      title: <FormattedMessage id="Dashboard" />,
+      id: 'web_analytics_dashboard',
+      title: <FormattedMessage id="Web Analytics Dashboard" />,
       type: 'item',
-      url: '/dashboard/',
+      url: '/dashboard/web-analytics',
       icon: icons.IconDashboard,
       breadcrumbs: false
     },
     {
-      id: 'default',
-      title: <FormattedMessage id="default" />,
+      id: 'campaign_analytics_dashboard',
+      title: <FormattedMessage id="Campaign Dashboard" />,
       type: 'item',
-      url: '/dashboard/default',
+      url: '/dashboard/campaign-analytics',
       icon: icons.IconDashboard,
       breadcrumbs: false
-    },
-    
+    }
+    // {
+    //   id: 'default',
+    //   title: <FormattedMessage id="default" />,
+    //   type: 'item',
+    //   url: '/dashboard/default',
+    //   icon: icons.IconDashboard,
+    //   breadcrumbs: false
+    // }
+
     // {
     //   id: 'analytics',
     //   title: <FormattedMessage id="analytics" />,
