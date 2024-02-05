@@ -199,7 +199,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                       </Button>
                     </AnimateButton>
                     <AnimateButton>
-                      <Button href={`/admin/banners/`} variant="contained" color="error">
+                      <Button href={`/admin/category/`} variant="contained" color="error">
                         ยกเลิก
                       </Button>
                     </AnimateButton>

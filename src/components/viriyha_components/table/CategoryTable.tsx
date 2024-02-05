@@ -460,7 +460,7 @@ const CategoryTable = () => {
                         />
                       </TableCell>
                       <TableCell align="left">{row.id}</TableCell>
-                      <TableCell align="right">{row.id}</TableCell>
+                      <TableCell align="right">{row.position}</TableCell>
                       <TableCell align="center">
                         <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="category images" />
                       </TableCell>

@@ -9,17 +9,17 @@ import GoBackButton from 'components/viriyha_components/button/go_back';
 
 // ==============================|| ORDER LIST ||============================== //
 
-const ShopDetailPage = () => {
+const CreateCategoryPage = () => {
   return (
-    <Page title="Shop Detail">
+    <Page title="Create Category Page">
       <GoBackButton Link={`/admin/category/`} />
       <CategoryForm titleMessage={'สร้างหมวดหมู่'} confirmMessage={'สร้างข้อมูล'} />
     </Page>
   );
 };
 
-ShopDetailPage.getLayout = function getLayout(page: ReactElement) {
+CreateCategoryPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default ShopDetailPage;
+export default CreateCategoryPage;
