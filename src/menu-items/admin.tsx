@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconPhoto, IconCategory, IconBuildingStore, IconUser } from '@tabler/icons';
+import { IconPhoto, IconCategory, IconBuildingStore, IconUser, IconAdjustments, IconVectorTriangle } from '@tabler/icons';
 
 // type
 import { NavItemType } from 'types';
@@ -11,7 +11,9 @@ const icons = {
   IconPhoto: IconPhoto,
   IconCategory: IconCategory,
   IconBuildingStore: IconBuildingStore,
-  IconUser: IconUser
+  IconUser: IconUser,
+  IconAdjustments: IconAdjustments,
+  IconVectorTriangle: IconVectorTriangle
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -24,7 +26,7 @@ const admin: NavItemType = {
   children: [
     {
       id: 'banner_management',
-      title: <FormattedMessage id="Banner Management" />,
+      title: <FormattedMessage id="Banner" />,
       type: 'item',
       url: '/admin/banners',
       icon: icons.IconPhoto,
@@ -32,7 +34,7 @@ const admin: NavItemType = {
     },
     {
       id: 'category_management',
-      title: <FormattedMessage id="Category Management" />,
+      title: <FormattedMessage id="Category" />,
       type: 'item',
       url: '/admin/category',
       icon: icons.IconCategory,
@@ -40,10 +42,26 @@ const admin: NavItemType = {
     },
     {
       id: 'shop_management',
-      title: <FormattedMessage id="Shop Management" />,
+      title: <FormattedMessage id="Shop" />,
       type: 'item',
       url: '/admin/shop',
       icon: icons.IconBuildingStore,
+      breadcrumbs: false
+    },
+    {
+      id: 'segment_management',
+      title: <FormattedMessage id="Segment" />,
+      type: 'item',
+      url: '/admin/segment',
+      icon: icons.IconAdjustments,
+      breadcrumbs: false
+    },
+    {
+      id: 'criteria_management',
+      title: <FormattedMessage id="Criteria" />,
+      type: 'item',
+      url: '/admin/criteria',
+      icon: icons.IconVectorTriangle,
       breadcrumbs: false
     },
     {

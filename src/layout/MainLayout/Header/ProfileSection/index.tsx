@@ -5,22 +5,16 @@ import { useTheme } from '@mui/material/styles';
 import {
   Avatar,
   Box,
-  Card,
-  CardContent,
   Chip,
   ClickAwayListener,
   Divider,
-  Grid,
-  InputAdornment,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  OutlinedInput,
   Paper,
   Popper,
   Stack,
-  Switch,
   Typography
 } from '@mui/material';
 
@@ -31,11 +25,11 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
-import UpgradePlanCard from './UpgradePlanCard';
+// import UpgradePlanCard from './UpgradePlanCard';
 import useAuth from 'hooks/useAuth';
 
 // assets
-import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
+import { IconLogout, IconSettings } from '@tabler/icons';
 import useConfig from 'hooks/useConfig';
 
 const User1 = '/assets/images/users/user-round.svg';
@@ -45,11 +39,6 @@ const User1 = '/assets/images/users/user-round.svg';
 const ProfileSection = () => {
   const theme = useTheme();
   const { borderRadius } = useConfig();
-  // const navigate = useNavigate();
-
-  const [sdm, setSdm] = useState(true);
-  const [value, setValue] = useState('');
-  const [notification, setNotification] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const { logout, user } = useAuth();
   const [open, setOpen] = useState(false);
@@ -164,14 +153,15 @@ const ProfileSection = () => {
                     <Box sx={{ p: 2, pb: 0 }}>
                       <Stack>
                         <Stack direction="row" spacing={0.5} alignItems="center">
-                          <Typography variant="h4">Good Morning,</Typography>
+                          <Typography variant="h4">ยินดีต้อนรับ คุณ,</Typography>
                           <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                            {user?.name}
+                            {user?.id}
                           </Typography>
                         </Stack>
-                        <Typography variant="subtitle2">Project Admin</Typography>
+                        <Typography variant="subtitle2">ตำแหน่งโรล</Typography>
                       </Stack>
-                      <OutlinedInput
+                    </Box>
+                    {/* <OutlinedInput
                         sx={{ width: '100%', pr: 1, pl: 2, my: 2 }}
                         id="input-search-profile"
                         value={value}
@@ -188,12 +178,12 @@ const ProfileSection = () => {
                         }}
                       />
                       <Divider />
-                    </Box>
+                    </Box> */}
                     <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
                       <Box sx={{ p: 2, pt: 0 }}>
-                        <UpgradePlanCard />
-                        <Divider />
-                        <Card
+                        {/* <UpgradePlanCard /> */}
+                        {/* <Divider /> */}
+                        {/* <Card
                           sx={{
                             bgcolor: theme.palette.mode === 'dark' ? theme.palette.dark[800] : theme.palette.primary.light,
                             my: 2
@@ -234,7 +224,7 @@ const ProfileSection = () => {
                               </Grid>
                             </Grid>
                           </CardContent>
-                        </Card>
+                        </Card> */}
                         <Divider />
                         <List
                           component="nav"
@@ -265,36 +255,12 @@ const ProfileSection = () => {
                             <ListItemText
                               primary={
                                 <Typography variant="body2">
-                                  <FormattedMessage id="account-settings" />
+                                  <FormattedMessage id="จัดการข้อมูลส่วนตัว" />
                                 </Typography>
                               }
                             />
                           </ListItemButton>
-                          <ListItemButton
-                            sx={{ borderRadius: `${borderRadius}px` }}
-                            selected={selectedIndex === 1}
-                            onClick={(event: React.MouseEvent<HTMLDivElement>) =>
-                              handleListItemClick(event, 1, '/user/social-profile/posts')
-                            }
-                          >
-                            <ListItemIcon>
-                              <IconUser stroke={1.5} size="20px" />
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={
-                                <Grid container spacing={1} justifyContent="space-between">
-                                  <Grid item>
-                                    <Typography variant="body2">
-                                      <FormattedMessage id="social-profile" />
-                                    </Typography>
-                                  </Grid>
-                                  <Grid item>
-                                    <Chip label="02" size="small" color="warning" sx={{ '& .MuiChip-label': { mt: 0.25 } }} />
-                                  </Grid>
-                                </Grid>
-                              }
-                            />
-                          </ListItemButton>
+
                           <ListItemButton sx={{ borderRadius: `${borderRadius}px` }} selected={selectedIndex === 4} onClick={handleLogout}>
                             <ListItemIcon>
                               <IconLogout stroke={1.5} size="20px" />
@@ -302,7 +268,7 @@ const ProfileSection = () => {
                             <ListItemText
                               primary={
                                 <Typography variant="body2">
-                                  <FormattedMessage id="logout" />
+                                  <FormattedMessage id="ออกจากระบบ" />
                                 </Typography>
                               }
                             />

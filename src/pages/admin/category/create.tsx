@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 // project imports
 import Page from 'components/ui-component/Page';
 import Layout from 'layout';
-import CategoryForm from 'components/viriyha_components/form/shop/CategoryForm';
+import CategoryForm from 'components/viriyha_components/form/admin/CategoryForm';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 
 // ==============================|| ORDER LIST ||============================== //

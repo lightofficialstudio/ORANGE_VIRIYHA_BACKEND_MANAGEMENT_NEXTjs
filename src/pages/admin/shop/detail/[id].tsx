@@ -7,7 +7,7 @@ import Page from 'components/ui-component/Page';
 import Layout from 'layout';
 import { Grid } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
-import ShopForm from 'components/viriyha_components/form/shop/ShopForm';
+import ShopForm from 'components/viriyha_components/form/admin/ShopForm';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 
 // project tables

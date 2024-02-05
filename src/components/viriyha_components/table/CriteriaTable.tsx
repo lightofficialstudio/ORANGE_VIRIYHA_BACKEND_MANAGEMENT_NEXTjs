@@ -29,21 +29,17 @@ import { visuallyHidden } from '@mui/utils';
 import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
-import { BannerManagementType } from 'types/viriyha_type/banner';
-import { getBannerList } from 'store/slices/viriyha/banner';
+import { ShopManagementType } from '../../../types/viriyha_type/shop';
+import { getShopList } from 'store/slices/viriyha/shop';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import ControlCameraIcon from '@mui/icons-material/ControlCamera';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
-import Avatar from 'ui-component/extended/Avatar';
-
-// third-party
 import Swal from 'sweetalert2';
 import axiosServices from 'utils/axios';
 
@@ -61,10 +57,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: BannerManagementType[], comparator: (a: BannerManagementType, b: BannerManagementType) => number) {
-  const stabilizedThis = array?.map((el: BannerManagementType, index: number) => [el, index]);
+function stableSort(array: ShopManagementType[], comparator: (a: ShopManagementType, b: ShopManagementType) => number) {
+  const stabilizedThis = array?.map((el: ShopManagementType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as BannerManagementType, b[0] as BannerManagementType);
+    const order = comparator(a[0] as ShopManagementType, b[0] as ShopManagementType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -81,40 +77,22 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
-    id: 'position',
-    numeric: true,
-    label: 'ตำแหน่ง',
-    align: 'right'
-  },
-  {
-    id: 'image',
-    numeric: false,
-    label: 'รูปภาพ',
-    align: 'center'
-  },
-  {
     id: 'name',
     numeric: false,
-    label: 'ชื่อแบนเนอร์',
+    label: 'ชื่อ Criteria',
     align: 'left'
   },
   {
-    id: 'link',
-    numeric: false,
-    label: 'ลิงก์แบนเนอร์',
-    align: 'left'
+    id: 'created_by',
+    numeric: true,
+    label: 'ผู้ที่สร้าง',
+    align: 'right'
   },
   {
     id: 'createdAt',
     numeric: true,
     label: 'สร้างเมื่อวันที่',
     align: 'right'
-  },
-  {
-    id: 'created_by',
-    numeric: true,
-    label: 'ผู้ที่สร้าง',
-    align: 'center'
   },
   {
     id: 'status',
@@ -233,7 +211,7 @@ function EnhancedTableHead({
 
 // ==============================|| ORDER LIST ||============================== //
 
-const BannerTable = () => {
+const CriteriaTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
@@ -242,17 +220,17 @@ const BannerTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<BannerManagementType[]>([]);
+  const [rows, setRows] = React.useState<ShopManagementType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
-  const { banner } = useSelector((state) => state.banner);
-  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner/';
+  const { shop } = useSelector((state) => state.shop);
+  //   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/shop/';
 
   React.useEffect(() => {
-    dispatch(getBannerList());
+    dispatch(getShopList());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(banner);
-  }, [banner]);
+    setRows(shop);
+  }, [shop]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -277,7 +255,7 @@ const BannerTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(banner);
+      setRows(shop);
     }
   };
 
@@ -290,6 +268,7 @@ const BannerTable = () => {
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelectedId = rows.map((n) => n.id);
+      console.log(newSelectedId);
       setSelected(newSelectedId);
       return;
     }
@@ -348,19 +327,9 @@ const BannerTable = () => {
               'Content-Type': 'application/json'
             }
           };
-          axiosServices.post(`/api/banner/delete`, { ids: selected }, header).then((response: any) => {
-            if (response.data) {
-              Swal.fire({
-                title: 'คุณทำรายการสำเร็จ',
-                text: response.data.message,
-                icon: 'success',
-                confirmButtonText: 'รับทราบ!'
-              });
-            }
-          });
-          setTimeout(() => {
-            dispatch(getBannerList());
-          }, 1000);
+          axiosServices.post(`/api/shop/delete`, { ids: selected }, header);
+          Swal.fire('ลบรายการนี้เรียบร้อยแล้ว!', '', 'success');
+          dispatch(getShopList());
           setSelected([]);
         } catch (error: any) {
           setErrorMessage(error.message);
@@ -369,21 +338,16 @@ const BannerTable = () => {
             text: errorMessage,
             icon: 'error',
             showCancelButton: false,
-            confirmButtonText: 'รับทราบ!'
+            confirmButtonText: 'เข้าใจแล้ว'
           });
         }
       } else {
-        Swal.fire({
-          title: 'การลบรายการถูกยกเลิก',
-          text: '',
-          icon: 'error',
-          confirmButtonText: 'รับทราบ'
-        });
+        Swal.fire('เกิดข้อผิดพลาดในการลบรายการนี้!', '', 'error');
       }
     });
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
@@ -420,9 +384,10 @@ const BannerTable = () => {
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
+
             {/* product add & dialog */}
-            <Link href={'/admin/banners/create'}>
-              <Tooltip title="เพิ่มข้อมูล">
+            <Link href={'/admin/criteria/create'}>
+              <Tooltip title="เพิ่ม Criteria">
                 <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                   <AddIcon fontSize="small" />
                 </Fab>
@@ -467,50 +432,26 @@ const BannerTable = () => {
                           }}
                         />
                       </TableCell>
-
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
+                      <TableCell>
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
                           {' '}
                           #{row.id}{' '}
                         </Typography>
                       </TableCell>
-                      <TableCell align="right">{row.position}</TableCell>
-
-                      <TableCell align="center">
-                        <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="product images" />
-                      </TableCell>
-
                       <TableCell align="left">{row.name}</TableCell>
-
-                      <TableCell align="left">{row.link}</TableCell>
-
+                      <TableCell align="right">{row.createdBy?.username}</TableCell>
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
-
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/banners/edit/${row.id}`}>
-                          <Tooltip title="แก้ไขข้อมูล">
-                            <IconButton color="secondary" size="large">
-                              <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                            </IconButton>
-                          </Tooltip>
-                        </Link>
-                        <Tooltip title="จัดการตำแหน่ง">
+                        <Link href={`/admin/criteria/detail/${row.id}`}>
                           <IconButton color="secondary" size="large">
-                            <ControlCameraIcon sx={{ fontSize: '1.3rem' }} />
+                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>
-                        </Tooltip>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   );
@@ -542,4 +483,4 @@ const BannerTable = () => {
   );
 };
 
-export default BannerTable;
+export default CriteriaTable;

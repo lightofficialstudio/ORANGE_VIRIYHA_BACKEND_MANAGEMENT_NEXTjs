@@ -6,7 +6,7 @@ import Page from 'components/ui-component/Page';
 import Layout from 'layout';
 import MainCard from 'ui-component/cards/MainCard';
 import GoBackButton from 'components/viriyha_components/button/go_back';
-import BannerForm from 'components/viriyha_components/form/banner/BannerCreateForm';
+import BannerForm from 'components/viriyha_components/form/admin/BannerForm';
 
 // Type
 

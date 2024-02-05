@@ -2,14 +2,16 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconDashboard, IconDeviceAnalytics } from '@tabler/icons';
+import { IconDashboard, IconDeviceAnalytics, IconChartArcs3, IconGraph } from '@tabler/icons';
 
 // type
 import { NavItemType } from 'types';
 
 const icons = {
   IconDashboard: IconDashboard,
-  IconDeviceAnalytics: IconDeviceAnalytics
+  IconDeviceAnalytics: IconDeviceAnalytics,
+  IconChartArcs3: IconChartArcs3,
+  IconGraph: IconGraph
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -22,18 +24,18 @@ const dashboard: NavItemType = {
   children: [
     {
       id: 'web_analytics_dashboard',
-      title: <FormattedMessage id="Web Analytics Dashboard" />,
+      title: <FormattedMessage id="Web Analytics" />,
       type: 'item',
       url: '/dashboard/web-analytics',
-      icon: icons.IconDashboard,
+      icon: icons.IconChartArcs3,
       breadcrumbs: false
     },
     {
       id: 'campaign_analytics_dashboard',
-      title: <FormattedMessage id="Campaign Dashboard" />,
+      title: <FormattedMessage id="Campaign" />,
       type: 'item',
       url: '/dashboard/campaign-analytics',
-      icon: icons.IconDashboard,
+      icon: icons.IconGraph,
       breadcrumbs: false
     }
     // {

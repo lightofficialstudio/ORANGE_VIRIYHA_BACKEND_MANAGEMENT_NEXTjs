@@ -42,6 +42,10 @@ import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
 import Avatar from 'ui-component/extended/Avatar';
 
+// third-party
+import Swal from 'sweetalert2';
+import axiosServices from 'utils/axios';
+
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
   if (b[orderBy] < a[orderBy]) {
@@ -243,6 +247,7 @@ const BannerTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [rows, setRows] = React.useState<User_BackendType[]>([]);
   const { user_backend } = useSelector((state) => state.user_backend);
   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner/';
@@ -289,19 +294,19 @@ const BannerTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.name);
+      const newSelectedId = rows.map((n) => n.id);
       setSelected(newSelectedId);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: string) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -321,6 +326,66 @@ const BannerTable = () => {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     if (event?.target.value) setRowsPerPage(parseInt(event?.target.value, 10));
     setPage(0);
+  };
+
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (selected.length === 0) {
+      Swal.fire({
+        title: 'โปรดเลือกรายการที่ต้องการลบก่อน!',
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: 'เข้าใจแล้ว'
+      });
+      return;
+    }
+    Swal.fire({
+      title: 'ต้องการลบรายการ?',
+      text: 'โปรดระวังการลบข้อมูลเป็นเรื่องที่ละเอียดอ่อน คุณไม่สามารถกู้ข้อมูลที่ลบไปแล้วได้!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ลบทันที!',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          const header = {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+          axiosServices.post(`/api/user_backend/delete`, { ids: selected }, header).then((response: any) => {
+            if (response.data) {
+              Swal.fire({
+                title: 'คุณทำรายการสำเร็จ',
+                text: response.data.message,
+                icon: 'success',
+                confirmButtonText: 'รับทราบ!'
+              });
+            }
+          });
+          setTimeout(() => {
+            dispatch(getUserBackend());
+          }, 1000);
+          setSelected([]);
+        } catch (error: any) {
+          setErrorMessage(error.message);
+          Swal.fire({
+            title: 'เกิดข้อผิดพลาดในการลบรายการนี้!',
+            text: errorMessage,
+            icon: 'error',
+            showCancelButton: false,
+            confirmButtonText: 'รับทราบ!'
+          });
+        }
+      } else {
+        Swal.fire({
+          title: 'การลบรายการถูกยกเลิก',
+          text: '',
+          icon: 'error',
+          confirmButtonText: 'รับทราบ'
+        });
+      }
+    });
   };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
@@ -348,7 +413,11 @@ const BannerTable = () => {
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
             <Tooltip title="ลบ">
               <IconButton size="large">
-                <DeleteIcon />
+                <DeleteIcon
+                  onClick={(e: any) => {
+                    handleDelete(e);
+                  }}
+                />
               </IconButton>
             </Tooltip>
             <Tooltip title="ตัวกรอง">
@@ -389,12 +458,12 @@ const BannerTable = () => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
+                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.id)}>
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}

@@ -5,13 +5,19 @@ import dynamic from 'next/dynamic';
 import { Button, Grid, Stack, TextField, Autocomplete, CardMedia, FormControlLabel, Radio, RadioGroup, FormControl } from '@mui/material';
 import { useTheme, styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+// with date-fns v3.x
+import { enGB } from 'date-fns/locale';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
-
+// Dialog
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // third-party
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -22,6 +28,7 @@ import axiosServices from 'utils/axios';
 // types
 import { CategoryType } from 'types/viriyha_type/category';
 import { ShopManagementType } from 'types/viriyha_type/shop';
+import { rows } from '../../../../forms/tables/GridTable';
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -54,17 +61,106 @@ const maxQuotaPerPerson = [
 ];
 
 const top100Films = [
-  { label: 'เพศชาย', id: 1 },
-  { label: 'เพศหญิง', id: 2 }
+  { label: 'The Shawshank Redemption', id: 1 },
+  { label: 'The Godfather', id: 2 },
+  { label: 'The Godfather: Part II', id: 3 },
+  { label: 'The Dark Knight', id: 4 }
 ];
 
-const CreateFormNormalCampaign = () => {
+interface CreateFormNormalCampaignProps {
+  primaryId: string;
+}
+
+const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) => {
   const theme = useTheme();
   const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
   const [valueColor, setValueColor] = useState('default');
+  // array
   const [ArrayCategory, setArrayCategory] = useState<CategoryType[]>([]);
   const [ArrayShop, setArrayShop] = useState<ShopManagementType[]>([]);
   const [ArrayBranchList, setArrayBranchList] = useState<any[]>([{ id: '0', name: 'Please select a branch' }]);
+  // variable
+  const [Name, setName] = useState('');
+  const [startDate, setStartDate] = React.useState<Date | null>(new Date());
+  const [endDate, setEndDate] = React.useState<Date | null>();
+  // condition
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner';
+
+  React.useEffect(() => {
+    if (primaryId) {
+      axiosServices.get(`/api/banner/${primaryId}`).then((response) => {
+        console.log(response);
+        setName(response.data.name);
+        setPosition(response.data.position);
+        setLinkNav(response.data.link);
+        setStatus(response.data.status);
+        SetPreviewImg(`${imgUrl}/${response.data.image}`);
+      });
+    }
+  }, [primaryId, imgUrl]);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      const fileName = file.name;
+      setImageFile(file);
+      console.log(fileName);
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target) {
+          SetPreviewImg(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCloseSuccessDialog = () => {
+    setOpenSuccessDialog(false);
+  };
+
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('name', Name);
+    // formData.append('status', Status);
+    // formData.append('link', LinkNav);
+    // formData.append('position', Position);
+    // formData.append('bannerImage', ImageFile ?? '');
+    // formData.append('createdById', MadeById ?? '');
+    console.log(Name);
+    // try {
+    //   let response;
+    //   if (primaryId) {
+    //     response = await axiosServices.put(`/api/banner/update/${primaryId}`, formData, {
+    //       headers: {
+    //         'Content-Type': 'multipart/form-data'
+    //       }
+    //     });
+    //   } else {
+    //     response = await axiosServices.post('/api/banner/create', formData, {
+    //       headers: {
+    //         'Content-Type': 'multipart/form-data'
+    //       }
+    //     });
+    //   }
+    //   console.log(response);
+    //   if (response.status === 200) {
+    //     setOpenSuccessDialog(true);
+    //     window.location.href = '/admin/banners';
+    //   } else {
+    //     setOpenErrorDialog(true);
+    //     setErrorMessage(response.statusText);
+    //   }
+    // } catch (error: any) {
+    //   setOpenErrorDialog(true);
+    //   console.log(error.message);
+    //   setErrorMessage(error.message);
+    // }
+  };
 
   useEffect(() => {
     const CategoryList = async () => {
@@ -149,6 +245,8 @@ const CreateFormNormalCampaign = () => {
 
   return (
     <MainCard title="">
+      <SuccessDialog open={openSuccessDialog} handleClose={handleCloseSuccessDialog} />
+      <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
       <form>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12} md={6} lg={6}>
@@ -219,7 +317,15 @@ const CreateFormNormalCampaign = () => {
 
           <Grid item xs={12} md={12}>
             <InputLabel required>ชื่อสิทธิพิเศษ</InputLabel>
-            <TextField required inputProps={{ maxLength: 12 }} fullWidth />
+            <TextField
+              required
+              inputProps={{ maxLength: 12 }}
+              fullWidth
+              value={Name}
+              onChange={(event: any) => {
+                setName(event.target.value);
+              }}
+            />
           </Grid>
 
           <Grid item md={6} xs={12}>
@@ -239,11 +345,27 @@ const CreateFormNormalCampaign = () => {
           <Grid xs={6} md={6} />
           <Grid item xs={12} md={6}>
             <InputLabel required>วันที่เริ่มต้น</InputLabel>
-            <TextField fullWidth type="date" id="campaign_start_date" name="campaign_start_date" label="" />{' '}
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={enGB}>
+              <DateTimePicker
+                renderInput={(props) => <TextField fullWidth {...props} helperText="" />}
+                value={startDate}
+                onChange={(newValue: Date | null) => {
+                  setStartDate(newValue);
+                }}
+              />
+            </LocalizationProvider>{' '}
           </Grid>
           <Grid item xs={12} md={6}>
             <InputLabel required>วันที่สิ้นสุด</InputLabel>
-            <TextField fullWidth type="date" id="campaign_end_date" name="campaign_end_date" label="" />{' '}
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={enGB}>
+              <DateTimePicker
+                renderInput={(props) => <TextField fullWidth {...props} helperText="" />}
+                value={endDate}
+                onChange={(newValue: Date | null) => {
+                  setEndDate(newValue);
+                }}
+              />
+            </LocalizationProvider>{' '}
           </Grid>
           <Grid item md={6} xs={12}>
             <InputLabel required>จำนวนสิทธิพิเศษรวมทั้งโครงการ </InputLabel>
@@ -276,6 +398,7 @@ const CreateFormNormalCampaign = () => {
                   getOptionLabel={(option) => option.label}
                   onChange={handleQuotaTypeChange}
                   defaultValue={maxQuotaPerPerson[0]}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </Grid>
@@ -284,48 +407,52 @@ const CreateFormNormalCampaign = () => {
           <Grid item md={6} xs={12}>
             <InputLabel required>เป้าหมายสิทธิพิเศษ (Criteria)</InputLabel>
             <Grid container direction="column" spacing={3}>
-              {/* <Grid item>
+              <Grid item>
                 <Autocomplete
                   multiple
                   options={top100Films}
                   getOptionLabel={(option) => option.label}
-                  defaultValue={[top100Films[0], top100Films[4]]}
                   renderInput={(params) => <TextField {...params} />}
                 />
-              </Grid> */}
+              </Grid>
             </Grid>
           </Grid>
 
           <Grid item md={6} xs={12}>
             <InputLabel required>เป้าหมายสิทธิพิเศษ (Segment)</InputLabel>
             <Grid container direction="column" spacing={3}>
-              {/* <Grid item>
+              <Grid item>
                 <Autocomplete
                   multiple
                   options={top100Films}
                   getOptionLabel={(option) => option.label}
-                  defaultValue={[top100Films[2], top100Films[3]]}
                   renderInput={(params) => <TextField {...params} />}
                 />
-              </Grid> */}
+              </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12}>
             <InputLabel required>รายละเอียด</InputLabel>
-            <ReactQuill
-              onChange={(value) => {
-                console.log(value);
-              }}
-            />
+            <div style={{ height: '150px' }}>
+              <ReactQuill
+                style={{ height: '100px' }}
+                onChange={(value) => {
+                  console.log(value);
+                }}
+              />
+            </div>
           </Grid>
 
           <Grid item xs={12}>
             <InputLabel required>เงื่อนไข</InputLabel>
-            <ReactQuill
-              onChange={(value) => {
-                console.log(value);
-              }}
-            />{' '}
+            <div style={{ height: '150px' }}>
+              <ReactQuill
+                style={{ height: '100px' }}
+                onChange={(value) => {
+                  console.log(value);
+                }}
+              />
+            </div>
           </Grid>
 
           <Grid item xs={12}>
@@ -377,7 +504,7 @@ const CreateFormNormalCampaign = () => {
               <Grid item>
                 <Stack direction="row" justifyContent="flex-end">
                   <AnimateButton>
-                    <Button variant="contained" type="submit">
+                    <Button variant="contained" type="submit" onClick={handleSubmit}>
                       ยืนยัน
                     </Button>
                   </AnimateButton>

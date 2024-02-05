@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 // project imports
 import Page from 'components/ui-component/Page';
 import Layout from 'layout';
-import BranchForm from 'components/viriyha_components/form/shop/BranchForm';
+import BranchForm from 'components/viriyha_components/form/admin/BranchForm';
 import axiosServices from 'utils/axios';
 // ==============================|| ORDER LIST ||============================== //
 

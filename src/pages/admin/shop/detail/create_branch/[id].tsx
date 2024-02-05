@@ -7,7 +7,7 @@ import Layout from 'layout';
 import Page from 'components/ui-component/Page';
 
 // form import
-import BranchForm from 'components/viriyha_components/form/shop/BranchForm';
+import BranchForm from 'components/viriyha_components/form/admin/BranchForm';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 

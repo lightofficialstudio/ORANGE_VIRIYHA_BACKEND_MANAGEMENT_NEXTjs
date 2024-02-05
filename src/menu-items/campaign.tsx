@@ -2,13 +2,14 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconSquarePlus } from '@tabler/icons';
+import { IconSquarePlus, IconBrandCampaignmonitor } from '@tabler/icons';
 
 // type
 import { NavItemType } from 'types';
 
 const icons = {
-  IconSquarePlus: IconSquarePlus
+  IconSquarePlus: IconSquarePlus,
+  IconBrandCampaignmonitor: IconBrandCampaignmonitor
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -24,7 +25,7 @@ const campaign: NavItemType = {
       title: <FormattedMessage id="Normal Campaign" />,
       type: 'item',
       url: '/campaign/normal',
-      icon: icons.IconSquarePlus,
+      icon: icons.IconBrandCampaignmonitor,
       breadcrumbs: false
     },
     {
@@ -32,7 +33,7 @@ const campaign: NavItemType = {
       title: <FormattedMessage id="Special Campaign" />,
       type: 'item',
       url: '/campaign/special',
-      icon: icons.IconSquarePlus,
+      icon: icons.IconBrandCampaignmonitor,
       breadcrumbs: false
     }
   ]

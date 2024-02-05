@@ -35,6 +35,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
   const context = React.useContext(JWTContext);
   const [PreviewImg, SetPreviewImg] = useState(MockupLogo);
   const [Name, setName] = useState('');
+  const [Position, setPosition] = useState('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
   const [Status, setStatus] = useState('');
   const MadeById = context?.user?.id;
@@ -78,6 +79,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
     event.preventDefault();
     const formData = new FormData();
     formData.append('name', Name);
+    formData.append('position', Position);
     formData.append('status', Status);
     formData.append('categoryImage', ImageFile ?? '');
     formData.append('createdById', MadeById ?? '');
@@ -149,10 +151,21 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                     <InputLabel required>ชื่อหมวดหมู่</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="เช่น KFC"
+                      placeholder="เช่น ร้านค้า,ท่องเที่ยว,อาหารและเครื่องดื่ม"
                       value={Name}
                       onChange={(event: any) => {
                         setName(event.target.value);
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputLabel required>ลำดับการแสดงผล</InputLabel>
+                    <TextField
+                      fullWidth
+                      placeholder="เช่น 1,2,3"
+                      value={Position}
+                      onChange={(event: any) => {
+                        setPosition(event.target.value);
                       }}
                     />
                   </Grid>
