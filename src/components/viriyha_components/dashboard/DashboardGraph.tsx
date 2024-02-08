@@ -102,7 +102,7 @@ const DashboardGraph = ({ titleMessage }: DashboardGraphProps) => {
     return data;
   };
 
-  const [series, setSeries] = useState<SeriesType[]>([
+  const [series] = useState<SeriesType[]>([
     {
       name: 'ครั้ง',
       data: generateMockDataForMonth('All')
@@ -165,7 +165,7 @@ const DashboardGraph = ({ titleMessage }: DashboardGraphProps) => {
               id="month-selector"
               value={selectedMonth}
               label="เลือกเดือน"
-              onChange={handleMonthChange}
+              onChange={(event: any) => handleMonthChange(event)}
             >
               <MenuItem value="All">ทั้งหมด</MenuItem>
               <MenuItem value="Jan">มกราคม</MenuItem>
@@ -183,25 +183,7 @@ const DashboardGraph = ({ titleMessage }: DashboardGraphProps) => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={6} md={6} sx={{ marginBottom: '15px' }}>
-          {' '}
-          <FormControl fullWidth>
-            <InputLabel id="month-selector-label">เลือกเดือน</InputLabel>
-            <Select
-              labelId="month-selector-label"
-              id="month-selector"
-              value={selectedMonth}
-              label="เลือกเดือน"
-              onChange={handleMonthChange}
-            >
-              <MenuItem value="All">ทั้งหมด</MenuItem>
-              <MenuItem value="Jan">มกราคม</MenuItem>
-              <MenuItem value="Feb">กุมภาพันธ์</MenuItem>
-              <MenuItem value="Mar">มีนาคม</MenuItem>
-              {/* ตัวเลือกเดือนอื่น ๆ */}
-            </Select>
-          </FormControl>
-        </Grid>
+
         <Grid xs={12} md={12}>
           {' '}
           <div id="chart">

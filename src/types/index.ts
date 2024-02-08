@@ -32,6 +32,7 @@ import { UserBackendStateProps } from './viriyha_type/backend_user';
 import { BranchStateProps } from './viriyha_type/branch';
 import { SegmentStateProps } from './viriyha_type/segment';
 import { CriteriaStateProps } from './viriyha_type/criteria';
+import { ErrorLogStateProps } from './viriyha_type/error_logs';
 
 export type ArrangementOrder = 'asc' | 'desc' | undefined;
 
@@ -61,8 +62,8 @@ export interface GenericCardProps {
 
 export type OverrideIcon =
   | (OverridableComponent<SvgIconTypeMap<{}, 'svg'>> & {
-      muiName: string;
-    })
+    muiName: string;
+  })
   | React.ComponentClass<any>
   | FunctionComponent<any>
   | TablerIcon;
@@ -140,6 +141,7 @@ export interface DefaultRootStateProps {
   branch: BranchStateProps;
   segment: SegmentStateProps;
   criteria: CriteriaStateProps;
+  error_log: ErrorLogStateProps;
 }
 
 export interface ColorProps {

@@ -37,6 +37,14 @@ const dashboard: NavItemType = {
       url: '/dashboard/campaign-analytics',
       icon: icons.IconGraph,
       breadcrumbs: false
+    },
+    {
+      id: 'redeem_transaction_dasboard',
+      title: <FormattedMessage id="Redeem" />,
+      type: 'item',
+      url: '/dashboard/redeem-transaction',
+      icon: icons.IconChartArcs3,
+      breadcrumbs: false
     }
     // {
     //   id: 'default',

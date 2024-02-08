@@ -4,12 +4,8 @@ import { format } from 'date-fns';
 import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
-  CardContent,
   Checkbox,
-  Fab,
-  Grid,
   IconButton,
-  InputAdornment,
   Table,
   TableBody,
   TableCell,
@@ -18,7 +14,6 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
-  TextField,
   Toolbar,
   Tooltip,
   Typography
@@ -27,18 +22,12 @@ import { visuallyHidden } from '@mui/utils';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import { CategoryType } from 'types/viriyha_type/category';
 import { useDispatch, useSelector } from 'store';
-import { getCategory } from 'store/slices/viriyha/category';
+import { ErrorLogType } from 'types/viriyha_type/error_logs';
+import { getErrorLog } from 'store/slices/viriyha/error_log';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
-
-import SearchIcon from '@mui/icons-material/Search';
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
-import AddIcon from '@mui/icons-material/AddTwoTone';
-import Link from 'next/link';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -54,10 +43,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: CategoryType[], comparator: (a: CategoryType, b: CategoryType) => number) {
-  const stabilizedThis = array?.map((el: CategoryType, index: number) => [el, index]);
+function stableSort(array: ErrorLogType[], comparator: (a: ErrorLogType, b: ErrorLogType) => number) {
+  const stabilizedThis = array?.map((el: ErrorLogType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as CategoryType, b[0] as CategoryType);
+    const order = comparator(a[0] as ErrorLogType, b[0] as ErrorLogType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -68,33 +57,21 @@ function stableSort(array: CategoryType[], comparator: (a: CategoryType, b: Cate
 
 const headCells: HeadCell[] = [
   {
-    id: 'id',
+    id: 'code',
     numeric: true,
-    label: 'ID',
+    label: 'Code',
     align: 'center'
   },
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อหมวดหมู่',
+    label: 'ข้อความ',
     align: 'left'
-  },
-  {
-    id: 'created_by',
-    numeric: true,
-    label: 'ผู้ที่สร้าง',
-    align: 'center'
   },
   {
     id: 'createdAt',
     numeric: true,
     label: 'สร้างเมื่อวันที่',
-    align: 'center'
-  },
-  {
-    id: 'status',
-    numeric: false,
-    label: 'สถานะ',
     align: 'center'
   }
 ];
@@ -194,13 +171,13 @@ function EnhancedTableHead({
               </TableSortLabel>
             </TableCell>
           ))}
-        {numSelected <= 0 && (
+        {/* {numSelected <= 0 && (
           <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
             <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
               จัดการ
             </Typography>
           </TableCell>
-        )}
+        )} */}
       </TableRow>
     </TableHead>
   );
@@ -217,15 +194,15 @@ const ErrorLogTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<CategoryType[]>([]);
-  const { category } = useSelector((state) => state.category);
+  const [rows, setRows] = React.useState<ErrorLogType[]>([]);
+  const { error_log } = useSelector((state) => state.errorLog);
 
   React.useEffect(() => {
-    dispatch(getCategory());
+    dispatch(getErrorLog());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(category);
-  }, [category]);
+    setRows(error_log);
+  }, [error_log]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -250,7 +227,7 @@ const ErrorLogTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(category);
+      setRows(error_log);
     }
   };
 
@@ -262,7 +239,7 @@ const ErrorLogTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.name);
+      const newSelectedId = rows.map((n) => n.id);
       setSelected(newSelectedId);
       return;
     }
@@ -301,7 +278,7 @@ const ErrorLogTable = () => {
 
   return (
     <>
-      <CardContent>
+      {/* <CardContent>
         <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -330,7 +307,7 @@ const ErrorLogTable = () => {
               </IconButton>
             </Tooltip>
 
-            {/* product add & dialog */}
+          
             <Link href={'/admin/category/create'}>
               <Tooltip title="เพิ่มหมวดหมู่">
                 <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
@@ -340,7 +317,7 @@ const ErrorLogTable = () => {
             </Link>
           </Grid>
         </Grid>
-      </CardContent>
+      </CardContent> */}
 
       {/* table */}
       <TableContainer>
@@ -363,12 +340,12 @@ const ErrorLogTable = () => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
+                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.id)}>
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}
@@ -377,46 +354,9 @@ const ErrorLogTable = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          #{row.id}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
-                        </Typography>
-                      </TableCell>
-
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
-
+                      <TableCell align="center">{row.code}</TableCell>
+                      <TableCell align="left">{row.message}</TableCell>
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
-                      <TableCell align="center">
-                        {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                        {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
-                        {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
-                      </TableCell>
-                      <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/category/edit/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
-                        </Link>
-                      </TableCell>
                     </TableRow>
                   );
                 })}
