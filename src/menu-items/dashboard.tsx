@@ -66,4 +66,16 @@ const dashboard: NavItemType = {
   ]
 };
 
-export default dashboard;
+// สมมติฐาน: รายการสิทธิ์ของผู้ใช้
+const userPermissions = ['redeem_transaction_dasboard', 'web_analytics_dashboard', 'campaign_analytics_dashboard'];
+
+// ฟังก์ชันสำหรับตรวจสอบว่าผู้ใช้มีสิทธิ์ตามที่ต้องการหรือไม่
+const hasPermission = (itemId: any) => userPermissions.includes(itemId);
+
+// กรองรายการเมนูตามสิทธิ์ของผู้ใช้
+const filteredChildren = dashboard.children?.filter((child) => hasPermission(child.id));
+
+// สร้าง object ใหม่สำหรับ dashboard ที่ได้กรองแล้ว
+const filteredDashboard = { ...dashboard, children: filteredChildren };
+
+export default filteredDashboard;

@@ -4,7 +4,23 @@ import Image from 'next/image';
 
 // import { useRouter } from 'next/router';
 // import JWTContext from 'contexts/JWTContext';
-import { Grid, TextField, Typography, Button, Autocomplete, Stack } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+import {
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  Autocomplete,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  tableCellClasses
+} from '@mui/material';
 import axiosServices from 'utils/axios';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -17,6 +33,27 @@ import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDia
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Mockup Logo
 const MockupLogo = '/assets/mockup/user.png';
+
+// styles
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14
+  }
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover
+  },
+  // hide last border
+  '&:last-of-type td, &:last-of-type th': {
+    border: 0
+  }
+}));
 // autocomplete options
 
 const EnumStatus = [
@@ -29,11 +66,21 @@ const EnumRole = [
   { role_name: 'ผู้ใช้งานทั่วไป', role: 'BACKEND_USER' }
 ];
 
+const Permission = [
+  { name: 'อนุญาติ', id: '1' },
+  { name: 'ไม่อนุญาติ', id: '0' }
+];
+
 type CategoryFormProps = {
   titleMessage: string;
   confirmMessage?: string;
   primaryId?: string;
 };
+
+// table data
+function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
+  return { name, calories, fat, carbs, protein };
+}
 
 const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormProps) => {
   const [error, setError] = useState('');
@@ -47,6 +94,8 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   const [ImageFile, setImageFile] = useState<File | null>(null);
   const [Status, setStatus] = useState('');
   const [Role, setRole] = useState('');
+  // permission
+  const [MenuWebAnalytics, setMenuWebAnalytics] = useState('');
   const [Description, setDescription] = useState('');
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
@@ -283,32 +332,79 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                   </Grid>
                 </Grid>
               </SubCard>
-              <Grid container justifyContent="right" alignItems="center" sx={{ mt: 3 }}>
-                <Grid item>
-                  <Stack direction="row" spacing={2}>
-                    <AnimateButton>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={(e) => {
-                          handleSubmit(e);
-                        }}
-                      >
-                        {confirmMessage}
-                      </Button>
-                    </AnimateButton>
-                    <AnimateButton>
-                      <Button href={`/admin/users/backend`} variant="contained" color="error">
-                        ยกเลิก
-                      </Button>
-                    </AnimateButton>
-                  </Stack>
-                </Grid>
-              </Grid>
             </Grid>
           </Grid>
         </MainCard>
+        <SubCard title={'จัดการสิทธิ์การใช้งานระบบ'}>
+          <MainCard
+            content={false}
+            secondary={
+              <Stack direction="row" spacing={2} alignItems="center">
+                {/* <SecondaryAction link="https://next.material-ui.com/components/tables/" /> */}
+              </Stack>
+            }
+          >
+            <TableContainer>
+              <Table sx={{ minWidth: 320 }} aria-label="customized table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell sx={{ pl: 3 }}>หัวข้อ</StyledTableCell>
+                    <StyledTableCell align="left">ระดับสิทธิ์การใช้งาน</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      <b>เมนู Dashboard</b>
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row"></StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Web Analytics
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : '');
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </MainCard>
+        </SubCard>
+        <Grid container justifyContent="right" alignItems="center" sx={{ mt: 3 }}>
+          <Grid item>
+            <Stack direction="row" spacing={2}>
+              <AnimateButton>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={(e) => {
+                    handleSubmit(e);
+                  }}
+                >
+                  {confirmMessage}
+                </Button>
+              </AnimateButton>
+              <AnimateButton>
+                <Button href={`/admin/users/backend`} variant="contained" color="error">
+                  ยกเลิก
+                </Button>
+              </AnimateButton>
+            </Stack>
+          </Grid>
+        </Grid>
       </MainCard>
+
       <SuccessDialog open={openSuccessDialog} handleClose={handleCloseSuccessDialog} />
       <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
     </>

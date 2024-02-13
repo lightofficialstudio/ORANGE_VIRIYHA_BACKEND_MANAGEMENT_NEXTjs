@@ -6,7 +6,6 @@ import { Typography } from '@mui/material';
 // project imports
 import Layout from 'layout';
 import Page from 'components/ui-component/Page';
-import MainCard from 'ui-component/cards/MainCard';
 
 // form import
 import CreateFormNormalCampaign from 'components/viriyha_components/form/campaign/normal/CampaignNormalCreateForm';
@@ -15,11 +14,9 @@ import CreateFormNormalCampaign from 'components/viriyha_components/form/campaig
 
 const SamplePage = () => (
   <Page title="Normal campaign create">
-    <MainCard title="สร้างสิทธิพิเศษธรรมดา">
-      <Typography variant="body2">
-        <CreateFormNormalCampaign />
-      </Typography>
-    </MainCard>
+    <Typography variant="body2">
+      <CreateFormNormalCampaign />
+    </Typography>
   </Page>
 );
 

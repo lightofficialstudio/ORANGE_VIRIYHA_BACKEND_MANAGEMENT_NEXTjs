@@ -341,7 +341,7 @@ const NormalCampaignTable = () => {
 
             {/* product add & dialog */}
             <Link href={'/campaign/normal/create'}>
-              <Tooltip title="เพิ่มหมวดหมู่">
+              <Tooltip title="เพิ่มสิทธิพิเศษ">
                 <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                   <AddIcon fontSize="small" />
                 </Fab>

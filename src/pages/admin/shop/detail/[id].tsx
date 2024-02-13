@@ -20,7 +20,7 @@ const ShopDetailPage = () => {
   const { id } = router.query;
   return (
     <Page title="Shop Detail">
-      <GoBackButton Link={`/admin/category/`} />
+      <GoBackButton Link={'/admin/shop/'} />
       <ShopForm titleMessage={'แก้ไขร้านค้า'} confirmMessage={'แก้ไขข้อมูล'} shopId={id as string} />
       {/* table */}
       <Grid mt={5}></Grid>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import JWTContext from 'contexts/JWTContext';
 import { Grid, TextField, Button, Autocomplete, Stack } from '@mui/material';
 import axiosServices from 'utils/axios';
@@ -26,6 +26,8 @@ type BranchFormProps = {
 };
 
 const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFormProps) => {
+  const router = useRouter();
+  const { id } = router.query;
   const context = React.useContext(JWTContext);
   const [titleShop, setTitleShop] = useState('');
   const [BranchName, setBranchName] = useState('');
@@ -76,7 +78,7 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
         }
       };
       if (branchId) {
-        response = await axiosServices.put(`/api/branch/update/${shopId}`, formData, header);
+        response = await axiosServices.put(`/api/branch/update/${id}`, formData, header);
       } else {
         response = await axiosServices.post('/api/branch/create', formData, header);
       }
