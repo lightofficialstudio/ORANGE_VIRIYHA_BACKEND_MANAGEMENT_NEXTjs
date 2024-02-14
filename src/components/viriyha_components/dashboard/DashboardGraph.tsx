@@ -71,7 +71,8 @@ const DashboardGraph = ({ titleMessage }: DashboardGraphProps) => {
   const darkLight = theme.palette.dark.light;
   const grey200 = theme.palette.grey[200];
   const secondary = theme.palette.secondary.main;
-  const daysInMonth = {
+
+  const daysInMonth: { [key: string]: number } = {
     Jan: 31,
     Feb: 28, // Standard non-leap year
     Mar: 31,

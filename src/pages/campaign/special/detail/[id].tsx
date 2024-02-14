@@ -14,9 +14,9 @@ import MainCard from 'ui-component/cards/MainCard';
 
 // viriyha components imports
 import CodeTable from 'components/viriyha_components/form/campaign/code_table';
-import DetailCampaignCard from 'components/viriyha_components/form/campaign/normal/detail/detail_campaign';
+import DetailCampaignCard from 'components/viriyha_components/form/campaign/normal/detail/CampaignDetail';
 import ConditionCampaign from 'components/viriyha_components/form/campaign/normal/detail/CampaignCondition';
-import DescriptionCampaign from 'components/viriyha_components/form/campaign/normal/detail/Cm';
+import DescriptionCampaign from 'components/viriyha_components/form/campaign/normal/detail/CampaignDescription';
 
 // assets
 

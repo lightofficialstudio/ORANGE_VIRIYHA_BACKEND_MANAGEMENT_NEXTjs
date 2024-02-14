@@ -62,8 +62,8 @@ export interface GenericCardProps {
 
 export type OverrideIcon =
   | (OverridableComponent<SvgIconTypeMap<{}, 'svg'>> & {
-    muiName: string;
-  })
+      muiName: string;
+    })
   | React.ComponentClass<any>
   | FunctionComponent<any>
   | TablerIcon;

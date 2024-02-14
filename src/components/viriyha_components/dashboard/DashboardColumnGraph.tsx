@@ -170,6 +170,7 @@ const DashboardColumnGraph = () => {
       setSelectedArray(campaign);
       setSeries(generateRandomSeries(campaign)); // Generate random series for campaign
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOption]);
 
   React.useEffect(() => {
