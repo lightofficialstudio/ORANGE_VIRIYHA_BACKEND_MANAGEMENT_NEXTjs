@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -7,8 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import { Props as ChartProps } from 'react-apexcharts';
 import dynamic from 'next/dynamic';
 // project import
-import InputLabel from 'ui-component/extended/Form/InputLabel';
-import { Autocomplete, FormControl, Grid, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, Grid, TextField } from '@mui/material';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 

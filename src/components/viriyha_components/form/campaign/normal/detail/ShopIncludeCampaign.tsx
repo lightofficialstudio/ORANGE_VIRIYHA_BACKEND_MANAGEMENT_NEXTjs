@@ -1,24 +1,13 @@
 // react
-import { useState } from 'react';
 // material-ui
-import { Button, Grid, TextField, Typography, Autocomplete } from '@mui/material';
+import { Grid, TextField, Autocomplete } from '@mui/material';
 
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
-import Avatar from 'ui-component/extended/Avatar';
 import MainCard from 'ui-component/cards/MainCard';
-import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
 // icon
-import InputLabel from 'ui-component/extended/Form/InputLabel';
 // Avatar
-const Avatar1 = '/assets/images/users/avatar-1.png';
-const quotaChoose = [
-  { label: 'รายวัน', id: 1 },
-  { label: 'รายสัปดาห์', id: 2 },
-  { label: 'รายเดือน', id: 3 },
-  { label: 'ไม่จำกัด', id: 4 }
-];
 
 const top100Films = [
   { label: 'The Dark Knight', id: 1 },
@@ -30,19 +19,7 @@ const top100Films = [
   { label: 'Pulp Fiction', id: 7 }
 ];
 
-const maxQuotaPerPerson = [
-  { label: 'คน/วัน', id: 1 },
-  { label: 'คน/สัปดาห์', id: 2 },
-  { label: 'คน/เดือน', id: 3 },
-  { label: 'ไม่จำกัด', id: 4 }
-];
 const DetailCampaignCard = () => {
-  const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
-
-  // Event handler for quota type change
-  const handleQuotaTypeChange = (event: any, value: any) => {
-    setIsQuotaDisabled(value.id === 4);
-  };
   return (
     <MainCard title="" content={true}>
       <Grid container spacing={gridSpacing}>

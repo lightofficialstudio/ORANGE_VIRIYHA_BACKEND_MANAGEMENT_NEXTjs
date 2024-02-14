@@ -26,8 +26,6 @@ import { useTheme, styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 
-// with date-fns v3.x
-import { enGB } from 'date-fns/locale';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SubCard from 'ui-component/cards/SubCard';
@@ -35,7 +33,7 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
 // Dialog
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
-import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
+// import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // third-party
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -46,11 +44,10 @@ import axiosServices from 'utils/axios';
 // types
 import { CategoryType } from 'types/viriyha_type/category';
 import { ShopManagementType } from 'types/viriyha_type/shop';
-import { rows } from '../../../../forms/tables/GridTable';
 import { BranchType } from 'types/viriyha_type/branch';
-import { DatePicker } from '@mui/x-date-pickers';
-import segment from 'store/slices/viriyha/segment';
 import Chip from 'ui-component/extended/Chip';
+// modal
+import ModalEditQuota from './ModalEditQuota';
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -113,10 +110,15 @@ interface CreateFormNormalCampaignProps {
   primaryId?: string;
 }
 
+interface GenerateQuotaTableProps {
+  id: string;
+  date: Date;
+  quantity: string | number;
+}
+
 const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) => {
   const theme = useTheme();
-  const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
-  const [valueColor, setValueColor] = useState('default');
+  // const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
   // array
   const [ArrayCategory, setArrayCategory] = useState<CategoryType[]>([]);
   const [ArrayShop, setArrayShop] = useState<ShopManagementType[]>([]);
@@ -137,46 +139,75 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
   const [Criteria, setCriteria] = useState<number[]>([]);
   const [Description, setDescription] = useState('');
   const [Condition, setCondition] = useState('');
-  const [Status, setStatus] = useState('');
+  // const [Status, setStatus] = useState('');
+  console.log(
+    Description,
+    Condition,
+    Segment,
+    Criteria,
+    CategoryQuotaLimit,
+    QuotaLimit,
+    CategoryQuantity,
+    Quantity,
+    endDate,
+    startDate,
+    Category,
+    Name,
+    BranchId,
+    ShopId
+  );
 
   // condition
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
-  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner';
+  // const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  // const [errorMessage, setErrorMessage] = React.useState('');
+  // const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner';
   const [error, setError] = useState('');
-  const [dateRange, setDateRange] = useState([]);
+
+  // generate table
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(30);
+  const [quotaRange, setQuotaRange] = useState<GenerateQuotaTableProps[]>([]);
+  const [codeQuatity, setCodeQuatity] = useState(0);
+  const [averageQuota, setAverageQuota] = useState(0);
+  const [tempQuotaId, setTempQuotaId] = useState(0);
+  const [tempQuotaQuantity, setTempQuotaQuantity] = useState(0);
 
-  React.useEffect(() => {
-    if (primaryId) {
-      axiosServices.get(`/api/banner/${primaryId}`).then((response) => {
-        console.log(response);
-        setName(response.data.name);
-        setPosition(response.data.position);
-        setLinkNav(response.data.link);
-        setStatus(response.data.status);
-        SetPreviewImg(`${imgUrl}/${response.data.image}`);
-      });
-    }
-  }, [primaryId, imgUrl]);
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files && event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      const fileName = file.name;
-      setImageFile(file);
-      console.log(fileName);
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (e.target) {
-          SetPreviewImg(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+  // modal
+  const [QuotaModal, setQuotaModal] = useState(false);
+  const handleSaveQuota = (quantity: number) => {
+    let newQuantity = quantity + codeQuatity;
+    setQuotaModal(false);
+    setCodeQuatity(newQuantity);
   };
+  // React.useEffect(() => {
+  //   if (primaryId) {
+  //     axiosServices.get(`/api/banner/${primaryId}`).then((response) => {
+  //       console.log(response);
+  //       setName(response.data.name);
+  //       setPosition(response.data.position);
+  //       setLinkNav(response.data.link);
+  //       setStatus(response.data.status);
+  //       SetPreviewImg(`${imgUrl}/${response.data.image}`);
+  //     });
+  //   }
+  // }, [primaryId, imgUrl]);
+
+  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files && event.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     const fileName = file.name;
+  //     setImageFile(file);
+  //     console.log(fileName);
+  //     reader.onload = (e: ProgressEvent<FileReader>) => {
+  //       if (e.target) {
+  //         SetPreviewImg(e.target.result as string);
+  //       }
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
@@ -283,9 +314,9 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     });
   };
 
-  const handleQuotaTypeChange = (event: any, value: any) => {
-    setIsQuotaDisabled(value.id === 4);
-  };
+  // const handleQuotaTypeChange = (event: any, value: any) => {
+  //   setIsQuotaDisabled(value.id === 4);
+  // };
 
   const handleShopChange = async (value: string) => {
     const res = await axiosServices.get(`/api/shop/${value}/branch`);
@@ -323,17 +354,36 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
   };
 
   // create code table
-  const handleCreateTable = () => {
-    const start = new Date(startDate as Date);
-    const end = new Date(endDate as Date);
-    let dates = [];
+  const generateQuotaTable = () => {
+    setCodeQuatity(0);
+    setQuotaRange([]);
+    const start = new Date(startDate as Date).getTime();
+    const end = new Date(endDate as Date).getTime();
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const totalQuantity = parseInt(Quantity);
+    setAverageQuota(Math.floor(totalQuantity / diffDays));
+    const remainderQuota = totalQuantity % diffDays;
+    let quotaTable = [];
+    let currentQuota = averageQuota;
 
-    while (start <= end) {
-      dates.push(new Date(start));
-      start.setDate(start.getDate() + 1);
+    for (let i = 0; i < diffDays; i++) {
+      const currentDate = new Date(start);
+      currentDate.setDate(new Date(start).getDate() + i);
+
+      // Add the remainder to the last day
+      if (i === diffDays - 1) {
+        currentQuota += remainderQuota;
+      }
+
+      quotaTable.push({
+        id: i,
+        date: new Date(currentDate),
+        quantity: currentQuota
+      });
     }
 
-    setDateRange(dates as any);
+    setQuotaRange(quotaTable as any);
   };
 
   const formatDate = (date: Date) => {
@@ -349,11 +399,17 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     setPage(0); // Reset to the first page with the new number of rows
   };
 
+  const handleOpenEditQuotaModal = (id: string, quantity: string) => {
+    setQuotaModal(true);
+    setTempQuotaId(parseInt(id));
+    setTempQuotaQuantity(parseInt(quantity));
+  };
+
   return (
     <>
       <MainCard title="สร้างสิทธิพิเศษใหม่">
         <SuccessDialog open={openSuccessDialog} handleClose={handleCloseSuccessDialog} />
-        <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
+        {/* <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} /> */}
         <form>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12} md={6} lg={6}>
@@ -365,6 +421,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                       getOptionLabel={(option) => option.name}
                       onChange={(event, value) => {
                         handleShopChange(value?.id ? value.id : '');
+                        setShopId(value?.id ? value.id : '');
                       }}
                       renderInput={(params) => <TextField {...params} />}
                     />
@@ -486,7 +543,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
               <TextField
                 fullWidth
                 placeholder="จำนวนคน"
-                disabled={isQuotaDisabled}
+                disabled={false}
                 onChange={(event: any) => {
                   setQuantity(event.target.value);
                 }}
@@ -645,7 +702,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                       <Button
                         variant="contained"
                         type="button"
-                        onClick={handleCreateTable}
+                        onClick={generateQuotaTable}
                         sx={{
                           background: theme.palette.dark.main,
                           '&:hover': { background: theme.palette.success.dark }
@@ -690,39 +747,45 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
         <Grid container spacing={gridSpacing} sx={{ marginBottom: '20px' }}>
           <Grid item xs={4} md={4} spacing={gridSpacing}>
             <Chip label="โค้ดที่มีทั้งหมด" chipcolor="success" sx={{ marginRight: '10px;' }} />
-            <Chip label="100,000" chipcolor="success" sx={{ marginRight: '10px;' }} />
+            <Chip label={Quantity ? Quantity.toString() : '0'} chipcolor="success" sx={{ marginRight: '10px;' }} />
           </Grid>
           <Grid item xs={4} md={4} spacing={gridSpacing}>
             <Chip label="โค้ดที่เฉลี่ยลงไปแล้ว" chipcolor="error" sx={{ marginRight: '10px;' }} />
-            <Chip label="100,000" chipcolor="error" sx={{ marginRight: '10px;' }} />
+            <Chip label={averageQuota ? averageQuota.toString() : '0'} chipcolor="error" sx={{ marginRight: '10px;' }} />
           </Grid>
           <Grid item xs={4} md={4} spacing={gridSpacing}>
             <Chip label="คงเหลือทั้งหมด" chipcolor="primary" sx={{ marginRight: '10px;' }} />
-            <Chip label="100,000" chipcolor="primary" sx={{ marginRight: '10px;' }} />
+            <Chip label={codeQuatity ? codeQuatity.toString() : '0'} chipcolor="primary" sx={{ marginRight: '10px;' }} />
           </Grid>
         </Grid>
         <TableContainer>
           <Table sx={{ minWidth: 320 }} aria-label="customized table">
             <TableHead>
               <TableRow>
+                <StyledTableCell align="left">ลำดับ</StyledTableCell>
                 <StyledTableCell sx={{ pl: 3 }}>วันที่</StyledTableCell>
                 <StyledTableCell align="left">โค้ดคงเหลือ</StyledTableCell>
                 <StyledTableCell align="right">จัดการ</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {dateRange.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((date, index) => (
+              {quotaRange.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((quota, index) => (
                 <StyledTableRow key={index}>
-                  <TableCell>{formatDate(date)}</TableCell>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                    <b>333</b>
+                    <b>{quota.id + 1}</b>
+                  </StyledTableCell>
+                  <TableCell>{formatDate(quota.date)}</TableCell>
+                  <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                    <b>{quota.quantity}</b>
                   </StyledTableCell>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
                     <AnimateButton>
                       <Button
                         variant="contained"
                         type="submit"
-                        onClick={handleSubmit}
+                        onClick={(_event: any) => {
+                          handleOpenEditQuotaModal(quota.id, String(quota.quantity));
+                        }}
                         sx={{
                           background: theme.palette.dark.main,
                           '&:hover': { background: theme.palette.success.dark }
@@ -741,13 +804,20 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
         <TablePagination
           rowsPerPageOptions={[5, 10, 30, { label: 'All', value: -1 }]}
           component="div"
-          count={dateRange.length}
+          count={quotaRange.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </MainCard>
+      <ModalEditQuota
+        isOpen={QuotaModal}
+        isClose={() => setQuotaModal(false)}
+        onSave={handleSaveQuota}
+        primaryId={tempQuotaId}
+        quantity={tempQuotaQuantity}
+      />
     </>
   );
 };

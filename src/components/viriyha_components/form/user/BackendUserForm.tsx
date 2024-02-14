@@ -78,9 +78,6 @@ type CategoryFormProps = {
 };
 
 // table data
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-  return { name, calories, fat, carbs, protein };
-}
 
 const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormProps) => {
   const [error, setError] = useState('');

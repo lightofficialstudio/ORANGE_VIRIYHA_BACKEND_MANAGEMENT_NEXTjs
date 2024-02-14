@@ -1,4 +1,3 @@
-
 export interface ErrorLogStateProps {
     error_log: ErrorLogType[];
     error: object | string | null;

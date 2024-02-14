@@ -33,7 +33,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   const context = React.useContext(JWTContext);
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
   const [Name, setName] = useState('');
-  const [Position , setPosition] = useState('');
+  const [Position, setPosition] = useState('');
   const [LinkNav, setLinkNav] = useState('');
   const [Status, setStatus] = useState('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
@@ -164,7 +164,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                   <Grid item xs={12}>
                     <InputLabel required>ตำแหน่งแบนเนอร์</InputLabel>
                     <TextField
-                    type="number"
+                      type="number"
                       fullWidth
                       placeholder=""
                       value={Position}

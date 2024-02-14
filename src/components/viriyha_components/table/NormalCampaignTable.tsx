@@ -86,8 +86,7 @@ const headCells: HeadCell[] = [
     label: 'จำนวนสิทธิพิเศษคงเหลือ',
     align: 'center'
   },
-  
- 
+
   {
     id: 'status',
     numeric: false,
@@ -105,7 +104,7 @@ const headCells: HeadCell[] = [
     numeric: true,
     label: 'สร้างเมื่อวันที่',
     align: 'right'
-  },
+  }
 ];
 
 // ==============================|| TABLE HEADER TOOLBAR ||============================== //
@@ -411,8 +410,6 @@ const NormalCampaignTable = () => {
                         </Typography>
                       </TableCell>
                       <TableCell align="center">100,000</TableCell>
-
-
 
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}

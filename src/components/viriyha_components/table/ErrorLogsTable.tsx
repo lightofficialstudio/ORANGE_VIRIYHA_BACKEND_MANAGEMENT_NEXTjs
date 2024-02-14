@@ -21,7 +21,6 @@ import {
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
-import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 import { ErrorLogType } from 'types/viriyha_type/error_logs';
 import { getErrorLog } from 'store/slices/viriyha/error_log';
@@ -193,7 +192,7 @@ const ErrorLogTable = () => {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
-  const [search, setSearch] = React.useState<string>('');
+  // const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<ErrorLogType[]>([]);
   const { error_log } = useSelector((state) => state.errorLog);
 
@@ -203,33 +202,33 @@ const ErrorLogTable = () => {
   React.useEffect(() => {
     setRows(error_log);
   }, [error_log]);
-  const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
-    const newString = event?.target.value;
-    setSearch(newString || '');
+  // const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
+  //   const newString = event?.target.value;
+  //   setSearch(newString || '');
 
-    if (newString) {
-      const newRows = rows.filter((row: KeyedObject) => {
-        let matches = true;
+  //   if (newString) {
+  //     const newRows = rows.filter((row: KeyedObject) => {
+  //       let matches = true;
 
-        const properties = ['name', 'id'];
-        let containsQuery = false;
+  //       const properties = ['name', 'id'];
+  //       let containsQuery = false;
 
-        properties.forEach((property) => {
-          if (row[property].toString().toLowerCase().includes(newString.toString().toLowerCase())) {
-            containsQuery = true;
-          }
-        });
+  //       properties.forEach((property) => {
+  //         if (row[property].toString().toLowerCase().includes(newString.toString().toLowerCase())) {
+  //           containsQuery = true;
+  //         }
+  //       });
 
-        if (!containsQuery) {
-          matches = false;
-        }
-        return matches;
-      });
-      setRows(newRows);
-    } else {
-      setRows(error_log);
-    }
-  };
+  //       if (!containsQuery) {
+  //         matches = false;
+  //       }
+  //       return matches;
+  //     });
+  //     setRows(newRows);
+  //   } else {
+  //     setRows(error_log);
+  //   }
+  // };
 
   const handleRequestSort = (event: React.SyntheticEvent<Element, Event>, property: string) => {
     const isAsc = orderBy === property && order === 'asc';

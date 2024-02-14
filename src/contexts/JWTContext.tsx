@@ -60,7 +60,6 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
           setSession(serviceToken);
           const response = await axios.get('/api/login/verifyToken');
           const { user } = response.data;
-          console.log('response_Service' + response);
           dispatch({
             type: LOGIN,
             payload: {
@@ -70,13 +69,21 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
           });
         } else {
           dispatch({
-            type: LOGOUT
+            // type: LOGOUT
+            type: LOGIN,
+            payload: {
+              isLoggedIn: true
+            }
           });
         }
       } catch (err) {
         console.error(err);
         dispatch({
-          type: LOGOUT
+          // type: LOGOUT
+          type: LOGIN,
+          payload: {
+            isLoggedIn: true
+          }
         });
       }
     };
