@@ -33,7 +33,6 @@ import { getCategory } from 'store/slices/viriyha/category';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
-
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
@@ -43,7 +42,11 @@ import Avatar from 'ui-component/extended/Avatar';
 import ControlCameraIcon from '@mui/icons-material/ControlCamera';
 import Swal from 'sweetalert2';
 import axiosServices from 'utils/axios';
-
+// modal
+import ModalChangePosition from '../modal/banners/ChangePosition';
+// response
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
   if (b[orderBy] < a[orderBy]) {
@@ -237,6 +240,15 @@ const CategoryTable = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const { category } = useSelector((state) => state.category);
   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category/';
+  // modal
+  const [openChangePositionModal, setOpenChangePositionModal] = React.useState<boolean>(false);
+  // response
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  // temp data
+  const [selectedId, setSelectedId] = React.useState<number>(0);
+  const [selectedPosition, setSelectedPosition] = React.useState<string>('');
+  const [selectedTitle, setSelectedTitle] = React.useState<string>('');
 
   React.useEffect(() => {
     dispatch(getCategory());
@@ -374,11 +386,23 @@ const CategoryTable = () => {
     });
   };
 
+  const handleResponsePositionModal = (response: boolean) => {
+    if (response) {
+      setOpenChangePositionModal(false);
+      setOpenSuccessDialog(true);
+      dispatch(getCategory());
+    } else {
+      setOpenErrorDialog(true);
+    }
+  };
+
   const isSelected = (id: string) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
     <>
+      <SuccessDialog open={openSuccessDialog} handleClose={() => setOpenSuccessDialog(false)} />
+      <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
       <CardContent>
         <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -483,10 +507,28 @@ const CategoryTable = () => {
                           </Tooltip>
                         </Link>
                         <Tooltip title="จัดการตำแหน่ง">
-                          <IconButton color="secondary" size="large">
+                          <IconButton
+                            color="secondary"
+                            size="large"
+                            onClick={(event: any) => {
+                              setOpenChangePositionModal(true);
+                              setSelectedId(parseInt(row.id));
+                              setSelectedPosition(row.position.toString());
+                              setSelectedTitle(row.name);
+                            }}
+                          >
                             <ControlCameraIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>
                         </Tooltip>
+                        <ModalChangePosition
+                          isOpen={openChangePositionModal}
+                          isClose={() => setOpenChangePositionModal(false)}
+                          onSave={handleResponsePositionModal}
+                          primaryId={selectedId}
+                          position={selectedPosition}
+                          title={selectedTitle}
+                          type={'category'}
+                        />
                       </TableCell>
                     </TableRow>
                   );

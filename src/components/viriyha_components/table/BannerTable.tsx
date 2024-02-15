@@ -34,7 +34,6 @@ import { getBannerList } from 'store/slices/viriyha/banner';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
-
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import ControlCameraIcon from '@mui/icons-material/ControlCamera';
@@ -42,10 +41,14 @@ import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, H
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
 import Avatar from 'ui-component/extended/Avatar';
-
+// response
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // third-party
 import Swal from 'sweetalert2';
 import axiosServices from 'utils/axios';
+// modal
+import ModalChangePosition from '../modal/banners/ChangePosition';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -246,6 +249,15 @@ const BannerTable = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const { banner } = useSelector((state) => state.banner);
   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner/';
+  // modal
+  const [openChangePositionModal, setOpenChangePositionModal] = React.useState<boolean>(false);
+  // response
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  // temp data
+  const [selectedId, setSelectedId] = React.useState<number>(0);
+  const [selectedPosition, setSelectedPosition] = React.useState<string>('');
+  const [selectedTitle, setSelectedTitle] = React.useState<string>('');
 
   React.useEffect(() => {
     dispatch(getBannerList());
@@ -383,11 +395,25 @@ const BannerTable = () => {
     });
   };
 
+  // modal change position
+
+  const handleResponsePositionModal = (response: boolean) => {
+    if (response) {
+      setOpenChangePositionModal(false);
+      setOpenSuccessDialog(true);
+      dispatch(getBannerList());
+    } else {
+      setOpenErrorDialog(true);
+    }
+  };
+
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
     <>
+      <SuccessDialog open={openSuccessDialog} handleClose={() => setOpenSuccessDialog(false)} />
+      <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
       <CardContent>
         <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -506,11 +532,30 @@ const BannerTable = () => {
                             </IconButton>
                           </Tooltip>
                         </Link>
+
                         <Tooltip title="จัดการตำแหน่ง">
-                          <IconButton color="secondary" size="large">
+                          <IconButton
+                            color="secondary"
+                            size="large"
+                            onClick={(event: any) => {
+                              setOpenChangePositionModal(true);
+                              setSelectedTitle(row.name);
+                              setSelectedId(parseInt(row.id));
+                              setSelectedPosition(row.position.toString());
+                            }}
+                          >
                             <ControlCameraIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>
                         </Tooltip>
+                        <ModalChangePosition
+                          isOpen={openChangePositionModal}
+                          isClose={() => setOpenChangePositionModal(false)}
+                          onSave={handleResponsePositionModal}
+                          primaryId={selectedId}
+                          position={selectedPosition}
+                          title={selectedTitle}
+                          type={'banner'}
+                        />
                       </TableCell>
                     </TableRow>
                   );

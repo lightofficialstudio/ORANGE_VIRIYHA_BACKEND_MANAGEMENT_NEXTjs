@@ -33,7 +33,7 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
 // Dialog
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
-// import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // third-party
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -111,9 +111,9 @@ interface CreateFormNormalCampaignProps {
 }
 
 interface GenerateQuotaTableProps {
-  id: string;
+  id: number;
   date: Date;
-  quantity: string | number;
+  quantity: number;
 }
 
 const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) => {
@@ -159,27 +159,23 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
 
   // condition
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
-  // const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
-  // const [errorMessage, setErrorMessage] = React.useState('');
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
   // const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner';
   const [error, setError] = useState('');
 
   // generate table
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(30);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [quotaRange, setQuotaRange] = useState<GenerateQuotaTableProps[]>([]);
-  const [codeQuatity, setCodeQuatity] = useState(0);
+  const [codeQuatity, setCodeQuatity] = useState<number>(0);
   const [averageQuota, setAverageQuota] = useState(0);
   const [tempQuotaId, setTempQuotaId] = useState(0);
   const [tempQuotaQuantity, setTempQuotaQuantity] = useState(0);
 
   // modal
   const [QuotaModal, setQuotaModal] = useState(false);
-  const handleSaveQuota = (quantity: number) => {
-    let newQuantity = quantity + codeQuatity;
-    setQuotaModal(false);
-    setCodeQuatity(newQuantity);
-  };
+
   // React.useEffect(() => {
   //   if (primaryId) {
   //     axiosServices.get(`/api/banner/${primaryId}`).then((response) => {
@@ -355,8 +351,8 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
 
   // create code table
   const generateQuotaTable = () => {
-    setCodeQuatity(0);
-    setQuotaRange([]);
+    // setCodeQuatity(0);
+    // setQuotaRange([]);
     const start = new Date(startDate as Date).getTime();
     const end = new Date(endDate as Date).getTime();
     const diffTime = Math.abs(end - start);
@@ -365,7 +361,8 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     setAverageQuota(Math.floor(totalQuantity / diffDays));
     const remainderQuota = totalQuantity % diffDays;
     let quotaTable = [];
-    let currentQuota = averageQuota;
+    let currentAverageQuota = Math.floor(totalQuantity / diffDays);
+    let currentQuota = currentAverageQuota;
 
     for (let i = 0; i < diffDays; i++) {
       const currentDate = new Date(start);
@@ -386,6 +383,22 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     setQuotaRange(quotaTable as any);
   };
 
+  const handleSaveQuota = (id: number, quantity: number) => {
+    // const newQuantity = quotaRange[id].quantity - quantity;
+    let oldQuantity = quotaRange[id].quantity;
+    let total = codeQuatity + (oldQuantity - quantity);
+    if (total < 0) {
+      setErrorMessage('จำนวนโค้ดคงเหลือไม่เพียงพอ');
+      setQuotaModal(false);
+      setOpenErrorDialog(true);
+    } else {
+      setCodeQuatity(total);
+      setQuotaModal(false);
+      quotaRange[id].quantity = quantity;
+      // setCodeQuatity(newQuantity);
+    }
+  };
+
   const formatDate = (date: Date) => {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   };
@@ -400,16 +413,16 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
   };
 
   const handleOpenEditQuotaModal = (id: string, quantity: string) => {
-    setQuotaModal(true);
     setTempQuotaId(parseInt(id));
     setTempQuotaQuantity(parseInt(quantity));
+    setQuotaModal(true);
   };
 
   return (
     <>
       <MainCard title="สร้างสิทธิพิเศษใหม่">
         <SuccessDialog open={openSuccessDialog} handleClose={handleCloseSuccessDialog} />
-        {/* <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} /> */}
+        <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
         <form>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12} md={6} lg={6}>
@@ -715,30 +728,6 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                 </Grid>
               </Grid>
             </Grid>
-
-            <Grid item xs={12}>
-              <Grid container spacing={2} justifyContent="end">
-                <Grid item>
-                  <Stack direction="row" justifyContent="flex-end">
-                    <AnimateButton>
-                      <Button variant="contained" type="submit" onClick={handleSubmit}>
-                        สร้างข้อมูล
-                      </Button>
-                    </AnimateButton>
-                  </Stack>
-                </Grid>
-
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    href="/campaign/normal"
-                    sx={{ background: theme.palette.error.main, '&:hover': { background: theme.palette.error.dark } }}
-                  >
-                    ย้อนกลับ
-                  </Button>
-                </Grid>
-              </Grid>
-            </Grid>
           </Grid>
         </form>
       </MainCard>
@@ -784,7 +773,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                         variant="contained"
                         type="submit"
                         onClick={(_event: any) => {
-                          handleOpenEditQuotaModal(quota.id, String(quota.quantity));
+                          handleOpenEditQuotaModal(String(quota.id), String(quota.quantity));
                         }}
                         sx={{
                           background: theme.palette.dark.main,
@@ -818,6 +807,30 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
         primaryId={tempQuotaId}
         quantity={tempQuotaQuantity}
       />
+
+      <Grid item xs={12} sx={{ marginTop: '20px' }}>
+        <Grid container spacing={2} justifyContent="end">
+          <Grid item>
+            <Stack direction="row" justifyContent="flex-end">
+              <AnimateButton>
+                <Button variant="contained" type="submit" onClick={handleSubmit}>
+                  สร้างข้อมูล
+                </Button>
+              </AnimateButton>
+            </Stack>
+          </Grid>
+
+          <Grid item>
+            <Button
+              variant="contained"
+              href="/campaign/normal"
+              sx={{ background: theme.palette.error.main, '&:hover': { background: theme.palette.error.dark } }}
+            >
+              ย้อนกลับ
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
     </>
   );
 };
