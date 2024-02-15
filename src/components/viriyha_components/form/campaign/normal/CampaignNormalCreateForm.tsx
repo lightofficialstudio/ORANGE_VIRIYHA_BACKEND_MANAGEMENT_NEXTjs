@@ -213,7 +213,9 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     event.preventDefault();
     const formData = new FormData();
     formData.append('shopId', ShopId);
+    formData.append('type', 'normal');
     formData.append('branchId', BranchId.join(','));
+    formData.append('branch_condition', BranchCondition);
     formData.append('name', Name);
     formData.append('category', Category);
     console.log(Name);
