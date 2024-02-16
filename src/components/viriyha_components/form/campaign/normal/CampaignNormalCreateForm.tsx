@@ -434,7 +434,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                     <Autocomplete
                       options={ArrayShop}
                       getOptionLabel={(option) => option.name}
-                      onChange={(event, value) => {
+                      onChange={(_event, value) => {
                         handleShopChange(value?.id ? value.id : '');
                         setShopId(value?.id ? value.id : '');
                       }}
