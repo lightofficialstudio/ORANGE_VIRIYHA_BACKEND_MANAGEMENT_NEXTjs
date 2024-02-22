@@ -87,7 +87,7 @@ export default function ModalEditQuota({ isOpen, isClose, onSave, primaryId, qua
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" color="error" onClick={handleSave}>
+                  <Button variant="contained" color="error" onClick={isClose}>
                     ยกเลิก
                   </Button>
                 </Grid>

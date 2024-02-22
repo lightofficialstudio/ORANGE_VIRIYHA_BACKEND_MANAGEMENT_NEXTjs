@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import JWTContext from 'contexts/JWTContext';
 
 // material-ui
 import {
@@ -31,6 +32,8 @@ import MainCard from 'ui-component/cards/MainCard';
 import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
+import Chip from 'ui-component/extended/Chip';
+
 // Dialog
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
@@ -45,9 +48,11 @@ import axiosServices from 'utils/axios';
 import { CategoryType } from 'types/viriyha_type/category';
 import { ShopManagementType } from 'types/viriyha_type/shop';
 import { BranchType } from 'types/viriyha_type/branch';
-import Chip from 'ui-component/extended/Chip';
+import { CriteriaType } from 'types/viriyha_type/criteria';
+import { SegmentType } from 'types/viriyha_type/segment';
 // modal
 import ModalEditQuota from './ModalEditQuota';
+
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -99,13 +104,6 @@ const maxQuotaPerPerson = [
   { label: 'ไม่จำกัด', id: 4 }
 ];
 
-const top100Films = [
-  { label: 'The Shawshank Redemption', id: 1 },
-  { label: 'The Godfather', id: 2 },
-  { label: 'The Godfather: Part II', id: 3 },
-  { label: 'The Dark Knight', id: 4 }
-];
-
 interface CreateFormNormalCampaignProps {
   primaryId?: string;
 }
@@ -118,11 +116,15 @@ interface GenerateQuotaTableProps {
 
 const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) => {
   const theme = useTheme();
+  const context = React.useContext(JWTContext);
   // const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
   // array
   const [ArrayCategory, setArrayCategory] = useState<CategoryType[]>([]);
   const [ArrayShop, setArrayShop] = useState<ShopManagementType[]>([]);
   const [ArrayBranchList, setArrayBranchList] = useState<any[]>([{ id: '0', name: 'Please select a branch' }]);
+  const [ArrayCriteria, setArrayCriteria] = useState<CriteriaType[]>([]);
+  const [ArraySegment, setArraySegment] = useState<SegmentType[]>([]);
+
   // variable
   const [ShopId, setShopId] = useState('');
   const [BranchCondition, setBranchCondition] = useState('include');
@@ -139,6 +141,8 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
   const [Criteria, setCriteria] = useState<number[]>([]);
   const [Description, setDescription] = useState('');
   const [Condition, setCondition] = useState('');
+  const [fileImage, setFileImage] = useState<File[]>([]);
+  const createdById = context?.user?.id;
   // const [Status, setStatus] = useState('');
   console.log(
     Description,
@@ -169,7 +173,6 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [quotaRange, setQuotaRange] = useState<GenerateQuotaTableProps[]>([]);
   const [codeQuatity, setCodeQuatity] = useState<number>(0);
-  const [averageQuota, setAverageQuota] = useState(0);
   const [tempQuotaId, setTempQuotaId] = useState(0);
   const [tempQuotaQuantity, setTempQuotaQuantity] = useState(0);
 
@@ -217,43 +220,60 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     formData.append('branchId', BranchId.join(','));
     formData.append('branch_condition', BranchCondition);
     formData.append('name', Name);
-    formData.append('category', Category);
-    console.log(Name);
-    // try {
-    //   let response;
-    //   if (primaryId) {
-    //     response = await axiosServices.put(`/api/banner/update/${primaryId}`, formData, {
-    //       headers: {
-    //         'Content-Type': 'multipart/form-data'
-    //       }
-    //     });
-    //   } else {
-    //     response = await axiosServices.post('/api/banner/create', formData, {
-    //       headers: {
-    //         'Content-Type': 'multipart/form-data'
-    //       }
-    //     });
-    //   }
-    //   console.log(response);
-    //   if (response.status === 200) {
-    //     setOpenSuccessDialog(true);
-    //     window.location.href = '/admin/banners';
-    //   } else {
-    //     setOpenErrorDialog(true);
-    //     setErrorMessage(response.statusText);
-    //   }
-    // } catch (error: any) {
-    //   setOpenErrorDialog(true);
-    //   console.log(error.message);
-    //   setErrorMessage(error.message);
-    // }
+    formData.append('category_type_id', Category);
+    formData.append('startDate', startDate ? startDate.toString() : '');
+    formData.append('endDate', endDate ? endDate.toString() : '');
+    formData.append('quantity', Quantity);
+    formData.append('quantity_category', CategoryQuantity);
+    formData.append('quota_quantity_limit', QuotaLimit);
+    formData.append('quota_limit_by', CategoryQuotaLimit);
+    formData.append('segment', Segment.join(','));
+    formData.append('criteria', Criteria.join(','));
+    formData.append('description', Description);
+    formData.append('condition', Condition);
+    formData.append('status', 'ACTIVE');
+    formData.append('createdById', createdById ?? '');
+    quotaRange.forEach((item, index) => {
+      formData.append('quotaRange', JSON.stringify(item));
+    });
+    fileImage.forEach((file: File) => {
+      formData.append('campaignImage', file);
+    });
+
+    try {
+      let response;
+      if (primaryId) {
+        response = await axiosServices.put(`/api/campaign/update/${primaryId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      } else {
+        response = await axiosServices.post('/api/campaign/create', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      }
+      if (response.status === 200) {
+        setOpenSuccessDialog(true);
+        window.location.href = '/campaign/normal/';
+      } else {
+        setOpenErrorDialog(true);
+        setErrorMessage(response.statusText);
+      }
+    } catch (error: any) {
+      setOpenErrorDialog(true);
+      console.log(error.message);
+      setErrorMessage(error.message);
+    }
   };
 
   useEffect(() => {
     const CategoryList = async () => {
-      const res = await axiosServices.get('/api/category');
+      const response = await axiosServices.get('/api/category');
       try {
-        const categoryArray = res.data.map((item: CategoryType) => ({
+        const categoryArray = response.data.map((item: CategoryType) => ({
           id: item.id,
           name: item.name
         }));
@@ -265,9 +285,9 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     };
 
     const ShopList = async () => {
-      const res = await axiosServices.get('/api/shop');
+      const response = await axiosServices.get('/api/shop');
       try {
-        const shopArray = res.data.map((item: ShopManagementType) => ({
+        const shopArray = response.data.map((item: ShopManagementType) => ({
           id: item.id,
           name: item.name
         }));
@@ -278,6 +298,33 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
       }
     };
 
+    const CriteriaList = async () => {
+      const response = await axiosServices.get('/api/criteria');
+      try {
+        const criteriaArray = response.data.map((item: any) => ({
+          id: item.id,
+          label: item.name
+        }));
+        setArrayCriteria(criteriaArray);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const SegmentList = async () => {
+      const response = await axiosServices.get('/api/segment');
+      try {
+        const segmentArray = response.data.map((item: any) => ({
+          id: item.id,
+          label: item.name
+        }));
+        setArraySegment(segmentArray);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    CriteriaList();
+    SegmentList();
     CategoryList();
     ShopList();
   }, []);
@@ -290,6 +337,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     }
 
     const files = Array.from(e.target.files).slice(0, 5); // Get first 5 files if there are more
+    setFileImage(files);
 
     // Ensure each file is actually a File object
     const newImageSrcs: string[] = [];
@@ -360,7 +408,6 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     const diffTime = Math.abs(end - start);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     const totalQuantity = parseInt(Quantity);
-    setAverageQuota(Math.floor(totalQuantity / diffDays));
     const remainderQuota = totalQuantity % diffDays;
     let quotaTable = [];
     let currentAverageQuota = Math.floor(totalQuantity / diffDays);
@@ -491,7 +538,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                     <Autocomplete
                       multiple
                       options={ArrayBranchList}
-                      onChange={(event, value) => {
+                      onChange={(_event, value) => {
                         setBranchId(value.map((item) => item.id));
                       }}
                       getOptionLabel={(option) => option.name}
@@ -506,7 +553,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
               <InputLabel required>ชื่อสิทธิพิเศษ</InputLabel>
               <TextField
                 required
-                inputProps={{ maxLength: 12 }}
+                inputProps={{ maxLength: 100 }}
                 fullWidth
                 value={Name}
                 onChange={(event: any) => {
@@ -522,8 +569,8 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                   <Autocomplete
                     options={ArrayCategory}
                     getOptionLabel={(option) => option.name}
-                    onChange={(event: any) => {
-                      setCategory(event.target.value);
+                    onChange={(_event: any, value: any) => {
+                      setCategory(value?.id);
                     }}
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -556,6 +603,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
             <Grid item md={6} xs={12}>
               <InputLabel required>จำนวนสิทธิพิเศษรวมทั้งโครงการ</InputLabel>
               <TextField
+                type="number"
                 fullWidth
                 placeholder="จำนวนคน"
                 disabled={false}
@@ -612,7 +660,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                 <Grid item>
                   <Autocomplete
                     multiple
-                    options={top100Films}
+                    options={ArrayCriteria}
                     onChange={(_event: any, newValue: any) => {
                       setSegment(newValue.map((item: any) => item.id));
                     }}
@@ -630,7 +678,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                 <Grid item>
                   <Autocomplete
                     multiple
-                    options={top100Films}
+                    options={ArraySegment}
                     onChange={(_event: any, value: any) => {
                       setCriteria(value.map((item: any) => item.id));
                     }}
@@ -740,13 +788,14 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
             <Chip label="โค้ดที่มีทั้งหมด" chipcolor="success" sx={{ marginRight: '10px;' }} />
             <Chip label={Quantity ? Quantity.toString() : '0'} chipcolor="success" sx={{ marginRight: '10px;' }} />
           </Grid>
+
           <Grid item xs={4} md={4} spacing={gridSpacing}>
-            <Chip label="โค้ดที่เฉลี่ยลงไปแล้ว" chipcolor="error" sx={{ marginRight: '10px;' }} />
-            <Chip label={averageQuota ? averageQuota.toString() : '0'} chipcolor="error" sx={{ marginRight: '10px;' }} />
-          </Grid>
-          <Grid item xs={4} md={4} spacing={gridSpacing}>
-            <Chip label="คงเหลือทั้งหมด" chipcolor="primary" sx={{ marginRight: '10px;' }} />
-            <Chip label={codeQuatity ? codeQuatity.toString() : '0'} chipcolor="primary" sx={{ marginRight: '10px;' }} />
+            <Chip label="จำนวนโควต้าทั้งหมด" chipcolor="primary" sx={{ marginRight: '10px;' }} />
+            <Chip
+              label={`${codeQuatity ? codeQuatity.toString() : '0'} / ${Quantity ? Quantity.toString() : '0'}`}
+              chipcolor="primary"
+              sx={{ marginRight: '10px;' }}
+            />
           </Grid>
         </Grid>
         <TableContainer>
@@ -755,7 +804,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
               <TableRow>
                 <StyledTableCell align="left">ลำดับ</StyledTableCell>
                 <StyledTableCell sx={{ pl: 3 }}>วันที่</StyledTableCell>
-                <StyledTableCell align="left">โค้ดคงเหลือ</StyledTableCell>
+                <StyledTableCell align="left">จำนวนโควต้า</StyledTableCell>
                 <StyledTableCell align="right">จัดการ</StyledTableCell>
               </TableRow>
             </TableHead>
