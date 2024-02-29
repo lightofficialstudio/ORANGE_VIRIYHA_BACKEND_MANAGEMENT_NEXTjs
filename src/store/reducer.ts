@@ -24,6 +24,7 @@ import branchReducer from './slices/viriyha/branch';
 import segmentReducer from './slices/viriyha/segment';
 import criteriaReducer from './slices/viriyha/criteria';
 import errorLogReducer from './slices/viriyha/error_log';
+import campaignReducer from './slices/viriyha/campaign';
 // ==============================|| COMBINE REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -53,7 +54,8 @@ const reducer = combineReducers({
   branch: branchReducer,
   segment: segmentReducer,
   criteria: criteriaReducer,
-  errorLog: errorLogReducer
+  errorLog: errorLogReducer,
+  campaign: campaignReducer
 });
 
 export default reducer;

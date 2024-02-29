@@ -12,16 +12,16 @@ import CreateFormNormalCampaign from 'components/viriyha_components/form/campaig
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
-const SamplePage = () => (
+const CreateCampaignPage = () => (
   <Page title="Normal campaign create">
     <Typography variant="body2">
-      <CreateFormNormalCampaign />
+      <CreateFormNormalCampaign title={'สร้างสิทธิพิเศษ'} />
     </Typography>
   </Page>
 );
 
-SamplePage.getLayout = function getLayout(page: ReactElement) {
+CreateCampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default SamplePage;
+export default CreateCampaignPage;

@@ -52,6 +52,8 @@ import { CriteriaType } from 'types/viriyha_type/criteria';
 import { SegmentType } from 'types/viriyha_type/segment';
 // modal
 import ModalEditQuota from './ModalEditQuota';
+import value from 'scss/_themes-vars.module.scss';
+import GoBackButton from 'components/viriyha_components/button/go_back';
 
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
@@ -106,6 +108,7 @@ const maxQuotaPerPerson = [
 
 interface CreateFormNormalCampaignProps {
   primaryId?: string;
+  title?: string;
 }
 
 interface GenerateQuotaTableProps {
@@ -114,7 +117,7 @@ interface GenerateQuotaTableProps {
   quantity: number;
 }
 
-const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) => {
+const CreateFormNormalCampaign = ({ primaryId, title }: CreateFormNormalCampaignProps) => {
   const theme = useTheme();
   const context = React.useContext(JWTContext);
   // const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
@@ -134,9 +137,9 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
   const [startDate, setStartDate] = React.useState<Date | null>(new Date());
   const [endDate, setEndDate] = React.useState<Date | null>();
   const [Quantity, setQuantity] = useState('');
-  const [CategoryQuantity, setCategoryQuantity] = useState('');
+  const [CategoryQuantity, setCategoryQuantity] = useState<number>();
   const [QuotaLimit, setQuotaLimit] = useState('');
-  const [CategoryQuotaLimit, setCategoryQuotaLimit] = useState('');
+  const [CategoryQuotaLimit, setCategoryQuotaLimit] = useState<number>();
   const [Segment, setSegment] = useState<number[]>([]);
   const [Criteria, setCriteria] = useState<number[]>([]);
   const [Description, setDescription] = useState('');
@@ -224,9 +227,9 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
     formData.append('startDate', startDate ? startDate.toString() : '');
     formData.append('endDate', endDate ? endDate.toString() : '');
     formData.append('quantity', Quantity);
-    formData.append('quantity_category', CategoryQuantity);
+    formData.append('quantity_category', String(CategoryQuantity));
     formData.append('quota_quantity_limit', QuotaLimit);
-    formData.append('quota_limit_by', CategoryQuotaLimit);
+    formData.append('quota_limit_by', String(CategoryQuotaLimit));
     formData.append('segment', Segment.join(','));
     formData.append('criteria', Criteria.join(','));
     formData.append('description', Description);
@@ -323,10 +326,31 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
         console.log(error);
       }
     };
-    CriteriaList();
-    SegmentList();
-    CategoryList();
-    ShopList();
+    const fetchData = async () => {
+      await CategoryList();
+      await ShopList();
+      await CriteriaList();
+      await SegmentList();
+      if (primaryId) {
+        const response = await axiosServices.get(`/api/campaign/${primaryId}`);
+        const data = response.data;
+        setName(data.name);
+        setCategory(data.category_type_id);
+        setStartDate(data.startDate.slice(0, 16));
+        setEndDate(data.endDate.slice(0, 16));
+        setQuantity(data.quantity);
+        setCategoryQuantity(parseInt(data.quantity_category));
+        setQuotaLimit(data.quota_quantity_limit);
+        setCategoryQuotaLimit(parseInt(data.quota_limit_by));
+        setSegment(data.segment);
+        setCriteria(data.criteria);
+        setDescription(data.description);
+        setCondition(data.condition);
+        setShopId(data.Campaign_Shop[0].shopId);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const [imageSrcs, setImageSrcs] = useState<string[]>([]);
@@ -469,7 +493,8 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
 
   return (
     <>
-      <MainCard title="สร้างสิทธิพิเศษใหม่">
+      <GoBackButton Link={'/campaign/normal'} />
+      <MainCard title={title}>
         <SuccessDialog open={openSuccessDialog} handleClose={handleCloseSuccessDialog} />
         <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
         <form>
@@ -481,6 +506,8 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                     <Autocomplete
                       options={ArrayShop}
                       getOptionLabel={(option) => option.name}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      value={ArrayShop.find((Item) => Item.id === ShopId) || null}
                       onChange={(_event, value) => {
                         handleShopChange(value?.id ? value.id : '');
                         setShopId(value?.id ? value.id : '');
@@ -569,9 +596,11 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                   <Autocomplete
                     options={ArrayCategory}
                     getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={(_event: any, value: any) => {
-                      setCategory(value?.id);
+                      setCategory(value);
                     }}
+                    value={ArrayCategory.find((Item) => Item.id === Category) || null}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Grid>
@@ -610,6 +639,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                 onChange={(event: any) => {
                   setQuantity(event.target.value);
                 }}
+                value={Quantity}
               />
             </Grid>
             <Grid item md={6} xs={12}>
@@ -623,6 +653,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                       setCategoryQuantity(value?.id);
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
+                    value={quotaChoose.find((Item) => Item.id === CategoryQuantity) || null}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Grid>
@@ -636,6 +667,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                 onChange={(event: any) => {
                   setQuotaLimit(event.target.value);
                 }}
+                value={QuotaLimit}
               />
             </Grid>
             <Grid item md={6} xs={12}>
@@ -649,6 +681,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                       setCategoryQuotaLimit(value?.id);
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
+                    value={maxQuotaPerPerson.find((Item) => Item.id === CategoryQuotaLimit) || null}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Grid>
@@ -662,10 +695,11 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                     multiple
                     options={ArrayCriteria}
                     onChange={(_event: any, newValue: any) => {
-                      setSegment(newValue.map((item: any) => item.id));
+                      setCriteria(newValue.map((item: any) => item.id));
                     }}
                     getOptionLabel={(option) => option.label}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
+                    value={ArrayCriteria.filter((item) => Criteria.includes(Number(item.id)))}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Grid>
@@ -680,10 +714,11 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                     multiple
                     options={ArraySegment}
                     onChange={(_event: any, value: any) => {
-                      setCriteria(value.map((item: any) => item.id));
+                      setSegment(value.map((item: any) => item.id));
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     getOptionLabel={(option) => option.label}
+                    value={ArraySegment.filter((item) => Segment.includes(Number(item.id)))}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Grid>
@@ -697,6 +732,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                   onChange={(value) => {
                     setDescription(value);
                   }}
+                  value={Description}
                 />
               </div>
             </Grid>
@@ -709,6 +745,7 @@ const CreateFormNormalCampaign = ({ primaryId }: CreateFormNormalCampaignProps) 
                   onChange={(value) => {
                     setCondition(value);
                   }}
+                  value={Condition}
                 />
               </div>
             </Grid>

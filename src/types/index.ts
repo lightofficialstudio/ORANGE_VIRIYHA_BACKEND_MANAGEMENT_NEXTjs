@@ -33,6 +33,7 @@ import { BranchStateProps } from './viriyha_type/branch';
 import { SegmentStateProps } from './viriyha_type/segment';
 import { CriteriaStateProps } from './viriyha_type/criteria';
 import { ErrorLogStateProps } from './viriyha_type/error_logs';
+import { CampaignStateProps } from './viriyha_type/campaign';
 
 export type ArrangementOrder = 'asc' | 'desc' | undefined;
 
@@ -137,6 +138,7 @@ export interface DefaultRootStateProps {
   category: CategoryStateProps;
   shop: ShopStateProps;
   banner: BannerStateProps;
+  campaign: CampaignStateProps;
   user_backend: UserBackendStateProps;
   branch: BranchStateProps;
   segment: SegmentStateProps;
