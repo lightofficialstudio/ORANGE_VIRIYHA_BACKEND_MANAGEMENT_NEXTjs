@@ -24,13 +24,14 @@ import {
   Typography
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+//type
+import { CampaignType } from 'types/viriyha_type/campaign';
 
 // project imports
 
 import Chip from 'ui-component/extended/Chip';
 
 import MainCard from 'ui-component/cards/MainCard';
-import { TypeNormalCampaign } from 'types/viriyha_type/campaign';
 import { useDispatch, useSelector } from 'store';
 import { getOrders } from 'store/slices/customer';
 
@@ -56,10 +57,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: TypeNormalCampaign[], comparator: (a: TypeNormalCampaign, b: TypeNormalCampaign) => number) {
-  const stabilizedThis = array.map((el: TypeNormalCampaign, index: number) => [el, index]);
+function stableSort(array: CampaignType[], comparator: (a: CampaignType, b: CampaignType) => number) {
+  const stabilizedThis = array.map((el: CampaignType, index: number) => [el, index]);
   stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0] as TypeNormalCampaign, b[0] as TypeNormalCampaign);
+    const order = comparator(a[0] as CampaignType, b[0] as CampaignType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -217,7 +218,7 @@ const CodeTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<TypeNormalCampaign[]>([]);
+  const [rows, setRows] = React.useState<CampaignType[]>([]);
   const { orders } = useSelector((state) => state.customer);
   //   const [value, setValue] = React.useState(0);
   //   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

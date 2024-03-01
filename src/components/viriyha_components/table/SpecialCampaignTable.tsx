@@ -29,8 +29,9 @@ import { visuallyHidden } from '@mui/utils';
 import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
-import { ShopManagementType } from '../../../types/viriyha_type/shop';
-import { getShopList } from 'store/slices/viriyha/shop';
+import { CampaignType } from 'types/viriyha_type/campaign';
+import { getCampaignList } from 'store/slices/viriyha/campaign';
+
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
@@ -55,10 +56,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: ShopManagementType[], comparator: (a: ShopManagementType, b: ShopManagementType) => number) {
-  const stabilizedThis = array?.map((el: ShopManagementType, index: number) => [el, index]);
+function stableSort(array: CampaignType[], comparator: (a: CampaignType, b: CampaignType) => number) {
+  const stabilizedThis = array?.map((el: CampaignType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as ShopManagementType, b[0] as ShopManagementType);
+    const order = comparator(a[0] as CampaignType, b[0] as CampaignType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -71,32 +72,45 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'ID',
+    label: 'Code',
     align: 'left'
   },
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อร้านค้า',
+    label: 'ชื่อสิทธิพิเศษ',
     align: 'left'
   },
   {
-    id: 'createdAt',
-    numeric: true,
-    label: 'สร้างเมื่อวันที่',
-    align: 'center'
+    id: 'shop_name',
+    numeric: false,
+    label: 'พาร์ทเนอร์',
+    align: 'left'
   },
   {
-    id: 'created_by',
+    id: 'quotaLeft',
     numeric: true,
-    label: 'ผู้ที่สร้าง',
+    label: 'จำนวนสิทธิพิเศษ',
     align: 'center'
   },
+
   {
     id: 'status',
     numeric: false,
     label: 'สถานะ',
     align: 'center'
+  },
+  {
+    id: 'updatedBy',
+    numeric: true,
+    label: 'ผู้ที่อัพเดทล่าสุด',
+    align: 'right'
+  },
+  {
+    id: 'createdAt',
+    numeric: true,
+    label: 'วันที่อัพเดทล่าสุด',
+    align: 'right'
   }
 ];
 
@@ -209,7 +223,7 @@ function EnhancedTableHead({
 
 // ==============================|| ORDER LIST ||============================== //
 
-const SpecialCampaignTable = () => {
+const NormalCampaignTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
@@ -218,15 +232,15 @@ const SpecialCampaignTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<ShopManagementType[]>([]);
-  const { shop } = useSelector((state) => state.shop);
+  const [rows, setRows] = React.useState<CampaignType[]>([]);
+  const { campaign } = useSelector((state) => state.campaign);
 
   React.useEffect(() => {
-    dispatch(getShopList());
+    dispatch(getCampaignList());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(shop);
-  }, [shop]);
+    setRows(campaign);
+  }, [campaign]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -251,7 +265,7 @@ const SpecialCampaignTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(shop);
+      setRows(campaign);
     }
   };
 
@@ -299,6 +313,12 @@ const SpecialCampaignTable = () => {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+  // function
+  const formatId = (id: number): string => {
+    const formattedId = id.toString().padStart(4, '0');
+    return `NMC-${formattedId}`;
+  };
 
   return (
     <>
@@ -378,41 +398,23 @@ const SpecialCampaignTable = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          #{row.id}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
-                        </Typography>
-                      </TableCell>
-
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
-
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
+                      <TableCell align="left">{formatId(row.id)}</TableCell>
+                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="left">{String(row.Campaign_Shop[0].Shop.name)}</TableCell>
                       <TableCell align="center">
+                        {row.quantity - row.used_quantity}/{row.quantity}
+                      </TableCell>
+                      <TableCell align="right">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
+                      <TableCell align="right">{row.updatedBy?.name != null ? row.updatedBy?.name : row.createdBy?.name}</TableCell>
+
+                      <TableCell align="right">{format(new Date(row.updatedAt), 'E, MMM d yyyy')}</TableCell>
+
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/campaign/special/detail/${row.id}`}>
+                        <Link href={`/campaign/normal/detail/${row.id}`}>
                           <IconButton color="secondary" size="large">
                             <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                           </IconButton>
@@ -448,4 +450,4 @@ const SpecialCampaignTable = () => {
   );
 };
 
-export default SpecialCampaignTable;
+export default NormalCampaignTable;

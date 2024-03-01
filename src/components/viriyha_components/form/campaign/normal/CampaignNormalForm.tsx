@@ -51,8 +51,7 @@ import { BranchType } from 'types/viriyha_type/branch';
 import { CriteriaType } from 'types/viriyha_type/criteria';
 import { SegmentType } from 'types/viriyha_type/segment';
 // modal
-import ModalEditQuota from './ModalEditQuota';
-import value from 'scss/_themes-vars.module.scss';
+import ModalEditQuota from '../ModalEditQuota';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 
 // styles
@@ -106,7 +105,7 @@ const maxQuotaPerPerson = [
   { label: 'ไม่จำกัด', id: 4 }
 ];
 
-interface CreateFormNormalCampaignProps {
+interface NormalCampaignFormProps {
   primaryId?: string;
   title?: string;
 }
@@ -117,7 +116,7 @@ interface GenerateQuotaTableProps {
   quantity: number;
 }
 
-const CreateFormNormalCampaign = ({ primaryId, title }: CreateFormNormalCampaignProps) => {
+const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   const theme = useTheme();
   const context = React.useContext(JWTContext);
   // const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
@@ -351,7 +350,7 @@ const CreateFormNormalCampaign = ({ primaryId, title }: CreateFormNormalCampaign
     };
 
     fetchData();
-  }, []);
+  }, [primaryId]);
 
   const [imageSrcs, setImageSrcs] = useState<string[]>([]);
 
@@ -923,4 +922,4 @@ const CreateFormNormalCampaign = ({ primaryId, title }: CreateFormNormalCampaign
   );
 };
 
-export default CreateFormNormalCampaign;
+export default NormalCampaignForm;

@@ -6,20 +6,16 @@ import { Typography } from '@mui/material';
 // project imports
 import Layout from 'layout';
 import Page from 'components/ui-component/Page';
-import MainCard from 'ui-component/cards/MainCard';
 
 // form import
-import CreateFormSpecialCampaign from 'components/viriyha_components/form/campaign/special/create_form';
-
+import SpecialCampaignForm from 'components/viriyha_components/form/campaign/special/CampaignSpecialForm';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const SamplePage = () => (
-  <Page title="Normal campaign create">
-    <MainCard title="สร้างแคมเปญ">
-      <Typography variant="body2">
-        <CreateFormSpecialCampaign />
-      </Typography>
-    </MainCard>
+  <Page title="Special Campaign Create">
+    <Typography variant="body2">
+      <SpecialCampaignForm title={'สร้างสิทธิพิเศษ (Special)'} />
+    </Typography>
   </Page>
 );
 

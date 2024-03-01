@@ -8,14 +8,14 @@ import Layout from 'layout';
 import Page from 'components/ui-component/Page';
 
 // form import
-import CreateFormNormalCampaign from 'components/viriyha_components/form/campaign/normal/CampaignNormalCreateForm';
+import NormalCampaignForm from 'components/viriyha_components/form/campaign/normal/CampaignNormalForm';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const CreateCampaignPage = () => (
   <Page title="Normal campaign create">
     <Typography variant="body2">
-      <CreateFormNormalCampaign title={'สร้างสิทธิพิเศษ'} />
+      <NormalCampaignForm title={'สร้างสิทธิพิเศษ'} />
     </Typography>
   </Page>
 );

@@ -8,7 +8,7 @@ import Layout from 'layout';
 import Page from 'components/ui-component/Page';
 
 // form import
-import CreateFormNormalCampaign from 'components/viriyha_components/form/campaign/normal/CampaignNormalCreateForm';
+import CreateFormNormalCampaign from 'components/viriyha_components/form/campaign/normal/CampaignNormalForm';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
