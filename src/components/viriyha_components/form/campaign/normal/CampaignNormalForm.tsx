@@ -643,7 +643,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                     getOptionLabel={(option) => option.name}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={(_event: any, value: any) => {
-                      setCategory(value);
+                      setCategory(value?.id);
                     }}
                     value={ArrayCategory.find((Item) => Item.id === Category) || null}
                     renderInput={(params) => <TextField {...params} />}
