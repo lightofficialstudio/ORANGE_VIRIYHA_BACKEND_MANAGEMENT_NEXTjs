@@ -53,6 +53,7 @@ import { SegmentType } from 'types/viriyha_type/segment';
 // modal
 import ModalEditQuota from '../ModalEditQuota';
 import GoBackButton from 'components/viriyha_components/button/go_back';
+import { CampaignDate } from 'types/viriyha_type/campaign';
 
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
@@ -130,7 +131,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   // variable
   const [ShopId, setShopId] = useState('');
   const [BranchCondition, setBranchCondition] = useState('include');
-  const [BranchId, setBranchId] = useState<string[]>([]);
+  const [BranchId, setBranchId] = useState<number[]>([]);
   const [Name, setName] = useState('');
   const [Category, setCategory] = useState('');
   const [startDate, setStartDate] = React.useState<Date | null>(new Date());
@@ -145,6 +146,8 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   const [Condition, setCondition] = useState('');
   const [fileImage, setFileImage] = useState<File[]>([]);
   const createdById = context?.user?.id;
+  // variable for update
+  const [primaryShopId, setPrimaryShopId] = useState('');
   // const [Status, setStatus] = useState('');
   console.log(
     Description,
@@ -241,6 +244,10 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     fileImage.forEach((file: File) => {
       formData.append('campaignImage', file);
     });
+    if (primaryId) {
+      formData.append('updatedById', createdById ?? '');
+      formData.append('primaryShopId', primaryShopId);
+    }
 
     try {
       let response;
@@ -275,7 +282,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     const CategoryList = async () => {
       const response = await axiosServices.get('/api/category');
       try {
-        const categoryArray = response.data.map((item: CategoryType) => ({
+        const categoryArray: CategoryType[] = response.data.map((item: CategoryType) => ({
           id: item.id,
           name: item.name
         }));
@@ -289,8 +296,9 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     const ShopList = async () => {
       const response = await axiosServices.get('/api/shop');
       try {
-        const shopArray = response.data.map((item: ShopManagementType) => ({
+        const shopArray: ShopManagementType[] = response.data.map((item: ShopManagementType) => ({
           id: item.id,
+          shopId: item.shopId,
           name: item.name
         }));
         setArrayShop(shopArray);
@@ -303,9 +311,9 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     const CriteriaList = async () => {
       const response = await axiosServices.get('/api/criteria');
       try {
-        const criteriaArray = response.data.map((item: any) => ({
+        const criteriaArray: CriteriaType[] = response.data.map((item: CriteriaType) => ({
           id: item.id,
-          label: item.name
+          name: item.name
         }));
         setArrayCriteria(criteriaArray);
       } catch (error) {
@@ -316,15 +324,46 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     const SegmentList = async () => {
       const response = await axiosServices.get('/api/segment');
       try {
-        const segmentArray = response.data.map((item: any) => ({
+        const segmentArray: SegmentType[] = response.data.map((item: SegmentType) => ({
           id: item.id,
-          label: item.name
+          name: item.name
         }));
         setArraySegment(segmentArray);
       } catch (error) {
         console.log(error);
       }
     };
+
+    const BranchList = async (shopId: number) => {
+      const response = await axiosServices.get(`/api/shop/${shopId}/branch`);
+      try {
+        const branchArray: BranchType[] = response.data.map((item: BranchType) => ({
+          id: item.id,
+          name: item.name
+        }));
+        setArrayBranchList(branchArray);
+        setBranchId(branchArray.map((item: any) => item.id));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const CampaignDateList = async (campaignDates: Array<CampaignDate>) => {
+      try {
+        const campaignArray: CampaignDate[] = campaignDates.map((item: CampaignDate) => ({
+          id: item.id,
+          date: new Date(item.date),
+          quantity: item.quantity,
+          campaignId: item.campaignId,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt
+        }));
+        setQuotaRange(campaignArray);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const fetchData = async () => {
       await CategoryList();
       await ShopList();
@@ -333,6 +372,11 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
       if (primaryId) {
         const response = await axiosServices.get(`/api/campaign/${primaryId}`);
         const data = response.data;
+        const shopId = data.Campaign_Shop[0].shopId;
+        await BranchList(shopId);
+        setShopId(data.Campaign_Shop[0].shopId);
+        setPrimaryShopId(data.Campaign_Shop[0].id);
+        setBranchId(data.Campaign_Shop[0].Campaign_Shop_Branch.map((item: any) => item.branchId));
         setName(data.name);
         setCategory(data.category_type_id);
         setStartDate(data.startDate.slice(0, 16));
@@ -345,7 +389,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
         setCriteria(data.criteria);
         setDescription(data.description);
         setCondition(data.condition);
-        setShopId(data.Campaign_Shop[0].shopId);
+        await CampaignDateList(data.Campaign_Date);
       }
     };
 
@@ -564,10 +608,12 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                     <Autocomplete
                       multiple
                       options={ArrayBranchList}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      getOptionLabel={(option) => option.name}
+                      value={ArrayBranchList.filter((item) => BranchId.includes(Number(item.id)))}
                       onChange={(_event, value) => {
                         setBranchId(value.map((item) => item.id));
                       }}
-                      getOptionLabel={(option) => option.name}
                       renderInput={(params) => <TextField {...params} />}
                     />
                   </Grid>
@@ -696,7 +742,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                     onChange={(_event: any, newValue: any) => {
                       setCriteria(newValue.map((item: any) => item.id));
                     }}
-                    getOptionLabel={(option) => option.label}
+                    getOptionLabel={(option) => option.name}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={ArrayCriteria.filter((item) => Criteria.includes(Number(item.id)))}
                     renderInput={(params) => <TextField {...params} />}
@@ -716,7 +762,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                       setSegment(value.map((item: any) => item.id));
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
-                    getOptionLabel={(option) => option.label}
+                    getOptionLabel={(option) => option.name}
                     value={ArraySegment.filter((item) => Segment.includes(Number(item.id)))}
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -848,7 +894,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
               {quotaRange.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((quota, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                    <b>{quota.id + 1}</b>
+                    <b>{index + 1}</b>
                   </StyledTableCell>
                   <TableCell>{formatDate(quota.date)}</TableCell>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">

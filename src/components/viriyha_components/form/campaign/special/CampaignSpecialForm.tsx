@@ -60,6 +60,9 @@ import Link from 'next/link';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
+// excel
+import * as XLSX from 'xlsx';
+
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -132,6 +135,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
   const [ArrayBranchList, setArrayBranchList] = useState<any[]>([{ id: '0', name: 'Please select a branch' }]);
   const [ArrayCriteria, setArrayCriteria] = useState<CriteriaType[]>([]);
   const [ArraySegment, setArraySegment] = useState<SegmentType[]>([]);
+  const [ArrayPhoneNumber, setArrayPhoneNumber] = useState<any[]>([]);
 
   // variable
   const [ShopId, setShopId] = useState('');
@@ -150,7 +154,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
   const [Description, setDescription] = useState('');
   const [Condition, setCondition] = useState('');
   const [fileImage, setFileImage] = useState<File[]>([]);
-  const [filePhoneNumberExcel, setFilePhoneNumberExcel] = useState<File>();
+  const [filePhoneNumberExcel, setFilePhoneNumberExcel] = useState<Blob>();
   const createdById = context?.user?.id;
   // const [Status, setStatus] = useState('');
   console.log(
@@ -167,7 +171,8 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
     Category,
     Name,
     BranchId,
-    ShopId
+    ShopId,
+    filePhoneNumberExcel
   );
 
   // condition
@@ -312,7 +317,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
       try {
         const criteriaArray = response.data.map((item: any) => ({
           id: item.id,
-          label: item.name
+          name: item.name
         }));
         setArrayCriteria(criteriaArray);
       } catch (error) {
@@ -325,7 +330,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
       try {
         const segmentArray = response.data.map((item: any) => ({
           id: item.id,
-          label: item.name
+          name: item.name
         }));
         setArraySegment(segmentArray);
       } catch (error) {
@@ -480,6 +485,36 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
 
   const formatDate = (date: Date) => {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  };
+
+  // create phone number table
+  const handlExcelFilePhoneNumberClick = () => {
+    document.getElementById('excelFile')?.click();
+  };
+  const handleExcelFilePhoneNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      setFilePhoneNumberExcel(files[0]);
+      handleExcelFilePhoneNumberUpload(files[0]);
+    }
+  };
+
+  const handleExcelFilePhoneNumberUpload = async (file: File) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const data = new Uint8Array(e.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const dataParse = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      const arrayPhoneNumber = dataParse.map((item: any) => ({
+        id: item[0],
+        phoneNumber: item[1]
+      }));
+      setArrayPhoneNumber(arrayPhoneNumber);
+      console.log(arrayPhoneNumber);
+    };
+    reader.readAsArrayBuffer(file);
   };
   // table
   const handleChangePage = (_event: any, newPage: any) => {
@@ -703,7 +738,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
                     onChange={(_event: any, newValue: any) => {
                       setCriteria(newValue.map((item: any) => item.id));
                     }}
-                    getOptionLabel={(option) => option.label}
+                    getOptionLabel={(option) => option.name}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={ArrayCriteria.filter((item) => Criteria.includes(Number(item.id)))}
                     renderInput={(params) => <TextField {...params} />}
@@ -723,7 +758,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
                       setSegment(value.map((item: any) => item.id));
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
-                    getOptionLabel={(option) => option.label}
+                    getOptionLabel={(option) => option.name}
                     value={ArraySegment.filter((item) => Segment.includes(Number(item.id)))}
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -913,8 +948,8 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
 
             <Tooltip title="นำเข้าเบอร์มือถือ">
               <IconButton size="large">
-                <SimCardDownloadIcon onClick={() => console.log('test clicky')} />
-                <input type="file" style={{ display: 'none' }} value={filePhoneNumberExcel} />
+                <SimCardDownloadIcon onClick={handlExcelFilePhoneNumberClick} />
+                <input type="file" style={{ display: 'none' }} id="excelFile" onChange={handleExcelFilePhoneNumberChange} />
               </IconButton>
             </Tooltip>
 
@@ -929,24 +964,22 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
           </Grid>
         </Grid>
         <TableContainer>
-          <Table sx={{ minWidth: 320 }} aria-label="customized table">
+          <Table sx={{ minWidth: 320 }} aria-label="phone number table">
             <TableHead>
               <TableRow>
                 <StyledTableCell align="left">ลำดับ</StyledTableCell>
-                <StyledTableCell sx={{ pl: 3 }}>วันที่</StyledTableCell>
-                <StyledTableCell align="left">จำนวนโควต้า</StyledTableCell>
+                <StyledTableCell sx={{ pl: 3 }}>เบอร์มือถือ</StyledTableCell>
                 <StyledTableCell align="right">จัดการ</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {quotaRange.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((quota, index) => (
+              {ArrayPhoneNumber.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((phone, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                    <b>{quota.id + 1}</b>
+                    <b>{phone.id}</b>
                   </StyledTableCell>
-                  <TableCell>{formatDate(quota.date)}</TableCell>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                    <b>{quota.quantity}</b>
+                    <b>{phone.phoneNumber}</b>
                   </StyledTableCell>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
                     <AnimateButton>
@@ -954,7 +987,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
                         variant="contained"
                         type="submit"
                         onClick={(_event: any) => {
-                          handleOpenEditQuotaModal(String(quota.id), String(quota.quantity));
+                          handleOpenEditQuotaModal(String(phone.id), String(phone.quantity));
                         }}
                         sx={{
                           background: theme.palette.dark.main,
@@ -974,7 +1007,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
         <TablePagination
           rowsPerPageOptions={[5, 10, 30, { label: 'All', value: -1 }]}
           component="div"
-          count={quotaRange.length}
+          count={ArrayPhoneNumber.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
