@@ -113,7 +113,8 @@ interface NormalCampaignFormProps {
 
 interface GenerateQuotaTableProps {
   id: number;
-  date: Date;
+  startDate: Date;
+  endDate: Date;
   quantity: number;
 }
 
@@ -147,7 +148,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   const [fileImage, setFileImage] = useState<File[]>([]);
   const createdById = context?.user?.id;
   // variable for update
-  const [primaryShopId, setPrimaryShopId] = useState('');
+  const [primaryShopId, setPrimaryShopId] = useState<number>();
   // const [Status, setStatus] = useState('');
   console.log(
     Description,
@@ -246,13 +247,13 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     });
     if (primaryId) {
       formData.append('updatedById', createdById ?? '');
-      formData.append('primaryShopId', primaryShopId);
+      formData.append('primaryShopId', String(primaryShopId));
     }
 
     try {
       let response;
       if (primaryId) {
-        response = await axiosServices.put(`/api/campaign/update/${primaryId}`, formData, {
+        response = await axiosServices.post(`/api/campaign/update/${primaryId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -352,13 +353,15 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
       try {
         const campaignArray: CampaignDate[] = campaignDates.map((item: CampaignDate) => ({
           id: item.id,
-          date: new Date(item.date),
+          startDate: new Date(item.startDate),
+          endDate: new Date(item.endDate),
           quantity: item.quantity,
           campaignId: item.campaignId,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt
         }));
         setQuotaRange(campaignArray);
+        console.log(campaignArray);
       } catch (error) {
         console.log(error);
       }
@@ -467,9 +470,34 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   };
 
   // create code table
-  const generateQuotaTable = () => {
-    // setCodeQuatity(0);
-    // setQuotaRange([]);
+  const handleCreateQuota = () => {
+    if (startDate && endDate && Quantity) {
+      if (CategoryQuantity === 1) {
+        generateDailyQuotaTable();
+      } else if (CategoryQuantity === 2) {
+        generateWeeklyQuotaTable();
+      } else if (CategoryQuantity === 3) {
+        generateMonthlyQuotaTable();
+      }
+    }
+  };
+
+  const formatDate = (date: Date): string => {
+    const options = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    } as Intl.DateTimeFormatOptions;
+    return new Intl.DateTimeFormat('th-TH', options).format(new Date(date));
+  };
+
+  const generateDailyQuotaTable = () => {
+    if (codeQuatity > 0) {
+      setCodeQuatity(0);
+    }
     const start = new Date(startDate as Date).getTime();
     const end = new Date(endDate as Date).getTime();
     const diffTime = Math.abs(end - start);
@@ -479,10 +507,13 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     let quotaTable = [];
     let currentAverageQuota = Math.floor(totalQuantity / diffDays);
     let currentQuota = currentAverageQuota;
-
     for (let i = 0; i < diffDays; i++) {
       const currentDate = new Date(start);
-      currentDate.setDate(new Date(start).getDate() + i);
+      currentDate.setDate(currentDate.getDate() + i);
+      currentDate.setHours(0, 0, 0, 0); // Set to the start of the day
+
+      const endDate = new Date(currentDate);
+      endDate.setHours(23, 59, 59, 999); // Set to the end of the day
 
       // Add the remainder to the last day
       if (i === diffDays - 1) {
@@ -491,17 +522,102 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
 
       quotaTable.push({
         id: i,
-        date: new Date(currentDate),
+        startDate: currentDate,
+        endDate: endDate,
         quantity: currentQuota
       });
     }
 
-    setQuotaRange(quotaTable as any);
+    setQuotaRange(quotaTable);
+  };
+
+  const generateWeeklyQuotaTable = () => {
+    if (codeQuatity > 0) {
+      setCodeQuatity(0);
+    }
+    const start = new Date(startDate as Date).getTime();
+    const end = new Date(endDate as Date).getTime();
+
+    const oneWeek = 1000 * 60 * 60 * 24 * 7;
+    const diffTime = Math.abs(end - start);
+    const diffWeeks = Math.ceil(diffTime / oneWeek);
+
+    let quotaTable = [];
+    for (let i = 0; i < diffWeeks; i++) {
+      const weekStart = new Date(start + i * oneWeek);
+      let weekEnd = new Date(weekStart.getTime() + oneWeek - 1);
+      weekStart.setHours(0, 0, 0, 0); // Set to the start of the day
+      weekEnd.setHours(23, 59, 59, 999); // Set to the end of the day
+
+      if (weekEnd > new Date(end)) {
+        weekEnd = new Date(end);
+      }
+
+      const totalQuantity = parseInt(Quantity);
+      let quota = Math.floor(totalQuantity / diffWeeks);
+      const remainderQuota = totalQuantity % diffWeeks;
+
+      if (i === diffWeeks - 1) {
+        quota += remainderQuota;
+      }
+
+      quotaTable.push({
+        id: i,
+        startDate: weekStart,
+        endDate: weekEnd,
+        quantity: quota
+      });
+    }
+
+    // แสดงผลลัพธ์
+    console.log(quotaTable);
+
+    // ใช้ฟังก์ชัน setQuotaRange หรืออัพเดทสถานะ/ฐานข้อมูลที่เหมาะสม
+    setQuotaRange(quotaTable);
+  };
+
+  const generateMonthlyQuotaTable = () => {
+    if (codeQuatity > 0) {
+      setCodeQuatity(0);
+    }
+    const start = new Date(startDate as Date).getTime();
+    const end = new Date(endDate as Date).getTime();
+    const diffTime = Math.abs(end - start);
+    const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
+    let quotaTable = [];
+    let currentAverageQuota = Math.floor(parseInt(Quantity) / diffMonths);
+    let currentQuota = currentAverageQuota;
+    for (let i = 0; i < diffMonths; i++) {
+      const monthStart = new Date(start);
+      monthStart.setMonth(monthStart.getMonth() + i);
+      monthStart.setDate(1);
+      monthStart.setHours(0, 0, 0, 0); // Set to the start of the day
+
+      const monthEnd = new Date(monthStart);
+      monthEnd.setMonth(monthEnd.getMonth() + 1);
+      monthEnd.setDate(0);
+      monthEnd.setHours(23, 59, 59, 999); // Set to the end of the day
+
+      // Add the remainder to the last month
+      if (i === diffMonths - 1) {
+        currentQuota += parseInt(Quantity) % diffMonths;
+      }
+
+      quotaTable.push({
+        id: i,
+        startDate: monthStart,
+        endDate: monthEnd,
+        quantity: currentQuota
+      });
+    }
+
+    setQuotaRange(quotaTable);
   };
 
   const handleSaveQuota = (id: number, quantity: number) => {
     // const newQuantity = quotaRange[id].quantity - quantity;
-    let oldQuantity = quotaRange[id].quantity;
+    const index = quotaRange.findIndex((item) => item.id === id);
+    let oldQuantity = quotaRange[index].quantity;
     let total = codeQuatity + (oldQuantity - quantity);
     if (total < 0) {
       setErrorMessage('จำนวนโค้ดคงเหลือไม่เพียงพอ');
@@ -510,13 +626,8 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     } else {
       setCodeQuatity(total);
       setQuotaModal(false);
-      quotaRange[id].quantity = quantity;
-      // setCodeQuatity(newQuantity);
+      quotaRange[index].quantity = Number(quantity);
     }
-  };
-
-  const formatDate = (date: Date) => {
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   };
   // table
   const handleChangePage = (_event: any, newPage: any) => {
@@ -843,19 +954,20 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
               <Grid container spacing={2} justifyContent="end">
                 <Grid item>
                   <Stack direction="row" justifyContent="flex-end">
-                    <AnimateButton>
-                      <Button
-                        variant="contained"
-                        type="button"
-                        onClick={generateQuotaTable}
-                        sx={{
-                          background: theme.palette.dark.main,
-                          '&:hover': { background: theme.palette.success.dark }
-                        }}
-                      >
-                        สร้างตารางสิทธิพิเศษ
-                      </Button>
-                    </AnimateButton>
+                    <Button
+                      variant="contained"
+                      type="button"
+                      onClick={() => {
+                        handleCreateQuota();
+                      }}
+                      component="button" // Add the component prop with the value "button"
+                      sx={{
+                        background: theme.palette.dark.main,
+                        '&:hover': { background: theme.palette.success.dark }
+                      }}
+                    >
+                      สร้างตารางสิทธิพิเศษ
+                    </Button>
                   </Stack>
                 </Grid>
               </Grid>
@@ -872,7 +984,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
           </Grid>
 
           <Grid item xs={4} md={4} spacing={gridSpacing}>
-            <Chip label="จำนวนโควต้าทั้งหมด" chipcolor="primary" sx={{ marginRight: '10px;' }} />
+            <Chip label="จำนวนโควต้าคงเหลือ" chipcolor="primary" sx={{ marginRight: '10px;' }} />
             <Chip
               label={`${codeQuatity ? codeQuatity.toString() : '0'} / ${Quantity ? Quantity.toString() : '0'}`}
               chipcolor="primary"
@@ -885,7 +997,8 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
             <TableHead>
               <TableRow>
                 <StyledTableCell align="left">ลำดับ</StyledTableCell>
-                <StyledTableCell sx={{ pl: 3 }}>วันที่</StyledTableCell>
+                <StyledTableCell sx={{ pl: 3 }}>วันที่เริ่มต้น</StyledTableCell>
+                <StyledTableCell sx={{ pl: 3 }}>วันที่สิ้นสุด</StyledTableCell>
                 <StyledTableCell align="left">จำนวนโควต้า</StyledTableCell>
                 <StyledTableCell align="right">จัดการ</StyledTableCell>
               </TableRow>
@@ -896,9 +1009,12 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                     <b>{index + 1}</b>
                   </StyledTableCell>
-                  <TableCell>{formatDate(quota.date)}</TableCell>
+                  <TableCell>{formatDate(quota.startDate)}</TableCell>
+                  <TableCell>{formatDate(quota.endDate)}</TableCell>
+
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                    <b>{quota.quantity}</b>
+                    {quota.quantity}
+                    <b>/{quota.quantity}</b>
                   </StyledTableCell>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
                     <AnimateButton>
@@ -906,7 +1022,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                         variant="contained"
                         type="submit"
                         onClick={(_event: any) => {
-                          handleOpenEditQuotaModal(String(quota.id), String(quota.quantity));
+                          handleOpenEditQuotaModal(quota.id.toString(), quota.quantity.toString());
                         }}
                         sx={{
                           background: theme.palette.dark.main,
@@ -923,6 +1039,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 30, { label: 'All', value: -1 }]}
           component="div"
@@ -947,7 +1064,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
             <Stack direction="row" justifyContent="flex-end">
               <AnimateButton>
                 <Button variant="contained" type="submit" onClick={handleSubmit}>
-                  สร้างข้อมูล
+                  {primaryId ? 'แก้ไขข้อมูล' : 'สร้างข้อมูล'}
                 </Button>
               </AnimateButton>
             </Stack>

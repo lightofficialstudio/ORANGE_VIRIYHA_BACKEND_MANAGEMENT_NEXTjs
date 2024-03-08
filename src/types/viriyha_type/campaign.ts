@@ -76,7 +76,8 @@ export type CampaignDate = {
   id: number;
   campaignId: number;
   quantity: number;
-  date: Date;
+  startDate: Date;
+  endDate: Date;
   createdAt: Date;
   updatedAt: Date;
 };

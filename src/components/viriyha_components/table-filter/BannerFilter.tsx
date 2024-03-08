@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 // material-ui
-import { CardContent, CardActions, Divider, Grid, IconButton, Modal, Typography, TextField, Button } from '@mui/material';
+import { CardContent, CardActions, Divider, Grid, IconButton, Modal, TextField, Button, Autocomplete } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -9,25 +9,23 @@ import MainCard from 'ui-component/cards/MainCard';
 // assets
 import CloseIcon from '@mui/icons-material/Close';
 import { gridSpacing } from 'store/constant';
-import InputLabel from 'ui-component/extended/Form/InputLabel';
 
-interface ModalEditQuotaProps {
+interface ModalFilterStatusProps {
   isOpen: boolean;
   isClose: () => void;
-  onSave: (id: number, quota: number) => void;
-  primaryId: number;
-  quantity: number;
+  onSave: (status: string) => void;
 }
 
-export default function ModalEditQuota({ isOpen, isClose, onSave, primaryId, quantity }: ModalEditQuotaProps) {
-  const [localQuota, setLocalQuota] = React.useState<number>(0);
+const status = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' }
+];
 
-  useEffect(() => {
-    setLocalQuota(quantity);
-  }, [quantity]);
+export default function ModalFilterStatus({ isOpen, isClose, onSave }: ModalFilterStatusProps) {
+  const [localStatus, setLocalStatus] = React.useState<string>('');
 
   const handleSave = () => {
-    onSave(primaryId, localQuota);
+    onSave(localStatus);
   };
 
   return (
@@ -64,23 +62,13 @@ export default function ModalEditQuota({ isOpen, isClose, onSave, primaryId, qua
             }
           >
             <CardContent>
-              <Grid container justifyContent="end">
-                <Typography variant="h4" sx={{ mb: 2 }}>
-                  จำนวนปัจจุบัน :
-                </Typography>
-                <Typography variant="h5" sx={{ mb: 2 }}>
-                  {quantity}
-                </Typography>
-              </Grid>
-              <InputLabel required>จำนวนที่ต้องการแก้ไข</InputLabel>
-              <input type="text" value={primaryId} />
-              <TextField
-                fullWidth
-                type="number"
-                onChange={(event: any) => {
-                  setLocalQuota(event.target.value);
+              <Autocomplete
+                options={status}
+                getOptionLabel={(option) => option.label}
+                onChange={(_event, value) => {
+                  setLocalStatus(value?.value as string);
                 }}
-                value={localQuota}
+                renderInput={(params) => <TextField {...params} label="สถานะ" />}
               />
             </CardContent>
             <Divider />
@@ -88,7 +76,7 @@ export default function ModalEditQuota({ isOpen, isClose, onSave, primaryId, qua
               <Grid container spacing={gridSpacing} justifyContent="end">
                 <Grid item>
                   <Button variant="contained" color="primary" onClick={handleSave}>
-                    แก้ไขข้อมูล
+                    ยืนยัน
                   </Button>
                 </Grid>
                 <Grid item>

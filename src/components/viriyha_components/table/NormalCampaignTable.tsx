@@ -41,6 +41,9 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
+// services
+import axiosServices from 'utils/axios';
+import Swal from 'sweetalert2';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -84,7 +87,19 @@ const headCells: HeadCell[] = [
   {
     id: 'shop_name',
     numeric: false,
-    label: 'พาร์ทเนอร์',
+    label: 'ร้านค้าที่เข้าร่วม',
+    align: 'left'
+  },
+  {
+    id: 'start_Date',
+    numeric: false,
+    label: 'วันที่เริ่มต้น',
+    align: 'left'
+  },
+  {
+    id: 'end_date',
+    numeric: false,
+    label: 'วันที่สิ้นสุด',
     align: 'left'
   },
   {
@@ -235,6 +250,8 @@ const NormalCampaignTable = () => {
   const [rows, setRows] = React.useState<CampaignType[]>([]);
   const { campaign } = useSelector((state) => state.campaign);
 
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
+
   React.useEffect(() => {
     dispatch(getCampaignList());
   }, [dispatch]);
@@ -277,19 +294,19 @@ const NormalCampaignTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.name);
+      const newSelectedId = rows.map((n) => n.id.toString()); // Convert numbers to strings
       setSelected(newSelectedId);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: string) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -320,6 +337,67 @@ const NormalCampaignTable = () => {
     return `NMC-${formattedId}`;
   };
 
+  // delete
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (selected.length === 0) {
+      Swal.fire({
+        title: 'โปรดเลือกรายการที่ต้องการลบก่อน!',
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: 'เข้าใจแล้ว'
+      });
+      return;
+    }
+    Swal.fire({
+      title: 'ต้องการลบรายการ?',
+      text: 'โปรดระวังการลบข้อมูลเป็นเรื่องที่ละเอียดอ่อน คุณไม่สามารถกู้ข้อมูลที่ลบไปแล้วได้!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ลบทันที!',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          const header = {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+          axiosServices.post(`/api/campaign/delete`, { ids: selected }, header).then((response: any) => {
+            if (response.data) {
+              Swal.fire({
+                title: 'คุณทำรายการสำเร็จ',
+                text: response.data.message,
+                icon: 'success',
+                confirmButtonText: 'รับทราบ!'
+              });
+            }
+          });
+          setTimeout(() => {
+            dispatch(getCampaignList());
+          }, 1000);
+          setSelected([]);
+        } catch (error: any) {
+          setErrorMessage(error.message);
+          Swal.fire({
+            title: 'เกิดข้อผิดพลาดในการลบรายการนี้!',
+            text: errorMessage,
+            icon: 'error',
+            showCancelButton: false,
+            confirmButtonText: 'รับทราบ!'
+          });
+        }
+      } else {
+        Swal.fire({
+          title: 'การลบรายการถูกยกเลิก',
+          text: '',
+          icon: 'error',
+          confirmButtonText: 'รับทราบ'
+        });
+      }
+    });
+  };
+
   return (
     <>
       <CardContent>
@@ -341,7 +419,7 @@ const NormalCampaignTable = () => {
           </Grid>
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
             <Tooltip title="ลบ">
-              <IconButton size="large">
+              <IconButton size="large" onClick={handleDelete}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
@@ -401,8 +479,10 @@ const NormalCampaignTable = () => {
                       <TableCell align="left">{formatId(row.id)}</TableCell>
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="left">{String(row.Campaign_Shop[0].Shop.name)}</TableCell>
+                      <TableCell align="left">{format(new Date(row.startDate), 'dd/MM/yyyy')}</TableCell>
+                      <TableCell align="left">{format(new Date(row.endDate), 'dd/MM/yyyy')}</TableCell>
                       <TableCell align="center">
-                        {row.quantity - row.used_quantity}/{row.quantity}
+                        <Chip label={`${row.quantity - row.used_quantity}/${row.quantity}`} size="small" chipcolor="primary"></Chip>
                       </TableCell>
                       <TableCell align="right">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
@@ -411,7 +491,7 @@ const NormalCampaignTable = () => {
                       </TableCell>
                       <TableCell align="right">{row.updatedBy?.name != null ? row.updatedBy?.name : row.createdBy?.name}</TableCell>
 
-                      <TableCell align="right">{format(new Date(row.updatedAt), 'E, MMM d yyyy')}</TableCell>
+                      <TableCell align="right">{format(new Date(row.updatedAt), 'dd/MM/yyyy')}</TableCell>
 
                       <TableCell align="center" sx={{ pr: 3 }}>
                         <Link href={`/campaign/normal/detail/${row.id}`}>

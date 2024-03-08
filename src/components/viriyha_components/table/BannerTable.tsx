@@ -49,6 +49,7 @@ import Swal from 'sweetalert2';
 import axiosServices from 'utils/axios';
 // modal
 import ModalChangePosition from '../modal/banners/ChangePosition';
+import ModalFilterStatus from '../table-filter/BannerFilter';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -251,6 +252,7 @@ const BannerTable = () => {
   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner/';
   // modal
   const [openChangePositionModal, setOpenChangePositionModal] = React.useState<boolean>(false);
+  const [openFilterStatus, setOpenFilterStatus] = React.useState<boolean>(false);
   // response
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
@@ -258,6 +260,8 @@ const BannerTable = () => {
   const [selectedId, setSelectedId] = React.useState<number>(0);
   const [selectedPosition, setSelectedPosition] = React.useState<string>('');
   const [selectedTitle, setSelectedTitle] = React.useState<string>('');
+  // filter
+  const [filterStatus, setFilterStatus] = React.useState<string>('');
 
   React.useEffect(() => {
     dispatch(getBannerList());
@@ -321,8 +325,6 @@ const BannerTable = () => {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
-    console.log(newSelected);
-
     setSelected(newSelected);
   };
 
@@ -407,6 +409,13 @@ const BannerTable = () => {
     }
   };
 
+  // modal filter status
+
+  const handleResponseFilterStatus = (status: string) => {
+    setFilterStatus(status);
+    console.log(filterStatus);
+  };
+
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -442,7 +451,7 @@ const BannerTable = () => {
               </IconButton>
             </Tooltip>
             <Tooltip title="ตัวกรอง">
-              <IconButton size="large">
+              <IconButton size="large" onClick={() => setOpenFilterStatus(true)}>
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
@@ -572,6 +581,8 @@ const BannerTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* modal */}
+      <ModalFilterStatus isOpen={openFilterStatus} isClose={() => setOpenFilterStatus(false)} onSave={handleResponseFilterStatus} />
 
       {/* table pagination */}
       <TablePagination
