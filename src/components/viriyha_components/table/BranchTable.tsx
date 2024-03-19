@@ -251,7 +251,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
     if (branchExcelData.length > 0) {
       handleSubmitExcelFileBranch(branchExcelData);
     }
-  }, [branchExcelData]);
+  });
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -333,8 +333,8 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
   const handleExcelFileBranchChange = (event: any) => {
     const file = event.target.files;
     if (file) {
-      console.log('HAS FILE!');
       setBranchExcelFile(file[0]);
+      console.log(branchExcelFile);
       handleExcelFileBranchUpload(file[0]);
       event.target.value = null;
     }

@@ -15,6 +15,7 @@ type DeleteDialogProps = {
 export default function DeleteDialog({ open, handleClose, message, id, link, status }: DeleteDialogProps) {
   const htmlMessage = Array.isArray(message) ? message.map((m) => `<p>${m}</p>`).join('') : message;
   const [statusDelete, setStatusDelete] = React.useState<Boolean>(false);
+
   React.useEffect(() => {
     const deleteId = async () => {
       const data = { ids: id };
@@ -72,7 +73,7 @@ export default function DeleteDialog({ open, handleClose, message, id, link, sta
       });
     }
     handleClose();
-  }, [open, handleClose, id, link, htmlMessage]);
+  }, [open, handleClose, id, link, htmlMessage, status, statusDelete]);
 
   return null;
 }
