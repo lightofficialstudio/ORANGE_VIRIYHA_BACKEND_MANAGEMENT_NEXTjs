@@ -10,11 +10,11 @@ export type BranchType = {
   name: string;
   latitude: number;
   longitude: number;
-  shopId: number;
+  shopId?: number;
   status: string;
-  description: string;
-  createdById: number;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy: UserType;
+  description?: string;
+  createdById?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  createdBy?: UserType;
 };

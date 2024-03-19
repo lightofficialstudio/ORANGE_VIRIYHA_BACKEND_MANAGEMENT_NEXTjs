@@ -491,6 +491,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
   const handlExcelFilePhoneNumberClick = () => {
     document.getElementById('excelFile')?.click();
   };
+
   const handleExcelFilePhoneNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -512,7 +513,6 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
         phoneNumber: item[1]
       }));
       setArrayPhoneNumber(arrayPhoneNumber);
-      console.log(arrayPhoneNumber);
     };
     reader.readAsArrayBuffer(file);
   };

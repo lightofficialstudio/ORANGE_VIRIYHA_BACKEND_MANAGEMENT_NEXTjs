@@ -21,7 +21,10 @@ import {
   TableHead,
   TableRow,
   tableCellClasses,
-  TablePagination
+  TablePagination,
+  OutlinedInput,
+  InputAdornment,
+  FormHelperText
 } from '@mui/material';
 import { useTheme, styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -33,6 +36,10 @@ import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
 import Chip from 'ui-component/extended/Chip';
+
+// third-party
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 // Dialog
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
@@ -92,11 +99,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0
   }
 }));
+
+// constant
 const quotaChoose = [
   { label: 'รายวัน', id: 1 },
   { label: 'รายสัปดาห์', id: 2 },
-  { label: 'รายเดือน', id: 3 },
-  { label: 'ไม่จำกัด', id: 4 }
+  { label: 'รายเดือน', id: 3 }
 ];
 
 const maxQuotaPerPerson = [
@@ -106,6 +114,17 @@ const maxQuotaPerPerson = [
   { label: 'ไม่จำกัด', id: 4 }
 ];
 
+const WebsiteTrafficPatternList = [
+  { label: 'อัตโนมัติ', value: 'Auto' },
+  { label: 'ปรับด้วยตัวเอง', value: 'Manual' }
+];
+
+// validation schema
+const validationSchema = yup.object({
+  Name: yup.string().required('คุณต้องใส่ชื่อสิทธิพิเศษนี้')
+});
+
+// interface
 interface NormalCampaignFormProps {
   primaryId?: string;
   title?: string;
@@ -137,10 +156,12 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   const [Category, setCategory] = useState('');
   const [startDate, setStartDate] = React.useState<Date | null>(new Date());
   const [endDate, setEndDate] = React.useState<Date | null>();
-  const [Quantity, setQuantity] = useState('');
+  const [Quantity, setQuantity] = useState<number>(0);
   const [CategoryQuantity, setCategoryQuantity] = useState<number>();
   const [QuotaLimit, setQuotaLimit] = useState('');
   const [CategoryQuotaLimit, setCategoryQuotaLimit] = useState<number>();
+  const [WebsiteTrafficPattern, setWebsiteTrafficPattern] = useState<string>('Auto');
+  const [WebsiteTrafficPatternValue, setWebsiteTrafficPatternValue] = useState<number>();
   const [Segment, setSegment] = useState<number[]>([]);
   const [Criteria, setCriteria] = useState<number[]>([]);
   const [Description, setDescription] = useState('');
@@ -149,6 +170,25 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   const createdById = context?.user?.id;
   // variable for update
   const [primaryShopId, setPrimaryShopId] = useState<number>();
+  // validation
+  const formik = useFormik({
+    initialValues: {
+      Name: Name,
+      Category: Category,
+      startDate: startDate,
+      endDate: endDate,
+      Quantity: Quantity,
+      CategoryQuantity: CategoryQuantity,
+      QuotaLimit: QuotaLimit,
+      CategoryQuotaLimit: CategoryQuotaLimit,
+      Segment: Segment,
+      Criteria: Criteria,
+      Description: Description,
+      Condition: Condition
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {}
+  });
   // const [Status, setStatus] = useState('');
   console.log(
     Description,
@@ -229,7 +269,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     formData.append('category_type_id', Category);
     formData.append('startDate', startDate ? startDate.toString() : '');
     formData.append('endDate', endDate ? endDate.toString() : '');
-    formData.append('quantity', Quantity);
+    formData.append('quantity', String(Quantity));
     formData.append('quantity_category', String(CategoryQuantity));
     formData.append('quota_quantity_limit', QuotaLimit);
     formData.append('quota_limit_by', String(CategoryQuotaLimit));
@@ -274,7 +314,6 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
       }
     } catch (error: any) {
       setOpenErrorDialog(true);
-      console.log(error.message);
       setErrorMessage(error.message);
     }
   };
@@ -502,7 +541,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     const end = new Date(endDate as Date).getTime();
     const diffTime = Math.abs(end - start);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const totalQuantity = parseInt(Quantity);
+    const totalQuantity = Quantity;
     const remainderQuota = totalQuantity % diffDays;
     let quotaTable = [];
     let currentAverageQuota = Math.floor(totalQuantity / diffDays);
@@ -553,7 +592,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
         weekEnd = new Date(end);
       }
 
-      const totalQuantity = parseInt(Quantity);
+      const totalQuantity = Quantity;
       let quota = Math.floor(totalQuantity / diffWeeks);
       const remainderQuota = totalQuantity % diffWeeks;
 
@@ -585,7 +624,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     const diffTime = Math.abs(end - start);
     const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
     let quotaTable = [];
-    let currentAverageQuota = Math.floor(parseInt(Quantity) / diffMonths);
+    let currentAverageQuota = Math.floor(Quantity / diffMonths);
     let currentQuota = currentAverageQuota;
     for (let i = 0; i < diffMonths; i++) {
       const monthStart = new Date(start);
@@ -600,7 +639,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
 
       // Add the remainder to the last month
       if (i === diffMonths - 1) {
-        currentQuota += parseInt(Quantity) % diffMonths;
+        currentQuota += Quantity % diffMonths;
       }
 
       quotaTable.push({
@@ -639,9 +678,9 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     setPage(0); // Reset to the first page with the new number of rows
   };
 
-  const handleOpenEditQuotaModal = (id: string, quantity: string) => {
+  const handleOpenEditQuotaModal = (id: string, quantity: number) => {
     setTempQuotaId(parseInt(id));
-    setTempQuotaQuantity(parseInt(quantity));
+    setTempQuotaQuantity(Number(quantity));
     setQuotaModal(true);
   };
 
@@ -738,10 +777,15 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                 required
                 inputProps={{ maxLength: 100 }}
                 fullWidth
+                name="Name"
                 value={Name}
                 onChange={(event: any) => {
                   setName(event.target.value);
+                  formik.handleChange(event);
                 }}
+                onBlur={formik.handleBlur}
+                error={formik.touched.Name && Boolean(formik.errors.Name)}
+                helperText={formik.touched.Name && formik.errors.Name}
               />
             </Grid>
 
@@ -787,16 +831,20 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
             </Grid>
             <Grid item md={6} xs={12}>
               <InputLabel required>จำนวนสิทธิพิเศษรวมทั้งโครงการ</InputLabel>
-              <TextField
-                type="number"
-                fullWidth
-                placeholder="จำนวนคน"
-                disabled={false}
-                onChange={(event: any) => {
-                  setQuantity(event.target.value);
-                }}
-                value={Quantity}
-              />
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  type="number"
+                  placeholder="จำนวนสิทธิพิเศษ"
+                  value={Quantity}
+                  onChange={(event: any) => {
+                    setQuantity(event.target.value);
+                    if (event.target.value < 0) {
+                      setQuantity(0);
+                    }
+                  }}
+                  endAdornment={<InputAdornment position="end">สิทธิพิเศษ</InputAdornment>}
+                />
+              </FormControl>
             </Grid>
             <Grid item md={6} xs={12}>
               <InputLabel required>ประเภทสิทธิพิเศษ</InputLabel>
@@ -817,6 +865,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
             </Grid>
             <Grid item md={6} xs={12}>
               <InputLabel required>จำกัดจำนวน</InputLabel>
+
               <TextField
                 fullWidth
                 placeholder="จำนวนคน"
@@ -879,6 +928,39 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                   />
                 </Grid>
               </Grid>
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <InputLabel required>รูปแบบนับการเข้าชมเว็บไซต์</InputLabel>
+              <Grid container direction="column" spacing={3}>
+                <Grid item>
+                  <Autocomplete
+                    options={WebsiteTrafficPatternList}
+                    getOptionLabel={(option) => option.label}
+                    onChange={(_event: any, value: any) => {
+                      setWebsiteTrafficPattern(value?.value);
+                    }}
+                    isOptionEqualToValue={(option, value) => option.value === value.value}
+                    value={WebsiteTrafficPatternList.find((Item) => Item.value === WebsiteTrafficPattern) || null}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </Grid>
+              </Grid>{' '}
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <InputLabel>จำนวนครั้งที่เข้าชม</InputLabel>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  endAdornment={<InputAdornment position="end">ครั้ง</InputAdornment>}
+                  placeholder="จำนวนการรับชม"
+                  value={WebsiteTrafficPatternValue}
+                  disabled={WebsiteTrafficPattern === 'Auto'}
+                  onChange={(event: any) => {
+                    setWebsiteTrafficPatternValue(event.target.value);
+                  }}
+                />
+                <FormHelperText>จำนวนครั้งที่เข้าชมเว็บไวต์</FormHelperText>
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <InputLabel required>รายละเอียด</InputLabel>
@@ -1022,7 +1104,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                         variant="contained"
                         type="submit"
                         onClick={(_event: any) => {
-                          handleOpenEditQuotaModal(quota.id.toString(), quota.quantity.toString());
+                          handleOpenEditQuotaModal(quota.id.toString(), quota.quantity);
                         }}
                         sx={{
                           background: theme.palette.dark.main,

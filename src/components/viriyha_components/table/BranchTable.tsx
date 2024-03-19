@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { format } from 'date-fns';
+import JWTContext from 'contexts/JWTContext';
+
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
@@ -41,7 +43,13 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
-
+// excel
+import * as XLSX from 'xlsx';
+import axiosServices from 'utils/axios';
+// dialog
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import DeleteDialog from 'components/viriyha_components/modal/status/DeleteDialog';
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
   if (b[orderBy] < a[orderBy]) {
@@ -138,7 +146,7 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
 
 interface OrderListEnhancedTableHeadProps extends EnhancedTableHeadProps {
   theme: Theme;
-  selected: string[];
+  selected: number[];
 }
 
 function EnhancedTableHead({
@@ -213,21 +221,37 @@ type BranchListTableProps = { shopId: string };
 const BranchListTable = ({ shopId }: BranchListTableProps) => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const context = React.useContext(JWTContext);
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('calories');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<BranchType[]>([]);
   const { branch } = useSelector((state) => state.branch);
   const paramShopId = parseInt(shopId);
+  // import varaible
+  const [branchExcelFile, setBranchExcelFile] = React.useState<File | null>(null);
+  const [branchExcelData, setBranchExcelData] = React.useState<BranchType[]>([]);
+  const createdById = context?.user?.id;
+  // condition
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
+  const [successMessage, setSuccessMessage] = React.useState<string>('');
   React.useEffect(() => {
     dispatch(getBranchFromShopBy(paramShopId));
   }, [dispatch, paramShopId]);
   React.useEffect(() => {
     setRows(branch);
   }, [branch]);
+  React.useEffect(() => {
+    if (branchExcelData.length > 0) {
+      handleSubmitExcelFileBranch(branchExcelData);
+    }
+  }, [branchExcelData]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -264,19 +288,19 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.name);
+      const newSelectedId = rows.map((n) => n.id);
       setSelected(newSelectedId);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: string[] = [];
+  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: number) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected: number[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -298,11 +322,98 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+  // function : import
+  const handleExcelFileBranchClick = () => {
+    document.getElementById('excelFile')?.click();
+  };
+
+  const handleExcelFileBranchChange = (event: any) => {
+    const file = event.target.files;
+    if (file) {
+      console.log('HAS FILE!');
+      setBranchExcelFile(file[0]);
+      handleExcelFileBranchUpload(file[0]);
+      event.target.value = null;
+    }
+  };
+
+  const handleExcelFileBranchUpload = async (file: File) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const data = new Uint8Array(e.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const dataParse = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      const arrayBranch: BranchType[] = dataParse.map((item: any) => ({
+        id: item[0],
+        name: item[1],
+        latitude: item[2],
+        longitude: item[3],
+        status: 'ACTIVE'
+      }));
+      setBranchExcelData(arrayBranch);
+      console.log(branchExcelData);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleSubmitExcelFileBranch = async (branchExcelData: BranchType[]) => {
+    const data = {
+      shop_id: paramShopId,
+      createdById: createdById,
+      branch: branchExcelData
+    };
+
+    try {
+      const response = await axiosServices.post(`/api/shop/import/branch/${shopId}`, JSON.stringify(data), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.status === 200) {
+        dispatch(getBranchFromShopBy(paramShopId));
+        setOpenSuccessDialog(true);
+        if (response.data.branch) {
+          // สร้างข้อความ HTML จากอาร์เรย์ของข้อความ
+          const htmlMessage = response.data.branch.map((branchMsg: string) => `${branchMsg}<br>`).join('');
+          setSuccessMessage(htmlMessage);
+        } else {
+          setSuccessMessage('ดำเนินการเสร็จสิ้น!');
+        }
+      } else {
+        setOpenErrorDialog(true);
+        setErrorMessage(response.statusText);
+      }
+    } catch (error: any) {
+      setErrorMessage(error.message);
+      setOpenErrorDialog(true);
+    }
+  };
+
+  const handleDelete = async () => {
+    setOpenDeleteDialog(true);
+  };
 
   return (
     <>
+      <SuccessDialog open={openSuccessDialog} handleClose={() => setOpenSuccessDialog(false)} message={successMessage} />
+      <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
+      <DeleteDialog
+        open={openDeleteDialog}
+        handleClose={() => setOpenDeleteDialog(false)}
+        message={`คุณต้องการลบรายการที่เลือกไว้หรือไม่? <br> มีรายการดังนี้ ${selected.join(', ')}`}
+        id={selected}
+        link={'/api/branch/delete'}
+        status={(statusDelete) => {
+          if (statusDelete) {
+            dispatch(getBranchFromShopBy(paramShopId));
+          }
+        }}
+      />
       <CardContent>
         <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -322,13 +433,14 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
           </Grid>
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
             <Tooltip title="ลบ">
-              <IconButton size="large">
+              <IconButton size="large" onClick={handleDelete}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="นำเข้าเอกสาร">
-              <IconButton size="large">
+              <IconButton size="large" onClick={handleExcelFileBranchClick}>
                 <FileOpenIcon />
+                <input type="file" id="excelFile" style={{ display: 'none' }} onChange={handleExcelFileBranchChange} />
               </IconButton>
             </Tooltip>
             <Tooltip title="ส่งออกเอกสาร">
@@ -375,12 +487,12 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
+                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.id)}>
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}
@@ -393,7 +505,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
                         component="th"
                         id={labelId}
                         scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
+                        onClick={(event) => handleClick(event, row.id)}
                         sx={{ cursor: 'pointer' }}
                       >
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
@@ -405,7 +517,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
                         component="th"
                         id={labelId}
                         scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
+                        onClick={(event) => handleClick(event, row.id)}
                         sx={{ cursor: 'pointer' }}
                       >
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
@@ -419,7 +531,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
+                      <TableCell align="right">{row.createdAt ? format(new Date(row.createdAt), 'E, MMM d yyyy') : ''}</TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
                         <Link href={`/admin/shop/detail/edit_branch/${row.id}`}>
                           <IconButton color="secondary" size="large">

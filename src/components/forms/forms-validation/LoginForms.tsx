@@ -45,7 +45,7 @@ const LoginForms = () => {
           alert: {
             color: 'success'
           },
-          close: false
+          close: true
         })
       );
     }
