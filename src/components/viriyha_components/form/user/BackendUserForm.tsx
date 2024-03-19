@@ -67,8 +67,8 @@ const EnumRole = [
 ];
 
 const Permission = [
-  { name: 'อนุญาติ', id: '1' },
-  { name: 'ไม่อนุญาติ', id: '0' }
+  { name: 'อนุญาติ', id: 1 },
+  { name: 'ไม่อนุญาติ', id: 0 }
 ];
 
 type CategoryFormProps = {
@@ -92,7 +92,8 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   const [Status, setStatus] = useState('');
   const [Role, setRole] = useState('');
   // permission
-  const [MenuWebAnalytics, setMenuWebAnalytics] = useState('');
+  const [MenuWebAnalytics, setMenuWebAnalytics] = useState<number>();
+  const [MenuDashboardCampaign, setMenuDashboardCampaign] = useState<number>();
   const [Description, setDescription] = useState('');
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
@@ -366,7 +367,326 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                         getOptionLabel={(option) => (option ? option.name : '')}
                         value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : '');
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Campaign
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuDashboardCampaign) || null}
+                        onChange={(event, val) => {
+                          setMenuDashboardCampaign(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Redeem
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      <b>เมนู Admin</b>
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row"></StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Banner
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Category
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Shop
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Segment
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Criteria
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Frontend Users
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Backend Users
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      <b>เมนู Campaign</b>
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row"></StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Normal Campaign
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Special Campaign
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      <b>เมนู Report</b>
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row"></StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Attempt
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Location
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Redeem Transaction
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Website Analyze
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      <b>เมนู Config</b>
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row"></StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Error Message
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
+                          console.log(val ? val.id : 'เอราเบะ');
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      <b>เมนู Logs</b>
+                    </StyledTableCell>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row"></StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                      - Error Logs
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Autocomplete
+                        options={Permission}
+                        getOptionLabel={(option) => (option ? option.name : '')}
+                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        onChange={(event, val) => {
+                          setMenuWebAnalytics(val ? val.id : 0);
                           console.log(val ? val.id : 'เอราเบะ');
                         }}
                         renderInput={(params) => <TextField {...params} />}
