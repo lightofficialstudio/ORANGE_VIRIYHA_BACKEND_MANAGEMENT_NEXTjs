@@ -9,19 +9,19 @@ import GoBackButton from 'components/viriyha_components/button/go_back';
 
 // ==============================|| ORDER LIST ||============================== //
 
-const ShopDetailPage = () => {
+const EditCategoryPage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Page title="Shop Detail">
+    <Page title="แก้ไขหมวดหมู่ (Edit Category)">
       <GoBackButton Link={`/admin/category/`} />
-      <CategoryForm titleMessage={'แก้ไขหมวดหมู่'} confirmMessage={'แก้ไขข้อมูล'} categoryId={id as string} />
+      <CategoryForm titleMessage={'แก้ไขหมวดหมู่ (Edit Category)'} confirmMessage={'แก้ไขหมวดหมู่'} categoryId={id as string} />
     </Page>
   );
 };
 
-ShopDetailPage.getLayout = function getLayout(page: ReactElement) {
+EditCategoryPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default ShopDetailPage;
+export default EditCategoryPage;

@@ -11,8 +11,8 @@ import ShopListTable from 'components/viriyha_components/table/ShopListTable';
 
 const ShopPage = () => {
   return (
-    <Page title="Shop List">
-      <MainCard title="Shop List" content={false}>
+    <Page title="จัดการร้านค้า (Shop Management)">
+      <MainCard title="จัดการร้านค้า (Shop Management)" content={false}>
         {/* table */}
         <ShopListTable />
       </MainCard>

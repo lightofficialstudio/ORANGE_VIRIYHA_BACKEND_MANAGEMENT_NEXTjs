@@ -12,8 +12,8 @@ import BannerTable from 'components/viriyha_components/table/BannerTable';
 
 const CategoryPage = () => {
   return (
-    <Page title="Banner Management">
-      <MainCard title="Banner Management" content={false}>
+    <Page title="จัดการแบนเนอร์ (Banner Management)">
+      <MainCard title="จัดการแบนเนอร์ (Banner Management)" content={false}>
         {/* table */}
         <BannerTable />
       </MainCard>

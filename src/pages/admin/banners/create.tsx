@@ -15,7 +15,7 @@ const BannerCreatePage = () => {
     <Page title="สร้างแบนเนอร์">
       <GoBackButton Link={`/admin/banners/`} />
       <MainCard>
-        <BannerForm titleMessage={'สร้างแบนเนอร์'} confirmMessage={'สร้างข้อมูล'} />
+        <BannerForm titleMessage={'สร้างแบนเนอร์ (Create Banner)'} confirmMessage={'สร้างแบนเนอร์'} />
       </MainCard>
     </Page>
   );

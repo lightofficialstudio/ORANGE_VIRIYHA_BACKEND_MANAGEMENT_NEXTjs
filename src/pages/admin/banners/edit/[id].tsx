@@ -14,10 +14,10 @@ const BannerCreatePage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Page title="แก้ไขแบนเนอร์">
+    <Page title="แก้ไขแบนเนอร์ (Edit Banner)">
       <GoBackButton Link={`/admin/banners/`} />
       <MainCard>
-        <BannerForm titleMessage={'แก้ไขแบนเนอร์'} confirmMessage={'แก้ไขข้อมูล'} primaryId={id as string} />
+        <BannerForm titleMessage={'แก้ไขแบนเนอร์ (Edit Banner)'} confirmMessage={'แก้ไขข้อมูลแบนเนอร์'} primaryId={id as string} />
       </MainCard>
     </Page>
   );

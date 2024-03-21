@@ -16,8 +16,10 @@ import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDia
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Avatar
 const Avatar1 = '/assets/banner/BDMS.jpg';
+// third-party - validation
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 // autocomplete options
-
 const StatusOption = [
   { status_name: 'เปิดใช้งาน', status: 'ACTIVE' },
   { status_name: 'ปิดใช้งาน', status: 'INACTIVE' }
@@ -29,10 +31,17 @@ type CategoryFormProps = {
   primaryId?: string;
 };
 
+// validation schema
+const validationSchema = yup.object({
+  Name: yup.string().required('กรุณาใส่ชื่อแบนเนอร์ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Position: yup.number().required('กรุณาใส่ตำแหน่งของแบนเนอร์'),
+  Status: yup.string().required('กรุณาเลือกสถานะของแบนเนอร์')
+});
+
 const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormProps) => {
   const context = React.useContext(JWTContext);
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
-  const [Name, setName] = useState('');
+  const [Name, setName] = useState<string>('');
   const [Position, setPosition] = useState('');
   const [LinkNav, setLinkNav] = useState('');
   const [Status, setStatus] = useState('');
@@ -42,6 +51,19 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner';
+  // validation
+  const formik = useFormik({
+    initialValues: {
+      Name: Name,
+      Position: Position,
+      Status: Status
+    },
+    validationSchema: validationSchema,
+    onSubmit: () => {
+      try {
+      } catch (error: any) {}
+    }
+  });
 
   React.useEffect(() => {
     if (primaryId) {
@@ -130,7 +152,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
-                      *จำกัดขนาด 2MB และ รูปภาพต้องเป็นไฟล์ .jpg .png เท่านั้น <br></br>
+                      *จำกัดขนาด 4MB และ รูปภาพต้องเป็นไฟล์ . jpg, .jpeg, .png .webp เท่านั้น <br></br>
                       *รูปภาพต้องมีขนาด 1080 x 800 เท่านั้น
                     </Typography>
                   </Grid>
@@ -139,8 +161,16 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                       {/* <Button variant="contained" size="small">
                         อัพโหลดรูปภาพ
                       </Button> */}
-                      <InputLabel style={{ textAlign: 'left' }}>รูปภาพ</InputLabel>
-                      <TextField fullWidth type="file" name="bannerImg" onChange={handleImageChange}></TextField>
+                      <InputLabel style={{ textAlign: 'left' }} required>
+                        รูปภาพ
+                      </InputLabel>
+                      <TextField
+                        fullWidth
+                        type="file"
+                        name="bannerImg"
+                        onChange={handleImageChange}
+                        helperText={'รูปภาพต้องมีขนาด 1080 * 800 พิกเซลเท่านั้น และขนาดไม่เกิน 4MB'}
+                      ></TextField>
                     </AnimateButton>
                   </Grid>
                 </Grid>
@@ -153,11 +183,16 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                     <InputLabel required>ชื่อแบนเนอร์</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="เช่น KFC"
+                      placeholder="เช่น แบนเนอร์โรงพยาบาลวิริยะ"
                       value={Name}
+                      name="Name"
                       onChange={(event: any) => {
                         setName(event.target.value);
+                        formik.handleChange(event);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Name && Boolean(formik.errors.Name)}
+                      helperText={formik.touched.Name && formik.errors.Name}
                     />
                   </Grid>
 
@@ -165,12 +200,17 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                     <InputLabel required>ตำแหน่งแบนเนอร์</InputLabel>
                     <TextField
                       type="number"
+                      name="Position"
                       fullWidth
-                      placeholder=""
+                      placeholder="เช่น 1,2,3,4"
                       value={Position}
                       onChange={(event: any) => {
                         setPosition(event.target.value);
+                        formik.handleChange(event);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Position && Boolean(formik.errors.Position)}
+                      helperText={formik.touched.Position && formik.errors.Position}
                     />
                   </Grid>
 
@@ -194,8 +234,17 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                       value={StatusOption.find((option) => option.status === Status) || null}
                       onChange={(event, newValue) => {
                         setStatus(newValue ? newValue.status : '');
+                        formik.setFieldValue('Status', newValue ? newValue.status : '');
                       }}
-                      renderInput={(params) => <TextField {...params} />}
+                      onBlur={() => formik.setFieldTouched('Status', true)}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          name="Status"
+                          error={formik.touched.Status && Boolean(formik.errors.Status)}
+                          helperText={formik.touched.Status && formik.errors.Status}
+                        />
+                      )}
                     />
                   </Grid>
                 </Grid>

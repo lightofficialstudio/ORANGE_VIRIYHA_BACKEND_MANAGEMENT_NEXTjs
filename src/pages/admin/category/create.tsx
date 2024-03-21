@@ -11,9 +11,9 @@ import GoBackButton from 'components/viriyha_components/button/go_back';
 
 const CreateCategoryPage = () => {
   return (
-    <Page title="Create Category Page">
+    <Page title="เพิ่มหมวดหมู่ (Create Category)">
       <GoBackButton Link={`/admin/category/`} />
-      <CategoryForm titleMessage={'สร้างหมวดหมู่'} confirmMessage={'สร้างข้อมูล'} />
+      <CategoryForm titleMessage={'เพิ่มหมวดหมู่ (Create Category)'} confirmMessage={'สร้างหมวดหมู่'} />
     </Page>
   );
 };

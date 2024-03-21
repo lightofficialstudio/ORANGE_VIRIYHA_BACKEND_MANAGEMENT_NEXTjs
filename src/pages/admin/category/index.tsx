@@ -12,8 +12,8 @@ import CategoryTable from 'components/viriyha_components/table/CategoryTable';
 
 const CategoryPage = () => {
   return (
-    <Page title="จัดการแคมเปญ">
-      <MainCard title="Category Management" content={false}>
+    <Page title="จัดการหมวดหมู่ (Category Management)">
+      <MainCard title="จัดการหมวดหมู่ (Category Management)" content={false}>
         {/* table */}
         <CategoryTable />
       </MainCard>

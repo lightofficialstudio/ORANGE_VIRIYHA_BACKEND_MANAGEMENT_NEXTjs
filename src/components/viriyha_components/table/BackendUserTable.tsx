@@ -420,14 +420,14 @@ const BannerTable = () => {
                 />
               </IconButton>
             </Tooltip>
-            <Tooltip title="ตัวกรอง">
+            <Tooltip title="ตัวกรอง" sx={{ display: 'none' }}>
               <IconButton size="large">
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
             {/* product add & dialog */}
             <Link href={'/admin/users/backend/create'}>
-              <Tooltip title="เพิ่มข้อมูล">
+              <Tooltip title="เพิ่มผู้ใช้งานระบบ">
                 <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
                   <AddIcon fontSize="small" />
                 </Fab>

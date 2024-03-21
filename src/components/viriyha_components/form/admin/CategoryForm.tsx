@@ -16,6 +16,9 @@ import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDia
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Mockup Logo
 const MockupLogo = '/assets/mockup/shop.png';
+// third-party - validation
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 // autocomplete options
 
 const StatusOption = [
@@ -28,6 +31,12 @@ type CategoryFormProps = {
   confirmMessage?: string;
   categoryId?: string;
 };
+// validation schema
+const validationSchema = yup.object({
+  Name: yup.string().required('กรุณาใส่ชื่อแบนเนอร์ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Position: yup.number().required('กรุณาใส่ตำแหน่งของแบนเนอร์'),
+  Status: yup.string().required('กรุณาเลือกสถานะของแบนเนอร์')
+});
 
 const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryFormProps) => {
   //   const router = useRouter();
@@ -43,7 +52,19 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category';
-
+  // validation
+  const formik = useFormik({
+    initialValues: {
+      Name: Name,
+      Position: Position,
+      Status: Status
+    },
+    validationSchema: validationSchema,
+    onSubmit: () => {
+      try {
+      } catch (error: any) {}
+    }
+  });
   React.useEffect(() => {
     if (categoryId) {
       axiosServices.get(`/api/category/${categoryId}`).then((response) => {
@@ -151,22 +172,32 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                     <InputLabel required>ชื่อหมวดหมู่</InputLabel>
                     <TextField
                       fullWidth
+                      name="Name"
                       placeholder="เช่น ร้านค้า,ท่องเที่ยว,อาหารและเครื่องดื่ม"
                       value={Name}
                       onChange={(event: any) => {
                         setName(event.target.value);
+                        formik.handleChange(event);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Name && Boolean(formik.errors.Name)}
+                      helperText={formik.touched.Name && formik.errors.Name}
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <InputLabel required>ลำดับการแสดงผล</InputLabel>
                     <TextField
                       fullWidth
+                      name="Position"
                       placeholder="เช่น 1,2,3"
                       value={Position}
                       onChange={(event: any) => {
                         setPosition(event.target.value);
+                        formik.handleChange(event);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Position && Boolean(formik.errors.Position)}
+                      helperText={formik.touched.Position && formik.errors.Position}
                     />
                   </Grid>
 

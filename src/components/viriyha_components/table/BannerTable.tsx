@@ -450,7 +450,7 @@ const BannerTable = () => {
                 />
               </IconButton>
             </Tooltip>
-            <Tooltip title="ตัวกรอง">
+            <Tooltip title="ตัวกรอง" sx={{ display: 'none' }}>
               <IconButton size="large" onClick={() => setOpenFilterStatus(true)}>
                 <FilterListIcon />
               </IconButton>

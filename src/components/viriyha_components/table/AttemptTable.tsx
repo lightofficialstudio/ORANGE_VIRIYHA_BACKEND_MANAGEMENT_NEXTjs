@@ -5,7 +5,6 @@ import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
   CardContent,
-  Checkbox,
   Fab,
   Grid,
   IconButton,
@@ -70,26 +69,26 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'ID',
+    label: 'Code',
     align: 'center'
   },
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อหมวดหมู่',
-    align: 'left'
+    label: 'ผู้ใช้งาน',
+    align: 'center'
   },
   {
     id: 'created_by',
     numeric: true,
-    label: 'ผู้ที่สร้าง',
+    label: 'ข้อความ',
     align: 'center'
   },
   {
     id: 'createdAt',
     numeric: true,
-    label: 'สร้างเมื่อวันที่',
-    align: 'center'
+    label: 'เกิดเหตุการณ์เมื่อวันที่',
+    align: 'right'
   },
   {
     id: 'status',
@@ -156,17 +155,6 @@ function EnhancedTableHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" sx={{ pl: 3 }}>
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts'
-            }}
-          />
-        </TableCell>
         {numSelected > 0 && (
           <TableCell padding="none" colSpan={8}>
             <EnhancedTableToolbar numSelected={selected.length} />
@@ -194,13 +182,6 @@ function EnhancedTableHead({
               </TableSortLabel>
             </TableCell>
           ))}
-        {numSelected <= 0 && (
-          <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
-            <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-              จัดการ
-            </Typography>
-          </TableCell>
-        )}
       </TableRow>
     </TableHead>
   );
@@ -367,16 +348,7 @@ const AttemptTable = () => {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId
-                          }}
-                        />
-                      </TableCell>
+                    <TableRow hover aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
                       <TableCell
                         component="th"
                         id={labelId}
@@ -420,6 +392,26 @@ const AttemptTable = () => {
                     </TableRow>
                   );
                 })}
+            <TableRow hover tabIndex={-1}>
+              <TableCell align="center">#ATMP001</TableCell>
+              <TableCell align="left">นาย ธนาธร (รหัส 4123)</TableCell>
+              <TableCell align="center">พยายามเข้ารับสิทธิ์การใช้งานที่ campaign xxx</TableCell>
+              <TableCell align="right">11/02/2024</TableCell>
+              <TableCell align="center">
+                {' '}
+                <Chip label="ล้มเหลว" size="small" chipcolor="orange" />
+              </TableCell>
+            </TableRow>
+            <TableRow hover tabIndex={-1}>
+              <TableCell align="center">#ATMP002</TableCell>
+              <TableCell align="left">นางสาว อำไภ (รหัส 3214)</TableCell>
+              <TableCell align="center">พยายามกดใช้งานสิทธิ์นอกเหนือเวลาที่กำหนด ที่ campaign xxx</TableCell>
+              <TableCell align="right">12/02/2024</TableCell>
+              <TableCell align="center">
+                {' '}
+                <Chip label="ล้มเหลว" size="small" chipcolor="orange" />
+              </TableCell>
+            </TableRow>
             {emptyRows > 0 && (
               <TableRow
                 style={{

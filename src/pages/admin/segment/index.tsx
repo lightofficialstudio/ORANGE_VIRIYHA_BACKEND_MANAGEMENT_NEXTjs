@@ -11,8 +11,8 @@ import SegmentTable from 'components/viriyha_components/table/SegmentTable';
 
 const ShopPage = () => {
   return (
-    <Page title="Segment">
-      <MainCard title="Segment" content={false}>
+    <Page title="กลุ่มการตลาด (Segment)">
+      <MainCard title="กลุ่มการตลาด (Segment)" content={false}>
         <SegmentTable />
       </MainCard>
     </Page>

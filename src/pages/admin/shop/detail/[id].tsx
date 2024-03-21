@@ -19,12 +19,12 @@ const ShopDetailPage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Page title="Shop Detail">
+    <Page title="รายละเอียดของร้านค้า (Shop Detail)">
       <GoBackButton Link={'/admin/shop/'} />
-      <ShopForm titleMessage={'แก้ไขร้านค้า'} confirmMessage={'แก้ไขข้อมูล'} shopId={id as string} />
+      <ShopForm titleMessage={'แก้ไขข้อมูลร้านค้า (Edit Shop)'} confirmMessage={'แก้ไขข้อมูลสาขา'} shopId={id as string} />
       {/* table */}
       <Grid mt={5}></Grid>
-      <MainCard title="Branch List" content={false}>
+      <MainCard title="สาขาทั้งหมด (Branch)" content={false}>
         <BranchListTable shopId={id as string} />
       </MainCard>
     </Page>
