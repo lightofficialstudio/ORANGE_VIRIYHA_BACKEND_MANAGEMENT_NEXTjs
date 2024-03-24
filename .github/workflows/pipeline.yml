@@ -1,0 +1,17 @@
+name: pipeline
+
+on:
+  push:
+    branches: ["main"]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V4
+        uses: actions/checkout@v4
+      - name: run
+        run: |
+          whoami
+          curl -I https://chinakron:11fdd7966e3b0e76bd9d1ebcd7bcb3e6ae@jenkins.ali-orange.com/job/ui-backend/build?token=TFK93Bx4w8H49Mp
+
+
