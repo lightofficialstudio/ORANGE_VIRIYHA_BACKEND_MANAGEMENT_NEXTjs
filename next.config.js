@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 
 const withTM = require('next-transpile-modules')([
-  '@fullcalendar/common',
-  '@babel/preset-react',
-  '@fullcalendar/common',
   '@fullcalendar/daygrid',
   '@fullcalendar/interaction',
   '@fullcalendar/react',
@@ -17,7 +14,7 @@ const nextConfig = withTM({
   images: {
     domains: ['flagcdn.com', 'localhost'], // เพิ่ม 'localhost' เข้าไปในรายการ domains
   },
-  
+
   env: {
     REACT_APP_VERSION: process.env.REACT_APP_VERSION,
     REACT_APP_API_URL: process.env.VIRIYHA_APP_API_URL,
