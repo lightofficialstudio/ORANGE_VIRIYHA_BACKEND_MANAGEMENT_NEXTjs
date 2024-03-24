@@ -20,13 +20,16 @@ const icons = {
 
 const admin: NavItemType = {
   id: 'admin',
-  title: <FormattedMessage id="Admin" />,
+  title: <FormattedMessage id="Admin Management" />,
+  caption: <FormattedMessage id="ระบบจัดการแอดมิน" />,
+
   icon: icons.IconPhoto,
   type: 'group',
   children: [
     {
       id: 'banner_management',
-      title: <FormattedMessage id="Banner" />,
+      title: <FormattedMessage id="Banner Management" />,
+      caption: <FormattedMessage id="จัดการแบนเนอร์" />,
       type: 'item',
       url: '/admin/banners',
       icon: icons.IconPhoto,
@@ -34,7 +37,8 @@ const admin: NavItemType = {
     },
     {
       id: 'category_management',
-      title: <FormattedMessage id="Category" />,
+      title: <FormattedMessage id="Category Management" />,
+      caption: <FormattedMessage id="จัดการหมวดหมู่" />,
       type: 'item',
       url: '/admin/category',
       icon: icons.IconCategory,
@@ -42,7 +46,8 @@ const admin: NavItemType = {
     },
     {
       id: 'shop_management',
-      title: <FormattedMessage id="Shop" />,
+      title: <FormattedMessage id="Shop Management" />,
+      caption: <FormattedMessage id="จัดการร้านค้า" />,
       type: 'item',
       url: '/admin/shop',
       icon: icons.IconBuildingStore,
@@ -51,6 +56,7 @@ const admin: NavItemType = {
     {
       id: 'segment_management',
       title: <FormattedMessage id="Segment" />,
+      caption: <FormattedMessage id="จัดการกลุ่มการตลาด" />,
       type: 'item',
       url: '/admin/segment',
       icon: icons.IconAdjustments,
@@ -59,6 +65,7 @@ const admin: NavItemType = {
     {
       id: 'criteria_management',
       title: <FormattedMessage id="Criteria" />,
+      caption: <FormattedMessage id="จัดการกลุ่มเป้าหมาย" />,
       type: 'item',
       url: '/admin/criteria',
       icon: icons.IconVectorTriangle,
@@ -67,6 +74,7 @@ const admin: NavItemType = {
     {
       id: 'user_management',
       title: <FormattedMessage id="User Management" />,
+      caption: <FormattedMessage id="จัดการผู้ใช้งาน" />,
       icon: icons.IconUser,
       type: 'collapse',
       children: [

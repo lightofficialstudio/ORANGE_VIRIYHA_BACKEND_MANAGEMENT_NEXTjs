@@ -37,10 +37,6 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
 import Chip from 'ui-component/extended/Chip';
 
-// third-party
-import { useFormik } from 'formik';
-import * as yup from 'yup';
-
 // Dialog
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
@@ -61,7 +57,9 @@ import { SegmentType } from 'types/viriyha_type/segment';
 import ModalEditQuota from '../ModalEditQuota';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 import { CampaignDate } from 'types/viriyha_type/campaign';
-
+// third-party - validation
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 // styles
 const ImageWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -121,7 +119,9 @@ const WebsiteTrafficPatternList = [
 
 // validation schema
 const validationSchema = yup.object({
-  Name: yup.string().required('คุณต้องใส่ชื่อสิทธิพิเศษนี้')
+  Name: yup.string().required('กรุณาใส่ชื่อแบนเนอร์ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  startDate: yup.date().required('กรุณาใส่วันที่เริ่มต้น หรือ กรอกให้ครบถ้วน'),
+  endDate: yup.date().required('กรุณาใส่วันที่สิ้นสุด หรือ กรอกให้ครบถ้วน')
 });
 
 // interface
@@ -174,20 +174,14 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   const formik = useFormik({
     initialValues: {
       Name: Name,
-      Category: Category,
       startDate: startDate,
-      endDate: endDate,
-      Quantity: Quantity,
-      CategoryQuantity: CategoryQuantity,
-      QuotaLimit: QuotaLimit,
-      CategoryQuotaLimit: CategoryQuotaLimit,
-      Segment: Segment,
-      Criteria: Criteria,
-      Description: Description,
-      Condition: Condition
+      endDate: endDate
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {}
+    onSubmit: () => {
+      try {
+      } catch (error: any) {}
+    }
   });
   // const [Status, setStatus] = useState('');
   console.log(
@@ -510,6 +504,14 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
 
   // create code table
   const handleCreateQuota = () => {
+    if (CategoryQuantity == null) {
+      setErrorMessage('กรุณาเลือกประเภทสิทธิพิเศษ');
+      setOpenErrorDialog(true);
+    }
+    if (Quantity == 0 || Quantity == null) {
+      setErrorMessage('กรุณาใส่จำนวนสิทธิพิเศษให้ครบถ้วน หรือใส่จำนวนมากกว่า 1');
+      setOpenErrorDialog(true);
+    }
     if (startDate && endDate && Quantity) {
       if (CategoryQuantity === 1) {
         generateDailyQuotaTable();
@@ -864,15 +866,16 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
               </Grid>{' '}
             </Grid>
             <Grid item md={6} xs={12}>
-              <InputLabel required>จำกัดจำนวน</InputLabel>
-
-              <TextField
+              <InputLabel>จำกัดจำนวน</InputLabel>
+              <OutlinedInput
                 fullWidth
                 placeholder="จำนวนคน"
                 onChange={(event: any) => {
                   setQuotaLimit(event.target.value);
                 }}
                 value={QuotaLimit}
+                disabled={CategoryQuotaLimit === 4}
+                endAdornment={<InputAdornment position="end">คน</InputAdornment>}
               />
             </Grid>
             <Grid item md={6} xs={12}>
@@ -893,7 +896,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
               </Grid>{' '}
             </Grid>
             <Grid item md={6} xs={12}>
-              <InputLabel required>เป้าหมายสิทธิพิเศษ (Criteria)</InputLabel>
+              <InputLabel required>กลุ่มเป้าหมาย (Criteria)</InputLabel>
               <Grid container direction="column" spacing={3}>
                 <Grid item>
                   <Autocomplete
@@ -912,7 +915,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
             </Grid>
 
             <Grid item md={6} xs={12}>
-              <InputLabel required>เป้าหมายสิทธิพิเศษ (Segment)</InputLabel>
+              <InputLabel required>กลุ่มการตลาด (Segment)</InputLabel>
               <Grid container direction="column" spacing={3}>
                 <Grid item>
                   <Autocomplete

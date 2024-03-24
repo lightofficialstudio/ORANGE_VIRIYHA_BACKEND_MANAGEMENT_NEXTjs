@@ -16,6 +16,9 @@ import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDia
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Mockup Logo
 const MockupLogo = '/assets/mockup/shop.png';
+// third-party - validation
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 // autocomplete options
 
 const StatusOption = [
@@ -28,6 +31,12 @@ type ShopFormProps = {
   confirmMessage?: string;
   shopId?: string;
 };
+
+// validation schema
+const validationSchema = yup.object({
+  Name: yup.string().required('กรุณาใส่ชื่อหมวดหมู่ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Status: yup.string().required('กรุณาเลือกสถานะของหมวดหมู่ให้ครบถ้วน')
+});
 
 const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
   //   const router = useRouter();
@@ -42,7 +51,18 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/shop';
-
+  // validation
+  const formik = useFormik({
+    initialValues: {
+      Name: Name,
+      Status: Status
+    },
+    validationSchema: validationSchema,
+    onSubmit: () => {
+      try {
+      } catch (error: any) {}
+    }
+  });
   React.useEffect(() => {
     if (shopId) {
       axiosServices.get(`/api/shop/${shopId}`).then((response) => {
@@ -156,9 +176,14 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
                       fullWidth
                       placeholder="เช่น KFC"
                       value={Name}
+                      name="Name"
                       onChange={(event: any) => {
                         setName(event.target.value);
+                        formik.handleChange(event);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Name && Boolean(formik.errors.Name)}
+                      helperText={formik.touched.Name && formik.errors.Name}
                     />
                   </Grid>
 

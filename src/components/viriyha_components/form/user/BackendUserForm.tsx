@@ -33,7 +33,9 @@ import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDia
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Mockup Logo
 const MockupLogo = '/assets/mockup/user.png';
-
+// third-party - validation
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 // styles
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -77,6 +79,13 @@ type CategoryFormProps = {
   primaryId?: string;
 };
 
+// validation schema
+const validationSchema = yup.object({
+  Username: yup.string().required('กรุณากรอกชื่อผู้ใช้งานให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Password: yup.string().required('กรุณากรอกรหัสผ่านให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Email: yup.string().required('กรุณากรอกอีเมลล์ให้ถูกต้อง หรือ กรอกให้ครบถ้วน')
+});
+
 // table data
 
 const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormProps) => {
@@ -92,14 +101,47 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   const [Status, setStatus] = useState('');
   const [Role, setRole] = useState('');
   // permission
+  // - Dashboard
   const [MenuWebAnalytics, setMenuWebAnalytics] = useState<number>();
   const [MenuDashboardCampaign, setMenuDashboardCampaign] = useState<number>();
+  const [MenuDashboardRedeem, setMenuDashboardRedeem] = useState<number>();
+  // - Admin
+  const [MenuAdminBanner, setMenuAdminBanner] = useState<number>();
+  const [MenuAdminCategory, setMenuAdminCategory] = useState<number>();
+  const [MenuAdminShop, setMenuAdminShop] = useState<number>();
+  const [MenuAdminSegment, setMenuAdminSegment] = useState<number>();
+  const [MenuAdminCriteria, setMenuAdminCriteria] = useState<number>();
+  const [MenuAdminFrontendUsers, setMenuAdminFrontendUsers] = useState<number>();
+  const [MenuAdminBackendUsers, setMenuAdminBackendUsers] = useState<number>();
+  // - Campaign
+  const [MenuCampaignNormal, setMenuCampaignNormal] = useState<number>();
+  const [MenuCampaignSpecial, setMenuCampaignSpecial] = useState<number>();
+  // - Report
+  const [MenuReportAttempt, setMenuReportAttempt] = useState<number>();
+  const [MenuReportLocation, setMenuReportLocation] = useState<number>();
+  const [MenuReportRedeemTransaction, setMenuReportRedeemTransaction] = useState<number>();
+  const [MenuReportWebsiteAnalyze, setMenuReportWebsiteAnalyze] = useState<number>();
+  // - Config
+  const [MenuConfigErrorMessage, setMenuConfigErrorMessage] = useState<number>();
+  // - Logs
+  const [MenuLogsErrorLogs, setMenuLogsErrorLogs] = useState<number>();
   const [Description, setDescription] = useState('');
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category';
-
+  // validation
+  const formik = useFormik({
+    initialValues: {
+      Username: Username,
+      Password: Password,
+      Email: Email,
+      Name: Name,
+      Phonenumber: Phonenumber
+    },
+    validationSchema: validationSchema,
+    onSubmit: () => {}
+  });
   React.useEffect(() => {
     if (primaryId) {
       axiosServices.get(`/api/user_backend/${primaryId}`).then((response) => {
@@ -228,12 +270,16 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <InputLabel required>ชื่อผู้เข้าใช้งานระบบ</InputLabel>
                     <TextField
                       fullWidth
-                      error={!!error}
                       placeholder="Username"
                       value={Username}
+                      name="Username"
                       onChange={(event: any) => {
                         setUsername(event.target.value);
+                        formik.handleChange(event);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Username && Boolean(formik.errors.Username)}
+                      helperText={formik.touched.Username && formik.errors.Username}
                     />
                   </Grid>
 
@@ -241,12 +287,16 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <InputLabel required>รหัสผ่าน</InputLabel>
                     <TextField
                       fullWidth
-                      error={!!error}
+                      name="Password"
                       placeholder="Password"
                       value={Password}
                       onChange={(event: any) => {
                         setPassword(event.target.value);
+                        formik.handleChange(event);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Password && Boolean(formik.errors.Password)}
+                      helperText={formik.touched.Password && formik.errors.Password}
                     />
                   </Grid>
 
@@ -254,12 +304,15 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <InputLabel required>อีเมลล์</InputLabel>
                     <TextField
                       fullWidth
-                      error={!!error}
                       placeholder="viriyha@mail.com"
+                      name="Email"
                       value={Email}
                       onChange={(event: any) => {
                         setEmail(event.target.value);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Email && Boolean(formik.errors.Email)}
+                      helperText={formik.touched.Email && formik.errors.Email}
                     />
                   </Grid>
 
@@ -267,7 +320,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <InputLabel>ชื่อ-นามสกุล</InputLabel>
                     <TextField
                       fullWidth
-                      error={!!error}
                       placeholder="สมชาย ใจดี"
                       value={Name}
                       onChange={(event: any) => {
@@ -280,7 +332,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <InputLabel>เบอร์โทร</InputLabel>
                     <TextField
                       fullWidth
-                      error={!!error}
                       placeholder="089-123-4567"
                       value={Phonenumber}
                       onChange={(event: any) => {
@@ -298,7 +349,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       onChange={(event, roleValue) => {
                         setRole(roleValue ? roleValue.role : '');
                       }}
-                      renderInput={(params) => <TextField {...params} />}
+                      renderInput={(params) => <TextField {...params} error={!!error} />}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -310,14 +361,13 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       onChange={(event, newValue) => {
                         setStatus(newValue ? newValue.status : '');
                       }}
-                      renderInput={(params) => <TextField {...params} />}
+                      renderInput={(params) => <TextField {...params} error={!!error} />}
                     />
                   </Grid>
 
                   <Grid item xs={12}>
                     <InputLabel>รายละเอียด</InputLabel>
                     <TextField
-                      error={!!error}
                       multiline
                       rows={3}
                       fullWidth
@@ -368,7 +418,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                         value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
                         onChange={(event, val) => {
                           setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -385,7 +434,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                         value={Permission.find((option) => option.id === MenuDashboardCampaign) || null}
                         onChange={(event, val) => {
                           setMenuDashboardCampaign(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -399,10 +447,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuDashboardRedeem) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuDashboardRedeem(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -422,10 +469,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuAdminBanner) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuAdminBanner(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -439,10 +485,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuAdminCategory) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuAdminCategory(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -456,10 +501,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuAdminShop) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuAdminShop(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -473,9 +517,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuAdminSegment) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
+                          setMenuAdminSegment(val ? val.id : 0);
                           console.log(val ? val.id : 'เอราเบะ');
                         }}
                         renderInput={(params) => <TextField {...params} />}
@@ -490,10 +534,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuAdminCriteria) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuAdminCriteria(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -507,10 +550,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuAdminFrontendUsers) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuAdminFrontendUsers(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -524,10 +566,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuAdminBackendUsers) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuAdminBackendUsers(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -547,10 +588,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuCampaignNormal) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuCampaignNormal(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -564,10 +604,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuCampaignSpecial) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuCampaignSpecial(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -587,10 +626,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuReportAttempt) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuReportAttempt(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -604,10 +642,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuReportLocation) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuReportLocation(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -621,10 +658,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuReportRedeemTransaction) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuReportRedeemTransaction(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -638,9 +674,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuReportWebsiteAnalyze) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
+                          setMenuReportWebsiteAnalyze(val ? val.id : 0);
                           console.log(val ? val.id : 'เอราเบะ');
                         }}
                         renderInput={(params) => <TextField {...params} />}
@@ -661,9 +697,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuConfigErrorMessage) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
+                          setMenuConfigErrorMessage(val ? val.id : 0);
                           console.log(val ? val.id : 'เอราเบะ');
                         }}
                         renderInput={(params) => <TextField {...params} />}
@@ -684,10 +720,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuWebAnalytics) || null}
+                        value={Permission.find((option) => option.id === MenuLogsErrorLogs) || null}
                         onChange={(event, val) => {
-                          setMenuWebAnalytics(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
+                          setMenuLogsErrorLogs(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />

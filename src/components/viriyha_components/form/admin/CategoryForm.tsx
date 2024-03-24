@@ -33,9 +33,9 @@ type CategoryFormProps = {
 };
 // validation schema
 const validationSchema = yup.object({
-  Name: yup.string().required('กรุณาใส่ชื่อแบนเนอร์ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
-  Position: yup.number().required('กรุณาใส่ตำแหน่งของแบนเนอร์'),
-  Status: yup.string().required('กรุณาเลือกสถานะของแบนเนอร์')
+  Name: yup.string().required('กรุณาใส่ชื่อหมวดหมู่ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Position: yup.number().required('กรุณาใส่ตำแหน่งหมวดหมู่ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Status: yup.string().required('กรุณาเลือกสถานะของหมวดหมู่ให้ครบถ้วน')
 });
 
 const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryFormProps) => {
@@ -97,6 +97,12 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
   };
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!Name || !Position || !Status) {
+      setOpenErrorDialog(true);
+      setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
+    }
+
     event.preventDefault();
     const formData = new FormData();
     formData.append('name', Name);

@@ -19,7 +19,7 @@ import config from './config';
 
 const menuItems: { items: NavItemType[] } = {
   items: [dashboard, admin, campaign, report, config, logs, application, forms, elements, samplePage, pages, utilities, support, other]
-  // items: [admin, campaign, report, dashboard, logs]
+  // items: [dashboard, admin, campaign, report, config, logs]
 };
 
 export default menuItems;

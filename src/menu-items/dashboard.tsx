@@ -18,56 +18,78 @@ const icons = {
 
 const dashboard: NavItemType = {
   id: 'dashboard',
-  title: <FormattedMessage id="dashboard" />,
+  title: <FormattedMessage id="Dashboard&Report" />,
+  caption: <FormattedMessage id="แดชบอร์ดและรายงาน" />,
   icon: icons.IconDashboard,
   type: 'group',
   children: [
     {
-      id: 'web_analytics_dashboard',
+      id: 'Web_Anylytics',
       title: <FormattedMessage id="Web Analytics" />,
-      type: 'item',
-      url: '/dashboard/web-analytics',
-      icon: icons.IconChartArcs3,
-      breadcrumbs: false
-    },
-    {
-      id: 'campaign_analytics_dashboard',
-      title: <FormattedMessage id="Campaign" />,
-      type: 'item',
-      url: '/dashboard/campaign-analytics',
+      caption: <FormattedMessage id="ระบบรายงานเว็บไซต์" />,
+      type: 'collapse',
       icon: icons.IconGraph,
-      breadcrumbs: false
+      children: [
+        {
+          id: 'web_analytics_dashboard',
+          title: <FormattedMessage id="Dashboard" />,
+          type: 'item',
+          url: '/dashboard/web-analytics',
+          breadcrumbs: false
+        },
+        {
+          id: 'report_website',
+          title: <FormattedMessage id="Report" />,
+          type: 'item',
+          url: '/report/website',
+          breadcrumbs: false
+        }
+      ]
     },
     {
-      id: 'redeem_transaction_dasboard',
-      title: <FormattedMessage id="Redeem" />,
-      type: 'item',
-      url: '/dashboard/redeem-transaction',
-      icon: icons.IconChartArcs3,
-      breadcrumbs: false
+      id: 'Redeem_Transaction',
+      title: <FormattedMessage id="Redeem Transaction" />,
+      caption: <FormattedMessage id="ระบบรายงานการรับสิทธิ์" />,
+      type: 'collapse',
+      icon: icons.IconGraph,
+      children: [
+        {
+          id: 'redeem_transaction_dasboard',
+          title: <FormattedMessage id="Dashboard" />,
+          type: 'item',
+          url: '/dashboard/redeem-transaction',
+          breadcrumbs: false
+        },
+        {
+          id: 'report_redeem',
+          title: <FormattedMessage id="Report" />,
+          type: 'item',
+          url: '/report/redeem',
+          breadcrumbs: false
+        }
+      ]
+    },
+    {
+      id: 'Campaign_Analytics',
+      title: <FormattedMessage id="Campaign Analytics" />,
+      caption: <FormattedMessage id="ระบบรายงานสิทธิพิเศษ" />,
+      type: 'collapse',
+      icon: icons.IconGraph,
+      children: [
+        {
+          id: 'campaign_analytics_dashboard',
+          title: <FormattedMessage id="Dashboard" />,
+          type: 'item',
+          url: '/dashboard/campaign-analytics',
+          breadcrumbs: false
+        }
+      ]
     }
-    // {
-    //   id: 'default',
-    //   title: <FormattedMessage id="default" />,
-    //   type: 'item',
-    //   url: '/dashboard/default',
-    //   icon: icons.IconDashboard,
-    //   breadcrumbs: false
-    // }
-
-    // {
-    //   id: 'analytics',
-    //   title: <FormattedMessage id="analytics" />,
-    //   type: 'item',
-    //   url: '/dashboard/analytics',
-    //   icon: icons.IconDeviceAnalytics,
-    //   breadcrumbs: false
-    // }
   ]
 };
 
 // สมมติฐาน: รายการสิทธิ์ของผู้ใช้
-const userPermissions = ['redeem_transaction_dasboard', 'web_analytics_dashboard', 'campaign_analytics_dashboard'];
+const userPermissions = ['Campaign_Analytics', 'Redeem_Transaction', 'Web_Anylytics'];
 
 // ฟังก์ชันสำหรับตรวจสอบว่าผู้ใช้มีสิทธิ์ตามที่ต้องการหรือไม่
 const hasPermission = (itemId: any) => userPermissions.includes(itemId);

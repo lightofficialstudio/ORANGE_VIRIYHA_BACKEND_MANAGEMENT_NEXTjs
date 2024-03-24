@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // material-ui
 import { CardContent, CardActions, Divider, Grid, IconButton, Modal, Typography, TextField, Button } from '@mui/material';
@@ -10,44 +10,24 @@ import MainCard from 'ui-component/cards/MainCard';
 import CloseIcon from '@mui/icons-material/Close';
 import { gridSpacing } from 'store/constant';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
-import axiosServices from 'utils/axios';
 
-interface ErrorFormDialogProps {
-  title?: string;
-  primaryId: number;
+interface ModalEditPhoneNumberProps {
   isOpen: boolean;
   isClose: () => void;
-  onSave: (status: boolean) => void;
+  onSave: (id: number, phonenumber: string) => void;
+  primaryId: number;
+  phonenumber: string;
 }
 
-export default function ErrorFormDialog({ isOpen, isClose, onSave, title, primaryId }: ErrorFormDialogProps) {
-  const [error, setError] = React.useState<string>('');
-  const [errorName, setErrorName] = React.useState<string>('');
-  const formatId = (id: number): string => {
-    const formattedId = id.toString().padStart(4, '0');
-    return `#ERR-${formattedId}`;
-  };
-  const handleSave = () => {
-    if (errorName === '') {
-      setError('กรุณากรอกข้อความที่ต้องการแก้ไข');
-      return;
-    }
-    const formData = new FormData();
-    formData.append('message', errorName);
+export default function ModalEditPhoneNumber({ isOpen, isClose, onSave, primaryId, phonenumber }: ModalEditPhoneNumberProps) {
+  const [localPhoneNumber, setLocalPhoneNumber] = React.useState<string>('');
 
-    axiosServices
-      .put(`/api/error_scenario/${primaryId}`, formData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          onSave(true);
-          setError('');
-          isClose();
-        }
-      });
+  useEffect(() => {
+    setLocalPhoneNumber(phonenumber);
+  }, [phonenumber]);
+
+  const handleSave = () => {
+    onSave(primaryId, localPhoneNumber);
   };
 
   return (
@@ -75,7 +55,7 @@ export default function ErrorFormDialog({ isOpen, isClose, onSave, title, primar
           }}
         >
           <MainCard
-            title={title}
+            title="แก้ไขเบอร์มือถือ"
             content={false}
             secondary={
               <IconButton onClick={isClose} size="large">
@@ -86,19 +66,21 @@ export default function ErrorFormDialog({ isOpen, isClose, onSave, title, primar
             <CardContent>
               <Grid container justifyContent="end">
                 <Typography variant="h4" sx={{ mb: 2 }}>
-                  รหัส : {formatId(primaryId)}
+                  เบอร์ปัจจุบัน :
+                </Typography>
+                <Typography variant="h5" sx={{ mb: 2 }}>
+                  {phonenumber}
                 </Typography>
               </Grid>
-              <InputLabel required>ข้อความที่ต้องการแก้ไข</InputLabel>
+              <InputLabel required>เบอร์มือถือที่ต้องการแก้ไข</InputLabel>
+              <input type="hidden" value={primaryId} />
               <TextField
                 fullWidth
-                required
-                error={!!error}
-                helperText={error}
                 type="text"
-                inputProps={{ maxLength: 256 }}
-                onChange={(event: any) => setErrorName(event.target.value)}
-                value={errorName}
+                onChange={(event: any) => {
+                  setLocalPhoneNumber(event.target.value);
+                }}
+                value={localPhoneNumber}
               />
             </CardContent>
             <Divider />
@@ -106,7 +88,7 @@ export default function ErrorFormDialog({ isOpen, isClose, onSave, title, primar
               <Grid container spacing={gridSpacing} justifyContent="end">
                 <Grid item>
                   <Button variant="contained" color="primary" onClick={handleSave}>
-                    แก้ไข
+                    แก้ไขข้อมูล
                   </Button>
                 </Grid>
                 <Grid item>

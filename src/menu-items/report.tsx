@@ -19,13 +19,17 @@ const icons = {
 
 const report: NavItemType = {
   id: 'report',
-  title: <FormattedMessage id="Report" />,
+  title: <FormattedMessage id="Transaction" />,
+  caption: <FormattedMessage id="ประวัติทำรายการ" />,
+
   icon: icons.IconPhoto,
   type: 'group',
   children: [
     {
       id: 'report_attempt',
       title: <FormattedMessage id="Attempt" />,
+      caption: <FormattedMessage id="ประวัติการพยายามเข้ารับสิทธิ์" />,
+
       type: 'item',
       url: '/report/attempt',
       icon: icons.IconFocus2,
@@ -34,25 +38,10 @@ const report: NavItemType = {
     {
       id: 'report_location',
       title: <FormattedMessage id="Location" />,
+      caption: <FormattedMessage id="ประวัติที่อยู่การกดรับสิทธิ์" />,
       type: 'item',
       url: '/report/location',
       icon: icons.IconLocation,
-      breadcrumbs: false
-    },
-    {
-      id: 'report_redeem',
-      title: <FormattedMessage id="Redeem Transaction" />,
-      type: 'item',
-      url: '/report/redeem',
-      icon: icons.IconLayersIntersect,
-      breadcrumbs: false
-    },
-    {
-      id: 'report_website',
-      title: <FormattedMessage id="Website Analyze" />,
-      type: 'item',
-      url: '/report/website',
-      icon: icons.IconBrowser,
       breadcrumbs: false
     }
   ]

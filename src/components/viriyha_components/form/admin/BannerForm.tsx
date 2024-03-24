@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 // import { useRouter } from 'next/router';
 import JWTContext from 'contexts/JWTContext';
-import { Grid, TextField, Typography, Button, Autocomplete, Stack } from '@mui/material';
+import { Grid, TextField, Typography, Button, Autocomplete, Stack, Dialog, DialogContent } from '@mui/material';
 import axiosServices from 'utils/axios';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -51,6 +51,8 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner';
+  // dialog
+  const [openImageDialog, setOpenImageDialog] = React.useState<boolean>(false);
   // validation
   const formik = useFormik({
     initialValues: {
@@ -139,15 +141,34 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   };
   return (
     <>
+      <Dialog
+        onClose={() => setOpenImageDialog(false)}
+        open={openImageDialog}
+        sx={{
+          '& .MuiDialog-paper': {
+            width: 1080,
+            maxWidth: '100%'
+          }
+        }}
+      >
+        <DialogContent>
+          <Image src={PreviewImg} alt="Preview" height={400} width={1080} />
+        </DialogContent>
+      </Dialog>
       <MainCard>
         <MainCard title={titleMessage} content={true}>
           <Grid container spacing={3}>
-            <Grid item xs={6} md={12}>
+            <Grid item xs={6} md={6}>
               <SubCard title="รูปภาพ" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <Image alt="User 1" src={PreviewImg} width={1080} height={480} style={{ margin: '0 auto' }} />
+                      <Image alt="User 1" src={PreviewImg} style={{ margin: '0 auto' }} width={600} height={250} />
+                    </Grid>
+                    <Grid item>
+                      <Button variant="outlined" onClick={() => setOpenImageDialog(true)}>
+                        ดูขนาดรูปภาพจริง
+                      </Button>
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>
@@ -176,7 +197,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                 </Grid>
               </SubCard>
             </Grid>
-            <Grid item xs={6} md={12}>
+            <Grid item xs={6} md={6}>
               <SubCard title={titleMessage}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>

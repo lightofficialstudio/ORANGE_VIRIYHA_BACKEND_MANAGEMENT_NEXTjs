@@ -23,18 +23,20 @@ import {
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
-import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
-import { SegmentType } from 'types/viriyha_type/segment';
-import { getSegment } from 'store/slices/viriyha/segment';
+
+import { ErrorMessageType } from 'types/viriyha_type/error_message';
+import { getErrorMessage } from 'store/slices/viriyha/error_message';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
-
+// response
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // dialog
 import ErrorFormDialog from '../modal/config/ErrorFormDialong';
 
@@ -52,10 +54,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: SegmentType[], comparator: (a: SegmentType, b: SegmentType) => number) {
-  const stabilizedThis = array?.map((el: SegmentType, index: number) => [el, index]);
+function stableSort(array: ErrorMessageType[], comparator: (a: ErrorMessageType, b: ErrorMessageType) => number) {
+  const stabilizedThis = array?.map((el: ErrorMessageType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as SegmentType, b[0] as SegmentType);
+    const order = comparator(a[0] as ErrorMessageType, b[0] as ErrorMessageType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -82,12 +84,6 @@ const headCells: HeadCell[] = [
     numeric: false,
     label: 'ข้อความปรับแต่งใหม่ ',
     align: 'left'
-  },
-  {
-    id: 'status',
-    numeric: false,
-    label: 'สถานะ',
-    align: 'center'
   }
 ];
 
@@ -198,22 +194,28 @@ const ConfigErrorTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<SegmentType[]>([]);
-  const { segment } = useSelector((state) => state.segment);
+  const [rows, setRows] = React.useState<ErrorMessageType[]>([]);
+  const { error_message } = useSelector((state) => state.error_message);
   // dialog
   const [tempConfigId, setTempConfigId] = React.useState<number>(0);
   const [openEditDialog, setOpenEditDialog] = React.useState<boolean>(false);
+  // response
+  // response
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
+
   //   const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/shop/';
   const formatId = (id: number): string => {
     const formattedId = id.toString().padStart(4, '0');
     return `ERR-${formattedId}`;
   };
   React.useEffect(() => {
-    dispatch(getSegment());
+    dispatch(getErrorMessage());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(segment);
-  }, [segment]);
+    setRows(error_message);
+  }, [error_message]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -238,7 +240,7 @@ const ConfigErrorTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(segment);
+      setRows(error_message);
     }
   };
 
@@ -250,7 +252,7 @@ const ConfigErrorTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.id);
+      const newSelectedId = rows.map((n) => n.id.toString());
       console.log(newSelectedId);
       setSelected(newSelectedId);
       return;
@@ -272,6 +274,8 @@ const ConfigErrorTable = () => {
 
   return (
     <>
+      <SuccessDialog open={openSuccessDialog} handleClose={() => setOpenSuccessDialog(false)} />
+      <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
       <ErrorFormDialog
         isOpen={openEditDialog}
         isClose={() => setOpenEditDialog(false)}
@@ -279,7 +283,11 @@ const ConfigErrorTable = () => {
         primaryId={tempConfigId}
         onSave={(response: boolean) => {
           if (response) {
-            dispatch(getSegment());
+            dispatch(getErrorMessage());
+            setOpenSuccessDialog(true);
+          } else {
+            setOpenErrorDialog(true);
+            setErrorMessage('เกิดข้อผิดพลาดในการแก้ไขข้อมูล');
           }
         }}
       />
@@ -324,23 +332,18 @@ const ConfigErrorTable = () => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.id);
+                  const isItemSelected = isSelected(row.id.toString());
 
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
                       <TableCell>
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
                           {' '}
-                          #{formatId(parseInt(row.id))}
+                          #{formatId(row.id)}
                         </Typography>
                       </TableCell>
-                      <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="center">
-                        {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                        {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
-                        {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
-                      </TableCell>
+                      <TableCell align="left">{row.scenario}</TableCell>
+                      <TableCell align="left">{row.set_message}</TableCell>
 
                       <TableCell align="center" sx={{ pr: 3 }}>
                         <IconButton

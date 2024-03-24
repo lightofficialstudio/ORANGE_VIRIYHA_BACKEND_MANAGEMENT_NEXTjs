@@ -55,6 +55,7 @@ import { CriteriaType } from 'types/viriyha_type/criteria';
 import { SegmentType } from 'types/viriyha_type/segment';
 // modal
 import ModalEditQuota from '../ModalEditQuota';
+import ModalEditPhoneNumber from '../ModalEditPhoneNumber';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/AddTwoTone';
@@ -157,6 +158,10 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
   const [filePhoneNumberExcel, setFilePhoneNumberExcel] = useState<Blob>();
   const createdById = context?.user?.id;
   // const [Status, setStatus] = useState('');
+  // modal
+  const [openEditPhoneNumberModal, setOpenEditPhoneNumberModal] = React.useState<boolean>(false);
+  const [tempPhoneNumberId, setTempPhoneNumberId] = React.useState<number>(0);
+  const [tempPhoneNumber, setTempPhoneNumber] = React.useState<string>('');
   console.log(
     Description,
     Condition,
@@ -507,15 +512,53 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
       const workbook = XLSX.read(data, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-      const dataParse = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-      const arrayPhoneNumber = dataParse.map((item: any) => ({
-        id: item[0],
-        phoneNumber: item[1]
-      }));
+      const range = XLSX.utils.decode_range(sheet['!ref']!);
+      range.s.r = 1; // ข้ามหัวข้อ (บรรทัดแรก)
+      const updatedRef = XLSX.utils.encode_range(range);
+      const dataParse = XLSX.utils.sheet_to_json(sheet, { range: updatedRef, header: 1 });
+      const arrayPhoneNumber: any[] = [];
+      const phoneNumbersSeen: { [key: string]: number } = {}; // เก็บ track หมายเลขที่เห็นแล้ว
+
+      dataParse.forEach((item: any) => {
+        let phoneNumber = item[1].toString().replace(/\s+/g, '');
+        let errorMessage = '';
+
+        if (phoneNumbersSeen[phoneNumber]) {
+          // หมายเลขซ้ำกับที่เห็นก่อนหน้า
+          errorMessage = ` (ผิดรูปแบบที่กำหนด: ซ้ำกับ id ${phoneNumbersSeen[phoneNumber]})`;
+        } else if (/[^0-9]/.test(phoneNumber)) {
+          errorMessage = ' (ผิดรูปแบบที่กำหนด: มีตัวอักษรพิเศษอยู่)';
+        } else if (phoneNumber.length < 9) {
+          errorMessage = ' (ผิดรูปแบบที่กำหนด: น้อยกว่า 9 ตัวอักษร)';
+        } else {
+          // ถ้าไม่พบข้อผิดพลาด, เก็บหมายเลขไว้ใน object เพื่อ track
+          phoneNumbersSeen[phoneNumber] = item[0];
+        }
+
+        // ทุก entry จะถูกเพิ่มเข้าไปใน array โดยจะมีข้อความแสดงข้อผิดพลาดถ้ามี
+        arrayPhoneNumber.push({
+          id: item[0],
+          phoneNumber: phoneNumber + errorMessage
+        });
+      });
+
       setArrayPhoneNumber(arrayPhoneNumber);
     };
     reader.readAsArrayBuffer(file);
   };
+
+  const handleOpenEditPhoneNumberModal = (id: number, phone_number: string) => {
+    setTempPhoneNumberId(id);
+    setTempPhoneNumber(phone_number);
+    setOpenEditPhoneNumberModal(true);
+  };
+
+  const handleSavePhoneNumber = (id: number, phone_number: string) => {
+    const index = ArrayPhoneNumber.findIndex((item) => item.id === id);
+    ArrayPhoneNumber[index].phoneNumber = phone_number;
+    setOpenEditPhoneNumberModal(false);
+  };
+
   // table
   const handleChangePage = (_event: any, newPage: any) => {
     setPage(newPage);
@@ -936,6 +979,13 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
         primaryId={tempQuotaId}
         quantity={tempQuotaQuantity}
       />
+      <ModalEditPhoneNumber
+        isOpen={openEditPhoneNumberModal}
+        isClose={() => setOpenEditPhoneNumberModal(false)}
+        onSave={handleSavePhoneNumber}
+        primaryId={tempPhoneNumberId}
+        phonenumber={tempPhoneNumber}
+      />
 
       <MainCard title="เบอร์มือถือที่เข้าร่วมรายการ" sx={{ marginTop: '50px' }}>
         <Grid container spacing={gridSpacing} sx={{ marginBottom: '20px' }} justifyContent="end">
@@ -987,7 +1037,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
                         variant="contained"
                         type="submit"
                         onClick={(_event: any) => {
-                          handleOpenEditQuotaModal(String(phone.id), String(phone.quantity));
+                          handleOpenEditPhoneNumberModal(Number(phone.id), String(phone.phoneNumber));
                         }}
                         sx={{
                           background: theme.palette.dark.main,

@@ -13,7 +13,9 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 // Dialog
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
-
+// third-party - validation
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 // autocomplete options
 
 const StatusOption = [
@@ -26,7 +28,12 @@ type CriteriaFormProps = {
   confirmMessage?: string;
   primaryId?: string;
 };
-
+// validation schema
+const validationSchema = yup.object({
+  Name: yup.string().required('กรุณาใส่ชื่อหมวดหมู่ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Position: yup.number().required('กรุณาใส่ตำแหน่งหมวดหมู่ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Status: yup.string().required('กรุณาเลือกสถานะของหมวดหมู่ให้ครบถ้วน')
+});
 const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormProps) => {
   //   const router = useRouter();
   //   const { id } = router.query;
@@ -37,7 +44,18 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
-
+  // validation
+  const formik = useFormik({
+    initialValues: {
+      Name: Name,
+      Status: Status
+    },
+    validationSchema: validationSchema,
+    onSubmit: () => {
+      try {
+      } catch (error: any) {}
+    }
+  });
   React.useEffect(() => {
     if (primaryId) {
       axiosServices.get(`/api/criteria/${primaryId}`).then((response) => {
@@ -107,9 +125,14 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
                       fullWidth
                       placeholder="เช่น Bronze หรือ Silver หรือ Gold หรือ Platinum หรือ Diamond หรือ VIP หรือ ฯลฯ"
                       value={Name}
+                      name="Name"
                       onChange={(event: any) => {
                         setName(event.target.value);
+                        formik.handleChange(event);
                       }}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.Name && Boolean(formik.errors.Name)}
+                      helperText={formik.touched.Name && formik.errors.Name}
                     />
                   </Grid>
 

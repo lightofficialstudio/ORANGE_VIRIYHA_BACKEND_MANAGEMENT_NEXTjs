@@ -1,4 +1,40 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# compiling
+/dist
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Unused dependencies to ignore
+# Note: You should manually remove these from your package.json and run 'npm prune' or 'yarn' to clean up
+# @babel/preset-react
+# @fullcalendar/common
+# history
+# jsonwebtoken
+# jss
+# jss-rtl
+# slick-carousel
+# uuid
+# web-vitals
+# @types/jsonwebtoken
+# @types/react-table
+# @types/uuid
 
 # dependencies
 /node_modules

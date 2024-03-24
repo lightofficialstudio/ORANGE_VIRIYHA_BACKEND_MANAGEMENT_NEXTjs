@@ -16,12 +16,15 @@ const icons = {
 const logs: NavItemType = {
   id: 'logs',
   title: <FormattedMessage id="Logs" />,
+  caption: <FormattedMessage id="ข้อความระบบ" />,
+
   icon: icons.IconBrandTabler,
   type: 'group',
   children: [
     {
       id: 'errpr_logs',
       title: <FormattedMessage id="Error Logs" />,
+      caption: <FormattedMessage id="การแจ้งเตือนข้อความระบบ" />,
       type: 'item',
       url: '/logs/error',
       icon: icons.IconBrandTabler,
