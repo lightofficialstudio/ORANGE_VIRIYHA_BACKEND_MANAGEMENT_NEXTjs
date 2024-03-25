@@ -6,7 +6,7 @@ import {
   Box,
   CardContent,
   Checkbox,
-  Fab,
+  // Fab,
   Grid,
   IconButton,
   InputAdornment,
@@ -32,12 +32,12 @@ import { useDispatch, useSelector } from 'store';
 import { getCategory } from 'store/slices/viriyha/category';
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
+// import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
-import AddIcon from '@mui/icons-material/AddTwoTone';
+// import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
 
 // table sort
@@ -68,33 +68,27 @@ function stableSort(array: CategoryType[], comparator: (a: CategoryType, b: Cate
 
 const headCells: HeadCell[] = [
   {
-    id: 'id',
-    numeric: true,
-    label: 'ID',
-    align: 'center'
-  },
-  {
     id: 'name',
     numeric: false,
-    label: 'ชื่อหมวดหมู่',
+    label: 'ชื่อผู้ใช้งาน',
     align: 'left'
   },
   {
-    id: 'created_by',
+    id: 'web_visit',
     numeric: true,
-    label: 'ผู้ที่สร้าง',
+    label: 'เข้าชมเว็บไซต์',
     align: 'center'
   },
   {
-    id: 'createdAt',
+    id: 'web_count_nonUnique',
     numeric: true,
-    label: 'สร้างเมื่อวันที่',
+    label: 'จำนวนครั้งที่เข้าชม (non-unique)',
     align: 'center'
   },
   {
-    id: 'status',
-    numeric: false,
-    label: 'สถานะ',
+    id: 'web_count_unique',
+    numeric: true,
+    label: 'จำนวนคนที่เข้าชม (unique)',
     align: 'center'
   }
 ];
@@ -157,7 +151,7 @@ function EnhancedTableHead({
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox" sx={{ pl: 3 }}>
-          <Checkbox
+          {/* <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
@@ -165,7 +159,7 @@ function EnhancedTableHead({
             inputProps={{
               'aria-label': 'select all desserts'
             }}
-          />
+          /> */}
         </TableCell>
         {numSelected > 0 && (
           <TableCell padding="none" colSpan={8}>
@@ -194,13 +188,13 @@ function EnhancedTableHead({
               </TableSortLabel>
             </TableCell>
           ))}
-        {numSelected <= 0 && (
+        {/* {numSelected <= 0 && (
           <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
             <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
               จัดการ
             </Typography>
           </TableCell>
-        )}
+        )} */}
       </TableRow>
     </TableHead>
   );
@@ -318,7 +312,7 @@ const WebsiteAnalyzedTable = () => {
               size="medium"
             />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
+          {/* <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
             <Tooltip title="ลบ">
               <IconButton size="large">
                 <DeleteIcon />
@@ -330,7 +324,6 @@ const WebsiteAnalyzedTable = () => {
               </IconButton>
             </Tooltip>
 
-            {/* product add & dialog */}
             <Link href={'/admin/category/create'}>
               <Tooltip title="เพิ่มหมวดหมู่">
                 <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
@@ -338,7 +331,7 @@ const WebsiteAnalyzedTable = () => {
                 </Fab>
               </Tooltip>
             </Link>
-          </Grid>
+          </Grid> */}
         </Grid>
       </CardContent>
 
