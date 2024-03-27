@@ -237,7 +237,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
       <MainCard>
         <MainCard title={titleMessage} content={true}>
           <Grid container spacing={3}>
-            <Grid item xs={6} md={4}>
+            <Grid item xs={6} md={4} sx={{ display: 'none' }}>
               <SubCard title="รูปภาพ" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
@@ -247,8 +247,8 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
-                      *จำกัดขนาด 2MB และ รูปภาพต้องเป็นไฟล์ .jpg .png เท่านั้น <br></br>
-                      *รูปภาพต้องมีขนาดตั้งแต่ 500 x 500 ขึ้นไป
+                      *จำกัดขนาด 4MB และ รูปภาพต้องเป็นไฟล์ . jpg, .jpeg, .png .webp เท่านั้น <br></br>
+                      *รูปภาพต้องมีขนาด 300 x 300 Pixel
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -257,13 +257,19 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                         อัพโหลดรูปภาพ
                       </Button> */}
                       <InputLabel style={{ textAlign: 'left' }}>รูปภาพ</InputLabel>
-                      <TextField fullWidth type="file" name="shopImage" onChange={handleImageChange}></TextField>
+                      <TextField
+                        fullWidth
+                        type="file"
+                        name="shopImage"
+                        onChange={handleImageChange}
+                        helperText={'*รูปภาพต้องมีขนาด 300 x 300 Pixel และขนาดไม่เกิน 4MB'}
+                      ></TextField>
                     </AnimateButton>
                   </Grid>
                 </Grid>
               </SubCard>
             </Grid>
-            <Grid item xs={6} md={8}>
+            <Grid item xs={6} md={12}>
               <SubCard title={titleMessage}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>

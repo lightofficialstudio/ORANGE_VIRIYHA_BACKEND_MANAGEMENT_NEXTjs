@@ -239,7 +239,7 @@ const CategoryTable = () => {
   const [rows, setRows] = React.useState<CategoryType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const { category } = useSelector((state) => state.category);
-  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category/';
+  const baseUrl = process.env.IMAGE_VIRIYHA_URL + 'images/category/';
   // modal
   const [openChangePositionModal, setOpenChangePositionModal] = React.useState<boolean>(false);
   // response
@@ -486,7 +486,7 @@ const CategoryTable = () => {
                       <TableCell align="left">{row.id}</TableCell>
                       <TableCell align="right">{row.position}</TableCell>
                       <TableCell align="center">
-                        <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="category images" />
+                        <Avatar src={`${baseUrl}${row.image}`} size="md" variant="rounded" alt="category images" />
                       </TableCell>
 
                       <TableCell align="center">{row.name}</TableCell>

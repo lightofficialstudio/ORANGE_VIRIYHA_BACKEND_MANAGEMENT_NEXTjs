@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 
 const withTM = require('next-transpile-modules')([
-  '@fullcalendar/common',
-  '@babel/preset-react',
-  '@fullcalendar/common',
-  '@fullcalendar/daygrid',
-  '@fullcalendar/interaction',
   '@fullcalendar/react',
   '@fullcalendar/timegrid',
   '@fullcalendar/list',
@@ -15,13 +10,14 @@ const withTM = require('next-transpile-modules')([
 const nextConfig = withTM({
   reactStrictMode: true,
   images: {
-    domains: ['flagcdn.com', 'localhost'], // เพิ่ม 'localhost' เข้าไปในรายการ domains
+    domains: ['flagcdn.com', 'localhost', 'viriyah.blob.core.windows.net'], // เพิ่ม 'localhost' เข้าไปในรายการ domains
   },
 
   env: {
-    REACT_APP_VERSION: process.env.REACT_APP_VERSION,
-    REACT_APP_API_URL: process.env.VIRIYHA_APP_API_URL,
+    REACT_APP_VERSION: process.env.BACKEND_VIRIYHA_APP_API_URL,
+    REACT_APP_API_URL: process.env.BACKEND_VIRIYHA_APP_API_URL,
     BACKEND_VIRIYHA_APP_API_URL: process.env.BACKEND_VIRIYHA_APP_API_URL,
+    IMAGE_VIRIYHA_URL: process.env.IMAGE_VIRIYHA_URL,
 
     REACT_APP_FIREBASE_API_KEY: process.env.REACT_APP_FIREBASE_API_KEY,
     REACT_APP_FIREBASE_AUTH_DOMAIN: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,

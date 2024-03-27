@@ -249,7 +249,8 @@ const BannerTable = () => {
   const [rows, setRows] = React.useState<BannerManagementType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const { banner } = useSelector((state) => state.banner);
-  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner/';
+  const baseUrl = process.env.IMAGE_VIRIYHA_URL + 'images/banner/';
+  console.log('baseUrl', baseUrl);
   // modal
   const [openChangePositionModal, setOpenChangePositionModal] = React.useState<boolean>(false);
   const [openFilterStatus, setOpenFilterStatus] = React.useState<boolean>(false);
@@ -518,7 +519,7 @@ const BannerTable = () => {
                       <TableCell align="right">{row.position}</TableCell>
 
                       <TableCell align="center">
-                        <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="product images" />
+                        <Avatar src={`${baseUrl}${row.image}`} size="md" variant="rounded" alt="product images" />
                       </TableCell>
 
                       <TableCell align="left">{row.name}</TableCell>

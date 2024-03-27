@@ -51,7 +51,6 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/category';
   // validation
   const formik = useFormik({
     initialValues: {
@@ -66,15 +65,17 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
     }
   });
   React.useEffect(() => {
+    const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/category';
     if (categoryId) {
       axiosServices.get(`/api/category/${categoryId}`).then((response) => {
         console.log(response);
         setName(response.data.name);
+        setPosition(response.data.position);
         setStatus(response.data.status);
         SetPreviewImg(`${imgUrl}/${response.data.image}`);
       });
     }
-  }, [categoryId, imgUrl]);
+  }, [categoryId]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -108,7 +109,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
     formData.append('name', Name);
     formData.append('position', Position);
     formData.append('status', Status);
-    formData.append('categoryImage', ImageFile ?? '');
+    formData.append('file', ImageFile ?? '');
     formData.append('createdById', MadeById ?? '');
 
     try {
@@ -155,8 +156,8 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
-                      *จำกัดขนาด 2MB และ รูปภาพต้องเป็นไฟล์ .jpg .png เท่านั้น <br></br>
-                      *รูปภาพต้องมีขนาดตั้งแต่ 500 x 500 ขึ้นไป
+                      *จำกัดขนาด 4MB และ รูปภาพต้องเป็นไฟล์ . jpg, .jpeg, .png .webp เท่านั้น <br></br>
+                      *รูปภาพต้องมีขนาด 251 x 331 Pixel
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -165,7 +166,13 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                         อัพโหลดรูปภาพ
                       </Button> */}
                       <InputLabel style={{ textAlign: 'left' }}>รูปภาพ</InputLabel>
-                      <TextField fullWidth type="file" name="shopImage" onChange={handleImageChange}></TextField>
+                      <TextField
+                        fullWidth
+                        type="file"
+                        name="shopImage"
+                        onChange={handleImageChange}
+                        helperText={'*รูปภาพต้องมีขนาด 251 x 331 Pixel และขนาดไม่เกิน 4MB'}
+                      ></TextField>
                     </AnimateButton>
                   </Grid>
                 </Grid>

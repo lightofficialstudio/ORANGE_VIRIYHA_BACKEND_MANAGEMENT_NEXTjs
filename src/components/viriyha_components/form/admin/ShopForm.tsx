@@ -50,7 +50,6 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/shop';
   // validation
   const formik = useFormik({
     initialValues: {
@@ -64,6 +63,8 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
     }
   });
   React.useEffect(() => {
+    const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/shop';
+
     if (shopId) {
       axiosServices.get(`/api/shop/${shopId}`).then((response) => {
         console.log(response);
@@ -72,7 +73,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
         SetPreviewImg(`${imgUrl}/${response.data.image}`);
       });
     }
-  }, [shopId, imgUrl]);
+  }, [shopId]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -104,7 +105,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
     const formData = new FormData();
     formData.append('name', Name);
     formData.append('status', Status);
-    formData.append('shopImage', ImageShop ?? '');
+    formData.append('file', ImageShop ?? '');
     formData.append('createdById', MadeById ?? '');
 
     try {
@@ -151,8 +152,8 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
-                      *จำกัดขนาด 2MB และ รูปภาพต้องเป็นไฟล์ .jpg .png เท่านั้น <br></br>
-                      *รูปภาพต้องมีขนาดตั้งแต่ 500 x 500 ขึ้นไป
+                      *จำกัดขนาด 4MB และ รูปภาพต้องเป็นไฟล์ . jpg, .jpeg, .png .webp เท่านั้น <br></br>
+                      *รูปภาพต้องมีขนาด 300 x 300 Pixel
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -161,7 +162,13 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
                         อัพโหลดรูปภาพ
                       </Button> */}
                       <InputLabel style={{ textAlign: 'left' }}>รูปภาพ</InputLabel>
-                      <TextField fullWidth type="file" name="shopImage" onChange={handleImageChange}></TextField>
+                      <TextField
+                        fullWidth
+                        type="file"
+                        name="shopImage"
+                        onChange={handleImageChange}
+                        helperText={'*รูปภาพต้องมีขนาด 300 x 300 Pixel และขนาดไม่เกิน 4MB'}
+                      ></TextField>
                     </AnimateButton>
                   </Grid>
                 </Grid>

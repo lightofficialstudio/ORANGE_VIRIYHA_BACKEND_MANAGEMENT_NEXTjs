@@ -42,15 +42,14 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   const context = React.useContext(JWTContext);
   const [PreviewImg, SetPreviewImg] = useState(Avatar1);
   const [Name, setName] = useState<string>('');
-  const [Position, setPosition] = useState('');
-  const [LinkNav, setLinkNav] = useState('');
-  const [Status, setStatus] = useState('');
+  const [Position, setPosition] = useState<string>('');
+  const [LinkNav, setLinkNav] = useState<string>('');
+  const [Status, setStatus] = useState<string>('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
   const MadeById = context?.user?.id;
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const imgUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner';
   // dialog
   const [openImageDialog, setOpenImageDialog] = React.useState<boolean>(false);
   // validation
@@ -68,6 +67,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   });
 
   React.useEffect(() => {
+    const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/banner';
     if (primaryId) {
       axiosServices.get(`/api/banner/${primaryId}`).then((response) => {
         console.log(response);
@@ -78,7 +78,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
         SetPreviewImg(`${imgUrl}/${response.data.image}`);
       });
     }
-  }, [primaryId, imgUrl]);
+  }, [primaryId]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -107,7 +107,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
     formData.append('status', Status);
     formData.append('link', LinkNav);
     formData.append('position', Position);
-    formData.append('bannerImage', ImageFile ?? '');
+    formData.append('file', ImageFile ?? '');
     formData.append('createdById', MadeById ?? '');
 
     try {
@@ -174,7 +174,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                   <Grid item xs={12}>
                     <Typography variant="subtitle2" align="center" style={{ color: 'red' }}>
                       *จำกัดขนาด 4MB และ รูปภาพต้องเป็นไฟล์ . jpg, .jpeg, .png .webp เท่านั้น <br></br>
-                      *รูปภาพต้องมีขนาด 1080 x 800 เท่านั้น
+                      *รูปภาพต้องมีขนาด 1374 x 542 Pixel
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -190,7 +190,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                         type="file"
                         name="bannerImg"
                         onChange={handleImageChange}
-                        helperText={'รูปภาพต้องมีขนาด 1080 * 800 พิกเซลเท่านั้น และขนาดไม่เกิน 4MB'}
+                        helperText={'*รูปภาพต้องมีขนาด 1374 x 542 Pixel และขนาดไม่เกิน 4MB'}
                       ></TextField>
                     </AnimateButton>
                   </Grid>
