@@ -12,8 +12,8 @@ import SpecialCampaignTable from 'components/viriyha_components/table/SpecialCam
 
 const SpecialCampagePage = () => {
   return (
-    <Page title="จัดการแคมเปญ">
-      <MainCard title="Special Campaign" content={false}>
+    <Page title="สิทธิพิเศษแบบพิเศษ (Special Campaign)">
+      <MainCard title="สิทธิพิเศษแบบพิเศษ (Special Campaign)" content={false}>
         {/* table */}
         <SpecialCampaignTable />
       </MainCard>

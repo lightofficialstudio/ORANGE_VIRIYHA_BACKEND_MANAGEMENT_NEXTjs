@@ -1,7 +1,8 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import JWTContext from 'contexts/JWTContext';
-
+// excel
+import * as XLSX from 'xlsx';
 // material-ui
 import {
   Button,
@@ -24,11 +25,16 @@ import {
   TablePagination,
   OutlinedInput,
   InputAdornment,
-  FormHelperText
+  FormHelperText,
+  Tooltip,
+  IconButton
 } from '@mui/material';
 import { useTheme, styled } from '@mui/material/styles';
+// icon
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileOpenIcon from '@mui/icons-material/FileOpen';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -112,6 +118,11 @@ const maxQuotaPerPerson = [
   { label: 'ไม่จำกัด', id: 4 }
 ];
 
+const CodeOption = [
+  { label: 'เพิ่มโค้ดโดยอัตโนมัติ', id: 1 },
+  { label: 'เพิ่มโค้ดโดยตัวเอง', id: 2 }
+];
+
 const WebsiteTrafficPatternList = [
   { label: 'อัตโนมัติ', value: 'Auto' },
   { label: 'ปรับด้วยตัวเอง', value: 'Manual' }
@@ -167,7 +178,12 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   const [Description, setDescription] = useState('');
   const [Condition, setCondition] = useState('');
   const [fileImage, setFileImage] = useState<File[]>([]);
+  const [codeCondition, setCodeCondition] = useState<number>();
   const createdById = context?.user?.id;
+  // import varaible
+  const [codeExcelFile, setCodeExcelFile] = React.useState<File | null>(null);
+  const [codeExcelData, setCodeExcelData] = React.useState<any[]>([]);
+
   // variable for update
   const [primaryShopId, setPrimaryShopId] = useState<number>();
   // validation
@@ -218,35 +234,6 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
 
   // modal
   const [QuotaModal, setQuotaModal] = useState(false);
-
-  // React.useEffect(() => {
-  //   if (primaryId) {
-  //     axiosServices.get(`/api/banner/${primaryId}`).then((response) => {
-  //       console.log(response);
-  //       setName(response.data.name);
-  //       setPosition(response.data.position);
-  //       setLinkNav(response.data.link);
-  //       setStatus(response.data.status);
-  //       SetPreviewImg(`${imgUrl}/${response.data.image}`);
-  //     });
-  //   }
-  // }, [primaryId, imgUrl]);
-
-  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files && event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     const fileName = file.name;
-  //     setImageFile(file);
-  //     console.log(fileName);
-  //     reader.onload = (e: ProgressEvent<FileReader>) => {
-  //       if (e.target) {
-  //         SetPreviewImg(e.target.result as string);
-  //       }
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
@@ -684,6 +671,45 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     setTempQuotaId(parseInt(id));
     setTempQuotaQuantity(Number(quantity));
     setQuotaModal(true);
+  };
+
+  // function : import
+  const handleOpenCodeExcel = () => {
+    document.getElementById('excelFile')?.click();
+  };
+
+  const handleExcelFileCodeChange = (event: any) => {
+    const file = event.target.files;
+    if (file) {
+      setCodeExcelFile(file[0]);
+      console.log(codeExcelFile);
+      handleExcelFileCodeUpload(file[0]);
+      event.target.value = null;
+    }
+  };
+
+  const handleExcelFileCodeUpload = async (file: File) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const data = new Uint8Array(e.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const dataParse = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      // Start mapping from the second element (index 1) to skip the header row
+      const arrayCodeList: any[] = dataParse.slice(1).map((item: any) => ({
+        id: item[0],
+        code: item[1]
+      }));
+      setCodeExcelData(arrayCodeList);
+      console.log(arrayCodeList);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleDelete = (id: number) => {
+    const filteredData = codeExcelData.filter((item) => item.id !== id);
+    setCodeExcelData(filteredData);
   };
 
   return (
@@ -1142,6 +1168,80 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
         primaryId={tempQuotaId}
         quantity={tempQuotaQuantity}
       />
+
+      <MainCard title="ตารางโค้ด" sx={{ marginTop: '50px' }}>
+        <Grid container>
+          <Grid item xs={12} sm={6} sx={{ textAlign: 'left', marginBottom: '20px' }}>
+            <Grid container direction="column" spacing={3}>
+              <Grid item>
+                <Autocomplete
+                  size="small"
+                  options={CodeOption}
+                  getOptionLabel={(option) => option.label}
+                  onChange={(_event: any, value: any) => {
+                    setCodeCondition(value?.id);
+                    if (value?.id === 2) {
+                      setCodeExcelData([]);
+                      handleOpenCodeExcel();
+                    }
+                  }}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  value={CodeOption.find((Item) => Item.id === codeCondition) || null}
+                  renderInput={(params) => <TextField {...params} label="การกำหนดโค้ด" />}
+                />
+              </Grid>
+            </Grid>{' '}
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ textAlign: 'right', display: codeCondition === 2 ? 'show' : 'none' }}>
+            <Tooltip title="นำเข้าโค้ด">
+              <IconButton size="large" onClick={handleOpenCodeExcel}>
+                <FileOpenIcon />
+                <input type="file" id="excelFile" style={{ display: 'none' }} onChange={handleExcelFileCodeChange} />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        </Grid>
+
+        <TableContainer sx={{ display: codeCondition === 2 ? 'show' : 'none' }}>
+          <Table sx={{ minWidth: 320 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell align="left">ลำดับ</StyledTableCell>
+                <StyledTableCell align="left">โค้ด</StyledTableCell>
+                <StyledTableCell align="right">จัดการ</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {codeExcelData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                    <b>{index + 1}</b>
+                  </StyledTableCell>
+                  <TableCell>{item.code}</TableCell>
+
+                  <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
+                    <AnimateButton>
+                      <IconButton size="large" onClick={() => handleDelete(item.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </AnimateButton>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 30, { label: 'All', value: -1 }]}
+          component="div"
+          count={codeExcelData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </MainCard>
 
       <Grid item xs={12} sx={{ marginTop: '20px' }}>
         <Grid container spacing={2} justifyContent="end">

@@ -31,10 +31,16 @@ import useScriptRef from 'hooks/useScriptRef';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
+// status
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
+
 // ===============================|| JWT LOGIN ||=============================== //
 
 const JWTLogin = ({ loginProp, ...others }: { loginProp?: number }) => {
   const theme = useTheme();
+
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const { login } = useAuth();
   const scriptedRef = useScriptRef();
@@ -58,13 +64,16 @@ const JWTLogin = ({ loginProp, ...others }: { loginProp?: number }) => {
         submit: null
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-        password: Yup.string().max(255).required('Password is required')
+        email: Yup.string().max(255).required('กรุณาใส่ชื่อผู้ใช้งานให้ครบถ้วน'),
+        password: Yup.string().max(255).required('กรุณาใส่รหัสผ่านให้ครบถ้วน')
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          await login(values.email, values.password);
-
+          const checkLogin = await login(values.email, values.password);
+          if (!checkLogin) {
+            setErrorMessage('เกิดข้อผิดพลาดในการเข้าสู่ระบบ โปรดตรวจสอบชื่อผู้ใช้งาน หรือ รหัสผ่านอีกครั้ง');
+            setOpenErrorDialog(true);
+          }
           if (scriptedRef.current) {
             setStatus({ success: true });
             setSubmitting(false);
@@ -81,8 +90,9 @@ const JWTLogin = ({ loginProp, ...others }: { loginProp?: number }) => {
     >
       {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
         <form noValidate onSubmit={handleSubmit} {...others}>
+          <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
           <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-            <InputLabel htmlFor="outlined-adornment-email-login">ชื่อผู้ใช้งาน</InputLabel>
+            <InputLabel htmlFor="outlined-adornment-email-login">ชื่อผู้ใช้งาน หรือ อีเมล</InputLabel>
             <OutlinedInput
               id="outlined-adornment-email-login"
               type="email"
@@ -148,7 +158,7 @@ const JWTLogin = ({ loginProp, ...others }: { loginProp?: number }) => {
                 color="secondary"
                 sx={{ textDecoration: 'none' }}
               >
-                ลืมรหัสผ่าน?
+                {/* ลืมรหัสผ่าน? */}
               </Typography>
             </Grid>
           </Grid>

@@ -69,8 +69,8 @@ const EnumRole = [
 ];
 
 const Permission = [
-  { name: 'อนุญาติ', id: 1 },
-  { name: 'ไม่อนุญาติ', id: 0 }
+  { name: 'อนุญาต', id: 1 },
+  { name: 'ไม่อนุญาต', id: 0 }
 ];
 
 type CategoryFormProps = {
@@ -81,9 +81,12 @@ type CategoryFormProps = {
 
 // validation schema
 const validationSchema = yup.object({
-  Username: yup.string().required('กรุณากรอกชื่อผู้ใช้งานให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Username: yup
+    .string()
+    .matches(/^[A-Za-z0-9]+$/, 'กรุณากรอกชื่อผู้ใช้งานด้วยตัวอักษรภาษาอังกฤษและตัวเลขเท่านั้น')
+    .required('กรุณากรอกชื่อผู้ใช้งานให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
   Password: yup.string().required('กรุณากรอกรหัสผ่านให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
-  Email: yup.string().required('กรุณากรอกอีเมลล์ให้ถูกต้อง หรือ กรอกให้ครบถ้วน')
+  Email: yup.string().email('กรุณากรอกรูปแบบอีเมลให้ถูกต้อง').required('กรุณากรอกอีเมลให้ถูกต้อง หรือ กรอกให้ครบถ้วน')
 });
 
 // table data
@@ -102,29 +105,29 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   const [Role, setRole] = useState('');
   // permission
   // - Dashboard
-  const [MenuWebAnalytics, setMenuWebAnalytics] = useState<number>();
-  const [MenuDashboardCampaign, setMenuDashboardCampaign] = useState<number>();
-  const [MenuDashboardRedeem, setMenuDashboardRedeem] = useState<number>();
+  const [MenuWebAnalytics, setMenuWebAnalytics] = useState<number>(1);
+  const [MenuDashboardCampaign, setMenuDashboardCampaign] = useState<number>(1);
+  const [MenuDashboardRedeem, setMenuDashboardRedeem] = useState<number>(1);
   // - Admin
-  const [MenuAdminBanner, setMenuAdminBanner] = useState<number>();
-  const [MenuAdminCategory, setMenuAdminCategory] = useState<number>();
-  const [MenuAdminShop, setMenuAdminShop] = useState<number>();
-  const [MenuAdminSegment, setMenuAdminSegment] = useState<number>();
-  const [MenuAdminCriteria, setMenuAdminCriteria] = useState<number>();
-  const [MenuAdminFrontendUsers, setMenuAdminFrontendUsers] = useState<number>();
-  const [MenuAdminBackendUsers, setMenuAdminBackendUsers] = useState<number>();
+  const [MenuAdminBanner, setMenuAdminBanner] = useState<number>(1);
+  const [MenuAdminCategory, setMenuAdminCategory] = useState<number>(1);
+  const [MenuAdminShop, setMenuAdminShop] = useState<number>(1);
+  const [MenuAdminSegment, setMenuAdminSegment] = useState<number>(1);
+  const [MenuAdminCriteria, setMenuAdminCriteria] = useState<number>(1);
+  const [MenuAdminFrontendUsers, setMenuAdminFrontendUsers] = useState<number>(1);
+  const [MenuAdminBackendUsers, setMenuAdminBackendUsers] = useState<number>(1);
   // - Campaign
-  const [MenuCampaignNormal, setMenuCampaignNormal] = useState<number>();
-  const [MenuCampaignSpecial, setMenuCampaignSpecial] = useState<number>();
+  const [MenuCampaignNormal, setMenuCampaignNormal] = useState<number>(1);
+  const [MenuCampaignSpecial, setMenuCampaignSpecial] = useState<number>(1);
   // - Report
-  const [MenuReportAttempt, setMenuReportAttempt] = useState<number>();
-  const [MenuReportLocation, setMenuReportLocation] = useState<number>();
-  const [MenuReportRedeemTransaction, setMenuReportRedeemTransaction] = useState<number>();
-  const [MenuReportWebsiteAnalyze, setMenuReportWebsiteAnalyze] = useState<number>();
+  const [MenuReportAttempt, setMenuReportAttempt] = useState<number>(1);
+  const [MenuReportLocation, setMenuReportLocation] = useState<number>(1);
+  const [MenuReportRedeemTransaction, setMenuReportRedeemTransaction] = useState<number>(1);
+  const [MenuReportWebsiteAnalyze, setMenuReportWebsiteAnalyze] = useState<number>(1);
   // - Config
-  const [MenuConfigErrorMessage, setMenuConfigErrorMessage] = useState<number>();
+  const [MenuConfigErrorMessage, setMenuConfigErrorMessage] = useState<number>(1);
   // - Logs
-  const [MenuLogsErrorLogs, setMenuLogsErrorLogs] = useState<number>();
+  const [MenuLogsErrorLogs, setMenuLogsErrorLogs] = useState<number>(1);
   const [Description, setDescription] = useState('');
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
@@ -183,12 +186,14 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (!Username || !Email || !Password || !Status || !Role) {
-      setError('Please enter a value.'); // Set an error message if the input is empty
       setOpenErrorDialog(true);
       setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+      setError('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
-    } else {
-      setError('');
+    } else if (formik.errors.Username || formik.errors.Email || formik.errors.Password) {
+      setOpenErrorDialog(true);
+      setErrorMessage((formik.errors.Username || formik.errors.Email || formik.errors.Password) as string);
+      return;
     }
 
     const formData = new FormData();
@@ -307,7 +312,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                   </Grid>
 
                   <Grid item xs={12}>
-                    <InputLabel required>อีเมลล์</InputLabel>
+                    <InputLabel required>อีเมล</InputLabel>
                     <TextField
                       fullWidth
                       placeholder="viriyha@mail.com"
@@ -315,6 +320,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       value={Email}
                       onChange={(event: any) => {
                         setEmail(event.target.value);
+                        formik.handleChange(event);
                       }}
                       onBlur={formik.handleBlur}
                       error={formik.touched.Email && Boolean(formik.errors.Email)}

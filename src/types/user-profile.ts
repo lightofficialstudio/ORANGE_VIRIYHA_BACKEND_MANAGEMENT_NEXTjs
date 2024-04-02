@@ -34,6 +34,12 @@ export type UserProfile = {
   time?: string;
   tier?: string;
   Progress?: ProfileProgress;
+  userInfo?: userInfo;
+};
+
+export type userInfo = {
+  name: string;
+  role: string;
 };
 
 export type Profile = {
