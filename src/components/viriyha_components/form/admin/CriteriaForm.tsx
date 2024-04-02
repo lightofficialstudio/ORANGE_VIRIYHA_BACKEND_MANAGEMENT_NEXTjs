@@ -40,7 +40,8 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
   const context = React.useContext(JWTContext);
   const [Name, setName] = useState('');
   const [Status, setStatus] = useState('');
-  const MadeById = context?.user?.id;
+  const MadeById = context?.user?.userInfo?.id;
+
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -80,7 +81,7 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
     const formData = new FormData();
     formData.append('name', Name);
     formData.append('status', Status);
-    formData.append('createdById', MadeById ?? '');
+    formData.append('createdById', String(MadeById));
 
     try {
       let response;

@@ -106,7 +106,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
     formData.append('name', Name);
     formData.append('status', Status);
     formData.append('file', ImageShop ?? '');
-    formData.append('createdById', MadeById ?? '');
+    formData.append('createdById', String(MadeById));
 
     try {
       let response;

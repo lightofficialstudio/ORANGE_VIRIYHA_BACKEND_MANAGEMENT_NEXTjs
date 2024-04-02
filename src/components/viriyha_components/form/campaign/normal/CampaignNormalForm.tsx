@@ -179,7 +179,8 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   const [Condition, setCondition] = useState('');
   const [fileImage, setFileImage] = useState<File[]>([]);
   const [codeCondition, setCodeCondition] = useState<number>();
-  const createdById = context?.user?.id;
+  const createdById = context?.user?.userInfo?.id;
+
   // import varaible
   const [codeExcelFile, setCodeExcelFile] = React.useState<File | null>(null);
   const [codeExcelData, setCodeExcelData] = React.useState<any[]>([]);
@@ -259,7 +260,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     formData.append('description', Description);
     formData.append('condition', Condition);
     formData.append('status', 'ACTIVE');
-    formData.append('createdById', createdById ?? '');
+    formData.append('createdById', String(createdById));
     quotaRange.forEach((item, index) => {
       formData.append('quotaRange', JSON.stringify(item));
     });
@@ -267,7 +268,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
       formData.append('campaignImage', file);
     });
     if (primaryId) {
-      formData.append('updatedById', createdById ?? '');
+      formData.append('updatedById', String(createdById));
       formData.append('primaryShopId', String(primaryShopId));
     }
 

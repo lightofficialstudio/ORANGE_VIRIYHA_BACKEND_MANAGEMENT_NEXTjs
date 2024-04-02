@@ -38,6 +38,7 @@ export type UserProfile = {
 };
 
 export type userInfo = {
+  id: number;
   name: string;
   role: string;
 };

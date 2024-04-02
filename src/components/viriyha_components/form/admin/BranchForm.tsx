@@ -34,7 +34,8 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
   const [Latitude, setLatitude] = useState('');
   const [Longitude, setLongitude] = useState('');
   const [Status, setStatus] = useState('');
-  const MadeById = context?.user?.id;
+  const MadeById = context?.user?.userInfo?.id;
+
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -68,7 +69,7 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
     formData.append('latitude', Latitude);
     formData.append('longitude', Longitude);
     formData.append('status', Status);
-    formData.append('createdById', MadeById ?? '');
+    formData.append('createdById', String(MadeById));
 
     try {
       let response;

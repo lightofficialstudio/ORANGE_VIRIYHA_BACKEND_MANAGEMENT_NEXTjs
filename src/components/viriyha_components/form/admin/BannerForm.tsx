@@ -46,7 +46,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   const [LinkNav, setLinkNav] = useState<string>('');
   const [Status, setStatus] = useState<string>('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
-  const MadeById = context?.user?.id;
+  const MadeById = context?.user?.userInfo?.id;
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -108,7 +108,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
     formData.append('link', LinkNav);
     formData.append('position', Position);
     formData.append('file', ImageFile ?? '');
-    formData.append('createdById', MadeById ?? '');
+    formData.append('createdById', String(MadeById));
 
     try {
       let response;
