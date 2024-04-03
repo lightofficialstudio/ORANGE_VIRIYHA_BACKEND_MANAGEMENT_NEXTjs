@@ -75,17 +75,18 @@ const SegmentForm = ({ titleMessage, confirmMessage, primaryId }: SegmentFormPro
     const formData = new FormData();
     formData.append('name', Name);
     formData.append('status', Status);
-    formData.append('createdById', String(MadeById));
 
     try {
       let response;
       if (primaryId) {
+        formData.append('updatedById', String(MadeById));
         response = await axiosServices.put(`/api/segment/update/${primaryId}`, formData, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
       } else {
+        formData.append('createdById', String(MadeById));
         response = await axiosServices.post('/api/segment/create', formData, {
           headers: {
             'Content-Type': 'application/json'

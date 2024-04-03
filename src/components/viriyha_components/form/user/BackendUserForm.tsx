@@ -85,7 +85,6 @@ const validationSchema = yup.object({
     .string()
     .matches(/^[A-Za-z0-9]+$/, 'กรุณากรอกชื่อผู้ใช้งานด้วยตัวอักษรภาษาอังกฤษและตัวเลขเท่านั้น')
     .required('กรุณากรอกชื่อผู้ใช้งานให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
-  Password: yup.string().required('กรุณากรอกรหัสผ่านให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
   Email: yup.string().email('กรุณากรอกรูปแบบอีเมลให้ถูกต้อง').required('กรุณากรอกอีเมลให้ถูกต้อง หรือ กรอกให้ครบถ้วน')
 });
 
@@ -97,7 +96,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   const [PreviewImg, SetPreviewImg] = useState(MockupLogo);
   const [Name, setName] = useState('');
   const [Username, setUsername] = useState('');
-  const [Password, setPassword] = useState('');
   const [Phonenumber, setPhonenumber] = useState('');
   const [Email, setEmail] = useState('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
@@ -137,7 +135,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   const formik = useFormik({
     initialValues: {
       Username: Username,
-      Password: Password,
       Email: Email,
       Name: Name,
       Phonenumber: Phonenumber
@@ -185,21 +182,20 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (!Username || !Email || !Password || !Status || !Role) {
+    if (!Username || !Email || !Status || !Role) {
       setOpenErrorDialog(true);
       setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
       setError('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
-    } else if (formik.errors.Username || formik.errors.Email || formik.errors.Password) {
+    } else if (formik.errors.Username || formik.errors.Email) {
       setOpenErrorDialog(true);
-      setErrorMessage((formik.errors.Username || formik.errors.Email || formik.errors.Password) as string);
+      setErrorMessage((formik.errors.Username || formik.errors.Email) as string);
       return;
     }
 
     const formData = new FormData();
     formData.append('username', Username);
     formData.append('email', Email);
-    formData.append('password', Password);
     formData.append('name', Name);
     formData.append('phonenumber', Phonenumber);
     formData.append('status', Status);
@@ -291,23 +287,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       onBlur={formik.handleBlur}
                       error={formik.touched.Username && Boolean(formik.errors.Username)}
                       helperText={formik.touched.Username && formik.errors.Username}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <InputLabel required>รหัสผ่าน</InputLabel>
-                    <TextField
-                      fullWidth
-                      name="Password"
-                      placeholder="Password"
-                      value={Password}
-                      onChange={(event: any) => {
-                        setPassword(event.target.value);
-                        formik.handleChange(event);
-                      }}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched.Password && Boolean(formik.errors.Password)}
-                      helperText={formik.touched.Password && formik.errors.Password}
                     />
                   </Grid>
 

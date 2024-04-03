@@ -147,7 +147,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <Image alt="User 1" src={PreviewImg} width={200} height={200} style={{ margin: '0 auto' }} />
+                      <Image alt="User 1" src={PreviewImg} width={251} height={331} style={{ margin: '0 auto' }} />
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>

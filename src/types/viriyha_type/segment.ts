@@ -12,4 +12,5 @@ export type SegmentType = {
   createdAt: Date;
   updatedAt: Date;
   createdBy: UserType;
+  updatedBy: UserType;
 };

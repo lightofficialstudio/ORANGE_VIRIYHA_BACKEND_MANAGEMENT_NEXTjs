@@ -15,7 +15,7 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Avatar
-const Avatar1 = '/assets/banner/BDMS.jpg';
+const Avatar1 = '/assets/banner/mockup-banner.webp';
 // third-party - validation
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -146,13 +146,13 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
         open={openImageDialog}
         sx={{
           '& .MuiDialog-paper': {
-            width: 1080,
+            width: 1374,
             maxWidth: '100%'
           }
         }}
       >
         <DialogContent>
-          <Image src={PreviewImg} alt="Preview" height={400} width={1080} />
+          <Image src={PreviewImg} alt="Preview" height={542} width={1374} />
         </DialogContent>
       </Dialog>
       <MainCard>
