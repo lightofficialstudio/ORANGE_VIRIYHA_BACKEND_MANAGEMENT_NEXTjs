@@ -46,7 +46,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
   const [Name, setName] = useState('');
   const [ImageShop, setImageShop] = useState<File | null>(null);
   const [Status, setStatus] = useState('');
-  const MadeById = context?.user?.id;
+  const MadeById = context?.user?.userInfo?.id;
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
