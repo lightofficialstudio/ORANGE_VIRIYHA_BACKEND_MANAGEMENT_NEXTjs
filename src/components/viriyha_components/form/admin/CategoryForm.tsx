@@ -34,20 +34,21 @@ type CategoryFormProps = {
 // validation schema
 const validationSchema = yup.object({
   Name: yup.string().required('กรุณาใส่ชื่อหมวดหมู่ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
-  Position: yup.number().required('กรุณาใส่ตำแหน่งหมวดหมู่ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  Position: yup
+    .number()
+    .typeError('ตำแหน่งต้องเป็นตัวเลขเท่านั้นไม่สามารถเป็นตัวอักษรได้')
+    .required('กรุณาใส่ตำแหน่งหมวดหมู่ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
   Status: yup.string().required('กรุณาเลือกสถานะของหมวดหมู่ให้ครบถ้วน')
 });
 
 const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryFormProps) => {
-  //   const router = useRouter();
-  //   const { id } = router.query;
   const context = React.useContext(JWTContext);
   const [PreviewImg, SetPreviewImg] = useState(MockupLogo);
   const [Name, setName] = useState('');
   const [Position, setPosition] = useState('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
   const [Status, setStatus] = useState('');
-  const MadeById = context?.user?.id;
+  const MadeById = context?.user?.userInfo?.id;
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -102,6 +103,14 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
       setOpenErrorDialog(true);
       setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
+    } else if (formik.errors.Name || formik.errors.Position) {
+      setOpenErrorDialog(true);
+      setErrorMessage(String(formik.errors.Name || formik.errors.Position));
+      return;
+    } else if (!ImageFile) {
+      setOpenErrorDialog(true);
+      setErrorMessage('กรุณาเลือกรูปภาพ');
+      return;
     }
 
     event.preventDefault();
@@ -110,7 +119,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
     formData.append('position', Position);
     formData.append('status', Status);
     formData.append('file', ImageFile ?? '');
-    formData.append('createdById', MadeById ?? '');
+    formData.append('createdById', String(MadeById));
 
     try {
       let response;
@@ -151,7 +160,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <Image alt="User 1" src={PreviewImg} width={200} height={200} style={{ margin: '0 auto' }} />
+                      <Image alt="User 1" src={PreviewImg} width={251} height={331} style={{ margin: '0 auto' }} />
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>

@@ -89,9 +89,21 @@ const headCells: HeadCell[] = [
     align: 'center'
   },
   {
-    id: 'createdAt',
+    id: 'createdBy',
     numeric: true,
-    label: 'สร้างเมื่อวันที่',
+    label: 'ผู้ที่สร้าง',
+    align: 'center'
+  },
+  {
+    id: 'updatedBy',
+    numeric: true,
+    label: 'ผู้ที่แก้ไขล่าสุด',
+    align: 'center'
+  },
+  {
+    id: 'updatedAt',
+    numeric: true,
+    label: 'วันที่แก้ไขล่าสุด',
     align: 'right'
   }
 ];
@@ -438,7 +450,9 @@ const CriteriaTable = () => {
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
+                      <TableCell align="center">{row.createdBy.email}</TableCell>
+                      <TableCell align="center">{row.updatedBy?.email}</TableCell>
+                      <TableCell align="right">{format(new Date(row.updatedAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
                         <Link href={`/admin/criteria/edit/${row.id}`}>
                           <IconButton color="secondary" size="large">

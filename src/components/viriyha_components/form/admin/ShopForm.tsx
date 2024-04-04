@@ -46,7 +46,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
   const [Name, setName] = useState('');
   const [ImageShop, setImageShop] = useState<File | null>(null);
   const [Status, setStatus] = useState('');
-  const MadeById = context?.user?.id;
+  const MadeById = context?.user?.userInfo?.id;
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -106,7 +106,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
     formData.append('name', Name);
     formData.append('status', Status);
     formData.append('file', ImageShop ?? '');
-    formData.append('createdById', MadeById ?? '');
+    formData.append('createdById', String(MadeById));
 
     try {
       let response;
@@ -147,7 +147,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <Image alt="User 1" src={PreviewImg} width={200} height={200} style={{ margin: '0 auto' }} />
+                      <Image alt="User 1" src={PreviewImg} width={251} height={331} style={{ margin: '0 auto' }} />
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>

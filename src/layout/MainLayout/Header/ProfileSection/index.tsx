@@ -155,10 +155,14 @@ const ProfileSection = () => {
                         <Stack direction="row" spacing={0.5} alignItems="center">
                           <Typography variant="h4">ยินดีต้อนรับ คุณ,</Typography>
                           <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                            {user?.id}
+                            {user?.userInfo?.name}
                           </Typography>
                         </Stack>
-                        <Typography variant="subtitle2">ตำแหน่งโรล</Typography>
+                        <Chip
+                          label={'ตำแหน่ง : ' + `${user?.userInfo?.role === 'ADMIN' ? 'ผู้ดูแลระบบ' : 'ผู้ใช้งานระบบหลังบ้าน'}`}
+                          size="small"
+                          sx={{ mt: 1, bgcolor: theme.palette.primary.dark, color: theme.palette.primary.contrastText }}
+                        />
                       </Stack>
                     </Box>
                     {/* <OutlinedInput
@@ -243,7 +247,7 @@ const ProfileSection = () => {
                           }}
                         >
                           <ListItemButton
-                            sx={{ borderRadius: `${borderRadius}px` }}
+                            sx={{ borderRadius: `${borderRadius}px`, display: 'none' }}
                             selected={selectedIndex === 0}
                             onClick={(event: React.MouseEvent<HTMLDivElement>) =>
                               handleListItemClick(event, 0, '/user/account-profile/profile1')

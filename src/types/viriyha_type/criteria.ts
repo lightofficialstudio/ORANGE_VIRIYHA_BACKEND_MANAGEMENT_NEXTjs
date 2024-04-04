@@ -12,4 +12,5 @@ export type CriteriaType = {
   createdAt: Date;
   updatedAt: Date;
   createdBy: UserType;
+  updatedBy: UserType;
 };

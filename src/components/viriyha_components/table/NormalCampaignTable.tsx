@@ -31,14 +31,16 @@ import { useDispatch, useSelector } from 'store';
 // project data
 import { CampaignType } from 'types/viriyha_type/campaign';
 import { getCampaignList } from 'store/slices/viriyha/campaign';
+import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
-
+// icon
 import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import LinkIcon from '@mui/icons-material/Link';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
 // services
@@ -494,11 +496,31 @@ const NormalCampaignTable = () => {
                       <TableCell align="right">{format(new Date(row.updatedAt), 'dd/MM/yyyy')}</TableCell>
 
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/campaign/normal/detail/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
-                        </Link>
+                        <Grid container justifyContent="space-between" alignItems="center" spacing={3}>
+                          <Grid item xs={12} sm={4}>
+                            <Link href={`/campaign/normal/detail/${row.id}`}>
+                              <Tooltip title="แก้ไขสิทธิพิเศษ">
+                                <IconButton color="secondary" size="large">
+                                  <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                                </IconButton>
+                              </Tooltip>
+                            </Link>
+                          </Grid>
+                          <Grid item xs={12} sm={4}>
+                            <Tooltip title="คัดลอกสิทธิพิเศษ">
+                              <IconButton color="secondary" size="large">
+                                <ContentCopyIcon sx={{ fontSize: '1.3rem' }} />
+                              </IconButton>
+                            </Tooltip>
+                          </Grid>
+                          <Grid item xs={12} sm={4}>
+                            <Tooltip title="คัดลอกลิงก์">
+                              <IconButton color="secondary" size="large">
+                                <LinkIcon sx={{ fontSize: '1.3rem' }} />
+                              </IconButton>
+                            </Tooltip>
+                          </Grid>
+                        </Grid>
                       </TableCell>
                     </TableRow>
                   );

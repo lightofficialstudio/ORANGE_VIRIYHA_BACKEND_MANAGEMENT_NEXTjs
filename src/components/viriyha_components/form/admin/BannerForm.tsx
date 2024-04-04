@@ -15,7 +15,7 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Avatar
-const Avatar1 = '/assets/banner/BDMS.jpg';
+const Avatar1 = '/assets/banner/mockup-banner.webp';
 // third-party - validation
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -46,7 +46,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   const [LinkNav, setLinkNav] = useState<string>('');
   const [Status, setStatus] = useState<string>('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
-  const MadeById = context?.user?.id;
+  const MadeById = context?.user?.userInfo?.id;
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -108,7 +108,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
     formData.append('link', LinkNav);
     formData.append('position', Position);
     formData.append('file', ImageFile ?? '');
-    formData.append('createdById', MadeById ?? '');
+    formData.append('createdById', String(MadeById));
 
     try {
       let response;
@@ -146,13 +146,13 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
         open={openImageDialog}
         sx={{
           '& .MuiDialog-paper': {
-            width: 1080,
+            width: 1374,
             maxWidth: '100%'
           }
         }}
       >
         <DialogContent>
-          <Image src={PreviewImg} alt="Preview" height={400} width={1080} />
+          <Image src={PreviewImg} alt="Preview" height={542} width={1374} />
         </DialogContent>
       </Dialog>
       <MainCard>

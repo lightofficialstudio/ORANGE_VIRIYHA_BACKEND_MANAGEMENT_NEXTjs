@@ -12,8 +12,8 @@ import NormalCampaignTable from 'components/viriyha_components/table/NormalCampa
 
 const NormalCampaignPage = () => {
   return (
-    <Page title="จัดการแคมเปญ">
-      <MainCard title="Normal Campaign" content={false}>
+    <Page title="สิทธิพิเศษแบบธรรมดา (Normal Campaign)">
+      <MainCard title="สิทธิพิเศษแบบธรรมดา (Normal Campaign)" content={false}>
         {/* table */}
         <NormalCampaignTable />
       </MainCard>

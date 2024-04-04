@@ -156,7 +156,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
   const [Condition, setCondition] = useState('');
   const [fileImage, setFileImage] = useState<File[]>([]);
   const [filePhoneNumberExcel, setFilePhoneNumberExcel] = useState<Blob>();
-  const createdById = context?.user?.id;
+  const createdById = context?.user?.userInfo?.id;
   // const [Status, setStatus] = useState('');
   // modal
   const [openEditPhoneNumberModal, setOpenEditPhoneNumberModal] = React.useState<boolean>(false);
@@ -251,7 +251,7 @@ const SpecialCampaignForm = ({ primaryId, title }: SpecialCampaignFormProps) => 
     formData.append('description', Description);
     formData.append('condition', Condition);
     formData.append('status', 'ACTIVE');
-    formData.append('createdById', createdById ?? '');
+    formData.append('createdById', String(createdById));
     quotaRange.forEach((item, index) => {
       formData.append('quotaRange', JSON.stringify(item));
     });
