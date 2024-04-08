@@ -39,8 +39,8 @@ import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog'
 const JWTLogin = ({ loginProp, ...others }: { loginProp?: number }) => {
   const theme = useTheme();
 
-  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
+  const [openErrorDialog, setOpenErrorDialog] = React.useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   const { login } = useAuth();
   const scriptedRef = useScriptRef();
@@ -154,11 +154,11 @@ const JWTLogin = ({ loginProp, ...others }: { loginProp?: number }) => {
               <Typography
                 variant="subtitle1"
                 component={Link}
-                href={loginProp ? `/pages/authentication/auth${loginProp}/forgot-password` : '/pages/authentication/auth3/forgot-password'}
+                href={'/login/forgot-password'}
                 color="secondary"
                 sx={{ textDecoration: 'none' }}
               >
-                {/* ลืมรหัสผ่าน? */}
+                ลืมรหัสผ่าน?
               </Typography>
             </Grid>
           </Grid>

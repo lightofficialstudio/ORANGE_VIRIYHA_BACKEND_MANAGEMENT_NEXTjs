@@ -1,7 +1,7 @@
+import React from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Box, Button, FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
-import { useDispatch } from 'store';
 
 // third party
 import * as Yup from 'yup';
@@ -11,14 +11,18 @@ import { Formik } from 'formik';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
-import { openSnackbar } from 'store/slices/snackbar';
-
+// status
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // ========================|| FIREBASE - FORGOT PASSWORD ||======================== //
 
 const AuthForgotPassword = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
-  const dispatch = useDispatch();
+
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState<boolean>(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   const { isLoggedIn, resetPassword } = useAuth();
 
@@ -29,7 +33,7 @@ const AuthForgotPassword = ({ ...others }) => {
         submit: null
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
+        email: Yup.string().email('ต้องอยู่ในรูปแบบอเีมลล์ที่ถูกต้อง').max(255).required('โปรดระบุอีเมลล์ให้ถูกต้อง')
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
@@ -37,20 +41,12 @@ const AuthForgotPassword = ({ ...others }) => {
             () => {
               setStatus({ success: true });
               setSubmitting(false);
-              dispatch(
-                openSnackbar({
-                  open: true,
-                  message: 'Check mail for reset password link',
-                  variant: 'alert',
-                  alert: {
-                    color: 'success'
-                  },
-                  close: false
-                })
-              );
+
+              setOpenSuccessDialog(true);
+
               setTimeout(() => {
                 window.location.replace(isLoggedIn ? '/auth/check-mail' : '/check-mail');
-              }, 1500);
+              }, 100000);
 
               // WARNING: do not set any formik state here as formik might be already destroyed here. You may get following error by doing so.
               // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application.
@@ -58,6 +54,8 @@ const AuthForgotPassword = ({ ...others }) => {
               // github issue: https://github.com/formium/formik/issues/2430
             },
             (err: any) => {
+              setOpenErrorDialog(true);
+              setErrorMessage(err.message);
               setStatus({ success: false });
               setErrors({ submit: err.message });
               setSubmitting(false);
@@ -75,8 +73,11 @@ const AuthForgotPassword = ({ ...others }) => {
     >
       {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
         <form noValidate onSubmit={handleSubmit} {...others}>
+          <SuccessDialog open={openSuccessDialog} handleClose={() => setOpenSuccessDialog(false)} />
+          <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
+
           <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-            <InputLabel htmlFor="outlined-adornment-email-forgot">Email Address / Username</InputLabel>
+            <InputLabel htmlFor="outlined-adornment-email-forgot">อีเมลล์</InputLabel>
             <OutlinedInput
               id="outlined-adornment-email-forgot"
               type="email"
@@ -84,7 +85,7 @@ const AuthForgotPassword = ({ ...others }) => {
               name="email"
               onBlur={handleBlur}
               onChange={handleChange}
-              label="Email Address / Username"
+              label="โปรดกรอกอีเมลล์"
               inputProps={{}}
             />
             {touched.email && errors.email && (
@@ -102,8 +103,8 @@ const AuthForgotPassword = ({ ...others }) => {
 
           <Box sx={{ mt: 2 }}>
             <AnimateButton>
-              <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
-                Send Mail
+              <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+                ส่งรหัสผ่านไปทางอีเมลล์
               </Button>
             </AnimateButton>
           </Box>

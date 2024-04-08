@@ -14,10 +14,7 @@ export default function Document() {
         <meta property="og:site_name" content="berrydashboard.io" />
         <meta property="article:publisher" content="https://www.facebook.com/codedthemes" />
         <meta property="og:title" content="วิริยะ - ระบบจัดการหลังบ้านวิริยะ" />
-        <meta
-          property="og:description"
-          content="Berry Dashboard is made for the faster web application development built using Material-UI, Reactjs, Redux & Hook API."
-        />
+        <meta property="og:description" content="ระบบจัดการหลังบ้านวิริยะ." />
         <meta property="og:image" content="https://berrydashboard.io/og-image/og-facebook.png" />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://berrydashboard.io" />

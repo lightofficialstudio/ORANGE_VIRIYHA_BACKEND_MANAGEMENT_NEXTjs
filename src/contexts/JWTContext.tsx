@@ -142,7 +142,14 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
     dispatch({ type: LOGOUT });
   };
 
-  const resetPassword = async (email: string) => {};
+  const resetPassword = async (email: string) => {
+    const response = await axios.post('/api/user_backend/reset-password', { email });
+    if (response.status === 200) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const updateProfile = () => {};
 
