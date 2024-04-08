@@ -9,9 +9,8 @@ jobs:
     steps:
       - name: Checkout V4
         uses: actions/checkout@v4
-      - name: run
+      - name: run jenkins
         run: |
           whoami
-          curl -I https://chinakron:11fdd7966e3b0e76bd9d1ebcd7bcb3e6ae@jenkins.ali-orange.com/job/ui-backend/build?token=TFK93Bx4w8H49Mp
-
-
+          CRUMB=$(curl --user chinakron:114c3ee50f8b28383ef9e1af6ba7d8e262 \http://jenkins.ali-orange.com/crumbIssuer/api/xml?xpath=concat\(//crumbRequestField,%22:%22,//crumb\))
+          curl -I -X POST http://chinakron:114c3ee50f8b28383ef9e1af6ba7d8e262@jenkins.ali-orange.com/job/ui-backend/build?token=TFK93Bx4w8H49Mp -H "${CRUMB}"
