@@ -12,5 +12,5 @@ jobs:
       - name: run jenkins
         run: |
           whoami
-          CRUMB=$(curl --user chinakron:114c3ee50f8b28383ef9e1af6ba7d8e262 \http://jenkins.ali-orange.com/crumbIssuer/api/xml?xpath=concat\(//crumbRequestField,%22:%22,//crumb\))
-          curl -I -X POST http://chinakron:114c3ee50f8b28383ef9e1af6ba7d8e262@jenkins.ali-orange.com/job/ui-backend/build?token=TFK93Bx4w8H49Mp -H "${CRUMB}"
+          CRUMB=$(curl --user chinakron:114c3ee50f8b28383ef9e1af6ba7d8e262 https://jenkins.ali-orange.com/crumbIssuer/api/xml?xpath=concat\(//crumbRequestField,%22:%22,//crumb\))
+          curl -I -X POST https://chinakron:114c3ee50f8b28383ef9e1af6ba7d8e262@jenkins.ali-orange.com/job/ui-backend/buildWithParameters?token=TFK93Bx4w8H49Mp -H "${CRUMB}"
