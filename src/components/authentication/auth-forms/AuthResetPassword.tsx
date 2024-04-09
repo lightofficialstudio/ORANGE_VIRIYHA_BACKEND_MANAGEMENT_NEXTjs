@@ -34,15 +34,27 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // types
 import { StringColorProps } from 'types';
-
+import JWTContext from 'contexts/JWTContext';
+import axiosServices from 'utils/axios';
+// status
+import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
+import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // ========================|| FIREBASE - RESET PASSWORD ||======================== //
 
 const AuthResetPassword = ({ ...others }) => {
+  const context = React.useContext(JWTContext);
+
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   const [showPassword, setShowPassword] = React.useState(false);
   const [strength, setStrength] = React.useState(0);
   const [level, setLevel] = React.useState<StringColorProps>();
+
+  const email = context?.user?.userInfo?.email;
+
+  const [openSuccessDialog, setOpenSuccessDialog] = React.useState<boolean>(false);
+  const [openErrorDialog, setOpenErrorDialog] = React.useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   const { isLoggedIn } = useAuth();
 
@@ -72,14 +84,26 @@ const AuthResetPassword = ({ ...others }) => {
         submit: null
       }}
       validationSchema={Yup.object().shape({
-        password: Yup.string().max(255).required('Password is required'),
+        password: Yup.string().max(255).required('โปรดระบุรหัสผ่าน'),
         confirmPassword: Yup.string()
-          .required('Confirm Password is required')
-          .test('confirmPassword', 'Both Password must be match!', (confirmPassword, yup) => yup.parent.password === confirmPassword)
+          .required('โปรดยืนยันหัสผ่าน')
+          .test(
+            'confirmPassword',
+            'รหัสผ่านทั้งสองไม่ตรงกัน กรุณากรอกใหม่ให้ตรงกัน!',
+            (confirmPassword, yup) => yup.parent.password === confirmPassword
+          )
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          // password reset
+          const response = await axiosServices.post('/api/user_backend/force-reset-password', { email: email, password: values.password });
+          if (response.status !== 200) {
+            setOpenErrorDialog(true);
+            setErrorMessage('เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน กรุณาลองใหม่อีกครั้ง');
+          } else {
+            setOpenSuccessDialog(true);
+            window.location.href = '/login';
+          }
+
           if (scriptedRef.current) {
             setStatus({ success: true });
             setSubmitting(false);
@@ -87,7 +111,7 @@ const AuthResetPassword = ({ ...others }) => {
             dispatch(
               openSnackbar({
                 open: true,
-                message: 'Successfuly reset password.',
+                message: 'เปลี่ยนรหัสผ่านสำเร็จ.',
                 variant: 'alert',
                 alert: {
                   color: 'success'
@@ -98,7 +122,7 @@ const AuthResetPassword = ({ ...others }) => {
 
             setTimeout(() => {
               window.location.replace(isLoggedIn ? '/auth/login' : '/login');
-            }, 1500);
+            }, 15000);
           }
         } catch (err: any) {
           console.error(err);
@@ -112,8 +136,12 @@ const AuthResetPassword = ({ ...others }) => {
     >
       {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
         <form noValidate onSubmit={handleSubmit} {...others}>
+          <SuccessDialog open={openSuccessDialog} handleClose={() => setOpenSuccessDialog(false)} />
+          <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
+          <InputLabel htmlFor="outlined-adornment-password-reset">อีเมลล์</InputLabel>
+          <OutlinedInput fullWidth type="text" value={email} label="อีเมลล์" sx={{ marginBottom: '10px;' }} disabled />
           <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-            <InputLabel htmlFor="outlined-adornment-password-reset">Password</InputLabel>
+            <InputLabel htmlFor="outlined-adornment-password-reset">รหัสผ่าน</InputLabel>
             <OutlinedInput
               id="outlined-adornment-password-reset"
               type={showPassword ? 'text' : 'password'}
@@ -176,7 +204,7 @@ const AuthResetPassword = ({ ...others }) => {
             error={Boolean(touched.confirmPassword && errors.confirmPassword)}
             sx={{ ...theme.typography.customInput }}
           >
-            <InputLabel htmlFor="outlined-adornment-confirm-password">Confirm Password</InputLabel>
+            <InputLabel htmlFor="outlined-adornment-confirm-password">ยืนยันรหัสผ่าน</InputLabel>
             <OutlinedInput
               id="outlined-adornment-confirm-password"
               type="password"
@@ -214,7 +242,7 @@ const AuthResetPassword = ({ ...others }) => {
           >
             <AnimateButton>
               <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
-                Reset Password
+                รีเซ็ตรหัสผ่าน
               </Button>
             </AnimateButton>
           </Box>

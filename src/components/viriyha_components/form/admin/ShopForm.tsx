@@ -118,10 +118,6 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
       setOpenErrorDialog(true);
       setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
-    } else if (!ImageShop) {
-      setOpenErrorDialog(true);
-      setErrorMessage('กรุณาอัพโหลดรูปภาพ');
-      return;
     }
     event.preventDefault();
     const formData = new FormData();
@@ -139,6 +135,11 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
           }
         });
       } else {
+        if (!ImageShop) {
+          setOpenErrorDialog(true);
+          setErrorMessage('กรุณาอัพโหลดรูปภาพ');
+          return;
+        }
         response = await axiosServices.post('/api/shop/create', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'

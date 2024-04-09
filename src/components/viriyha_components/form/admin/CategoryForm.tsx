@@ -125,10 +125,6 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
       setOpenErrorDialog(true);
       setErrorMessage(String(formik.errors.Name || formik.errors.Position));
       return;
-    } else if (!ImageFile) {
-      setOpenErrorDialog(true);
-      setErrorMessage('กรุณาเลือกรูปภาพ');
-      return;
     }
 
     event.preventDefault();
@@ -148,6 +144,11 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
           }
         });
       } else {
+        if (!ImageFile) {
+          setOpenErrorDialog(true);
+          setErrorMessage('กรุณาเลือกรูปภาพ');
+          return;
+        }
         response = await axiosServices.post('/api/category/create', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'

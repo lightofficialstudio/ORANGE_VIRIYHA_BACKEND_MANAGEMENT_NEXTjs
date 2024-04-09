@@ -236,6 +236,9 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
   // modal
   const [QuotaModal, setQuotaModal] = useState(false);
 
+  // image
+  const [imageSrcs, setImageSrcs] = useState<string[]>([]);
+
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
   };
@@ -394,9 +397,11 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
       await CriteriaList();
       await SegmentList();
       if (primaryId) {
+        const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/normal-campaign/';
         const response = await axiosServices.get(`/api/campaign/${primaryId}`);
         const data = response.data;
         const shopId = data.Campaign_Shop[0].shopId;
+        const newImageSrcs: string[] = [];
         await BranchList(shopId);
         setShopId(data.Campaign_Shop[0].shopId);
         setPrimaryShopId(data.Campaign_Shop[0].id);
@@ -413,6 +418,10 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
         setCriteria(data.criteria);
         setDescription(data.description);
         setCondition(data.condition);
+        data.Campaign_Image.forEach((item: any) => {
+          newImageSrcs.push(imgUrl + item.image);
+          setImageSrcs(newImageSrcs);
+        });
         await CampaignDateList(data.Campaign_Date);
       }
     };
@@ -420,30 +429,23 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     fetchData();
   }, [primaryId]);
 
-  const [imageSrcs, setImageSrcs] = useState<string[]>([]);
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return; // No files selected
     }
 
-    const files = Array.from(e.target.files).slice(0, 5); // Get first 5 files if there are more
+    const files = Array.from(e.target.files).slice(0, 5);
     setFileImage(files);
-
-    // Ensure each file is actually a File object
     const newImageSrcs: string[] = [];
     files.forEach((file) => {
-      // Ensure that each file is a Blob
       if (file instanceof Blob) {
-        // This is where you ensure the file is a Blob
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
-          // Ensure that the result is a string
           if (typeof e.target?.result === 'string') {
             newImageSrcs.push(e.target.result);
           }
           if (newImageSrcs.length === files.length) {
-            setImageSrcs(newImageSrcs); // Update the image srcs state
+            setImageSrcs(newImageSrcs);
           }
         };
         reader.readAsDataURL(file);
@@ -1052,7 +1054,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
                 <Grid container spacing={3} justifyContent="center">
                   {imageSrcs.map((src, index) => (
                     <Grid item key={index}>
-                      <ImageWrapper>
+                      <ImageWrapper sx={{ width: '200px;', height: '250px;' }}>
                         <CardMedia component="img" image={src} title={`Product ${index + 1}`} />
                       </ImageWrapper>
                     </Grid>

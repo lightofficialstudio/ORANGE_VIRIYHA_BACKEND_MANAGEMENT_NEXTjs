@@ -51,7 +51,6 @@ const JWTContext = createContext<JWTContextType | null>(null);
 
 export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
   const [state, dispatch] = useReducer(accountReducer, initialState);
-
   useEffect(() => {
     const init = async () => {
       try {
@@ -60,6 +59,10 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
           setSession(serviceToken);
           const response = await axios.get('/api/login/verifyToken');
           const user = response.data;
+          const { forceChangePassword } = user.userInfo;
+          if (forceChangePassword && window.location.pathname !== '/login/reset-password') {
+            window.location.href = '/login/reset-password';
+          }
           dispatch({
             type: LOGIN,
             payload: {

@@ -120,11 +120,6 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (!ImageFile) {
-      setOpenErrorDialog(true);
-      setErrorMessage('กรุณาเลือกรูปภาพ');
-      return;
-    }
 
     if (formik.errors.Name || formik.errors.Position || formik.errors.Status) {
       setOpenErrorDialog(true);
@@ -148,6 +143,11 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
           }
         });
       } else {
+        if (!ImageFile) {
+          setOpenErrorDialog(true);
+          setErrorMessage('กรุณาเลือกรูปภาพ');
+          return;
+        }
         response = await axiosServices.post('/api/banner/create', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
