@@ -83,6 +83,24 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
     if (file) {
+      // ตรวจสอบขนาดไฟล์ไม่เกิน 4MB
+      const isFileSizeValid = file.size <= 4 * 1024 * 1024; // 4MB
+      // ตรวจสอบนามสกุลไฟล์
+      const isFileTypeValid = /\.(jpg|jpeg|png|webp)$/i.test(file.name);
+
+      if (!isFileSizeValid) {
+        setErrorMessage('ขนาดไฟล์รูปภาพต้องไม่เกิน 4MB');
+        setOpenErrorDialog(true);
+        return; // หยุดการทำงานถัดไปหากขนาดไฟล์ไม่ถูกต้อง
+      }
+
+      if (!isFileTypeValid) {
+        setErrorMessage('รูปภาพต้องเป็นไฟล์ .jpg, .jpeg, .png, .webp เท่านั้น');
+        setOpenErrorDialog(true);
+        return; // หยุดการทำงานถัดไปหากนามสกุลไฟล์ไม่ถูกต้อง
+      }
+
+      // ถ้าเงื่อนไขทั้งหมดถูกต้อง, ดำเนินการต่อ
       const reader = new FileReader();
       const fileName = file.name;
       setImageFile(file);
@@ -102,6 +120,17 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    if (!ImageFile) {
+      setOpenErrorDialog(true);
+      setErrorMessage('กรุณาเลือกรูปภาพ');
+      return;
+    }
+
+    if (formik.errors.Name || formik.errors.Position || formik.errors.Status) {
+      setOpenErrorDialog(true);
+      setErrorMessage(String(formik.errors.Name || formik.errors.Position || formik.errors.Status));
+      return;
+    }
     const formData = new FormData();
     formData.append('name', Name);
     formData.append('status', Status);

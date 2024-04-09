@@ -265,7 +265,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
       formData.append('quotaRange', JSON.stringify(item));
     });
     fileImage.forEach((file: File) => {
-      formData.append('campaignImage', file);
+      formData.append('file', file);
     });
     if (primaryId) {
       formData.append('updatedById', String(createdById));

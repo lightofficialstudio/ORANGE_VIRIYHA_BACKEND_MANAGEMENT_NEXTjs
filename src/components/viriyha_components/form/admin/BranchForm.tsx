@@ -62,6 +62,11 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
   };
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!BranchName || !Status) {
+      setOpenErrorDialog(true);
+      setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
+    }
     event.preventDefault();
     const formData = new FormData();
     formData.append('shopId', shopId ?? '');
