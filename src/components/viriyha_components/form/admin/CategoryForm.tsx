@@ -15,7 +15,7 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Mockup Logo
-const MockupLogo = '/assets/mockup/shop.png';
+const MockupLogo = '/assets/default-img/category.jpg';
 // third-party - validation
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -67,13 +67,14 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
   });
   React.useEffect(() => {
     const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/category';
+
     if (categoryId) {
       axiosServices.get(`/api/category/${categoryId}`).then((response) => {
         console.log(response);
         setName(response.data.name);
         setPosition(response.data.position);
         setStatus(response.data.status);
-        SetPreviewImg(`${imgUrl}/${response.data.image}`);
+        response.data.image ? SetPreviewImg(`${imgUrl}/${response.data.image}`) : SetPreviewImg(MockupLogo);
       });
     }
   }, [categoryId]);

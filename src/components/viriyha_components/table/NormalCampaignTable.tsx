@@ -154,13 +154,6 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
       </Typography>
     )}
     <Box sx={{ flexGrow: 1 }} />
-    {numSelected > 0 && (
-      <Tooltip title="ลบรายการ">
-        <IconButton size="large">
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    )}
   </Toolbar>
 );
 
@@ -168,7 +161,7 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
 
 interface OrderListEnhancedTableHeadProps extends EnhancedTableHeadProps {
   theme: Theme;
-  selected: string[];
+  selected: number[];
 }
 
 function EnhancedTableHead({
@@ -245,7 +238,7 @@ const NormalCampaignTable = () => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('calories');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
   const [search, setSearch] = React.useState<string>('');
@@ -296,16 +289,16 @@ const NormalCampaignTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.id.toString()); // Convert numbers to strings
+      const newSelectedId = rows.map((n) => n.id);
       setSelected(newSelectedId);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: string) => {
+  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: number) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
+    let newSelected: number[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -316,8 +309,6 @@ const NormalCampaignTable = () => {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
-    console.log(newSelected);
-
     setSelected(newSelected);
   };
 
@@ -330,7 +321,7 @@ const NormalCampaignTable = () => {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   // function
@@ -464,12 +455,12 @@ const NormalCampaignTable = () => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
+                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.id)}>
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}
@@ -507,11 +498,13 @@ const NormalCampaignTable = () => {
                             </Link>
                           </Grid>
                           <Grid item xs={12} sm={4}>
-                            <Tooltip title="คัดลอกสิทธิพิเศษ">
-                              <IconButton color="secondary" size="large">
-                                <ContentCopyIcon sx={{ fontSize: '1.3rem' }} />
-                              </IconButton>
-                            </Tooltip>
+                            <Link href={`/campaign/normal/clone/${row.id}`}>
+                              <Tooltip title="คัดลอกสิทธิพิเศษ">
+                                <IconButton color="secondary" size="large">
+                                  <ContentCopyIcon sx={{ fontSize: '1.3rem' }} />
+                                </IconButton>
+                              </Tooltip>
+                            </Link>
                           </Grid>
                           <Grid item xs={12} sm={4}>
                             <Tooltip title="คัดลอกลิงก์">

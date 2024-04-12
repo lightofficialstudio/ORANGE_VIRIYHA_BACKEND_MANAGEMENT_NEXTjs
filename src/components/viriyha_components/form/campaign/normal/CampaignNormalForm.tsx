@@ -139,6 +139,7 @@ const validationSchema = yup.object({
 interface NormalCampaignFormProps {
   primaryId?: string;
   title?: string;
+  type?: string;
 }
 
 interface GenerateQuotaTableProps {
@@ -148,7 +149,7 @@ interface GenerateQuotaTableProps {
   quantity: number;
 }
 
-const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
+const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps) => {
   const theme = useTheme();
   const context = React.useContext(JWTContext);
   // const [isQuotaDisabled, setIsQuotaDisabled] = useState(false);
@@ -201,22 +202,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     }
   });
   // const [Status, setStatus] = useState('');
-  console.log(
-    Description,
-    Condition,
-    Segment,
-    Criteria,
-    CategoryQuotaLimit,
-    QuotaLimit,
-    CategoryQuantity,
-    Quantity,
-    endDate,
-    startDate,
-    Category,
-    Name,
-    BranchId,
-    ShopId
-  );
+  console.log(codeExcelData);
 
   // condition
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
@@ -267,6 +253,11 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
     quotaRange.forEach((item, index) => {
       formData.append('quotaRange', JSON.stringify(item));
     });
+    if (codeCondition === 2) {
+      codeExcelData.forEach((item) => {
+        formData.append('codeExcelData', JSON.stringify(item));
+      });
+    }
     fileImage.forEach((file: File) => {
       formData.append('file', file);
     });
@@ -277,8 +268,14 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
 
     try {
       let response;
-      if (primaryId) {
+      if (primaryId && type != 'clone') {
         response = await axiosServices.post(`/api/campaign/update/${primaryId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      } else if (type == 'clone' && primaryId) {
+        response = await axiosServices.post('/api/campaign/create', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -312,7 +309,6 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
           name: item.name
         }));
         setArrayCategory(categoryArray);
-        console.log(categoryArray);
       } catch (error) {
         console.log(error);
       }
@@ -418,6 +414,10 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
         setCriteria(data.criteria);
         setDescription(data.description);
         setCondition(data.condition);
+        if (data.Campaign_Code.length > 0) {
+          setCodeCondition(2);
+          setCodeExcelData(data.Campaign_Code.code);
+        }
         data.Campaign_Image.forEach((item: any) => {
           newImageSrcs.push(imgUrl + item.image);
           setImageSrcs(newImageSrcs);
@@ -1252,7 +1252,7 @@ const NormalCampaignForm = ({ primaryId, title }: NormalCampaignFormProps) => {
             <Stack direction="row" justifyContent="flex-end">
               <AnimateButton>
                 <Button variant="contained" type="submit" onClick={handleSubmit}>
-                  {primaryId ? 'แก้ไขข้อมูล' : 'สร้างข้อมูล'}
+                  ยืนยัน
                 </Button>
               </AnimateButton>
             </Stack>

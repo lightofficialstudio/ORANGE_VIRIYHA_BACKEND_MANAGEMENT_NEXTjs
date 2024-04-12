@@ -120,8 +120,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
   // - Report
   const [MenuReportAttempt, setMenuReportAttempt] = useState<number>(1);
   const [MenuReportLocation, setMenuReportLocation] = useState<number>(1);
-  const [MenuReportRedeemTransaction, setMenuReportRedeemTransaction] = useState<number>(1);
-  const [MenuReportWebsiteAnalyze, setMenuReportWebsiteAnalyze] = useState<number>(1);
+
   // - Config
   const [MenuConfigErrorMessage, setMenuConfigErrorMessage] = useState<number>(1);
   // - Logs
@@ -156,6 +155,32 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
           SetPreviewImg(`${imgUrl}/${response.data.image}`);
         }
         setDescription(response.data.description);
+        // Permission
+        let permissions: string[] = [];
+        permissions = response.data.permission.map((item: { name: string }) => item.name || '');
+        console.log(permissions);
+        // - Dashboard
+        setMenuWebAnalytics(permissions.includes('MenuWebAnalytics') ? 1 : 0);
+        setMenuDashboardCampaign(permissions.includes('MenuDashboardCampaign') ? 1 : 0);
+        setMenuDashboardRedeem(permissions.includes('MenuDashboardRedeem') ? 1 : 0);
+        // - Admin
+        setMenuAdminBanner(permissions.includes('MenuAdminBanner') ? 1 : 0);
+        setMenuAdminCategory(permissions.includes('MenuAdminCategory') ? 1 : 0);
+        setMenuAdminShop(permissions.includes('MenuAdminShop') ? 1 : 0);
+        setMenuAdminSegment(permissions.includes('MenuAdminSegment') ? 1 : 0);
+        setMenuAdminCriteria(permissions.includes('MenuAdminCriteria') ? 1 : 0);
+        setMenuAdminFrontendUsers(permissions.includes('MenuAdminFrontendUsers') ? 1 : 0);
+        setMenuAdminBackendUsers(permissions.includes('MenuAdminBackendUsers') ? 1 : 0);
+        // - Campaign
+        setMenuCampaignNormal(permissions.includes('MenuCampaignNormal') ? 1 : 0);
+        setMenuCampaignSpecial(permissions.includes('MenuCampaignSpecial') ? 1 : 0);
+        // - Report
+        setMenuReportAttempt(permissions.includes('MenuReportAttempt') ? 1 : 0);
+        setMenuReportLocation(permissions.includes('MenuReportLocation') ? 1 : 0);
+        // - Config
+        setMenuConfigErrorMessage(permissions.includes('MenuConfigErrorMessage') ? 1 : 0);
+        // - Logs
+        setMenuLogsErrorLogs(permissions.includes('MenuLogsErrorLogs') ? 1 : 0);
       });
     }
   }, [primaryId, imgUrl]);
@@ -192,6 +217,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
       setErrorMessage((formik.errors.Username || formik.errors.Email) as string);
       return;
     }
+    const permissions = [];
 
     const formData = new FormData();
     formData.append('username', Username);
@@ -202,19 +228,42 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
     formData.append('role', Role);
     formData.append('description', Description);
     formData.append('user_backendImage', ImageFile ?? '');
+    /* Permission */
+    if (MenuWebAnalytics === 1) permissions.push('MenuWebAnalytics');
+    if (MenuDashboardCampaign === 1) permissions.push('MenuDashboardCampaign');
+    if (MenuDashboardRedeem === 1) permissions.push('MenuDashboardRedeem');
+    // - Admin
+    if (MenuAdminBanner === 1) permissions.push('MenuAdminBanner');
+    if (MenuAdminCategory === 1) permissions.push('MenuAdminCategory');
+    if (MenuAdminShop === 1) permissions.push('MenuAdminShop');
+    if (MenuAdminSegment === 1) permissions.push('MenuAdminSegment');
+    if (MenuAdminCriteria === 1) permissions.push('MenuAdminCriteria');
+    if (MenuAdminFrontendUsers === 1) permissions.push('MenuAdminFrontendUsers');
+    if (MenuAdminBackendUsers === 1) permissions.push('MenuAdminBackendUsers');
+    // - Campaign
+    if (MenuCampaignNormal === 1) permissions.push('MenuCampaignNormal');
+    if (MenuCampaignSpecial === 1) permissions.push('MenuCampaignSpecial');
+    // - Report
+    if (MenuReportAttempt === 1) permissions.push('MenuReportAttempt');
+    if (MenuReportLocation === 1) permissions.push('MenuReportLocation');
+    // - Config
+    if (MenuConfigErrorMessage === 1) permissions.push('MenuConfigErrorMessage');
+    // - Logs
+    if (MenuLogsErrorLogs === 1) permissions.push('MenuLogsErrorLogs');
+    formData.append('permissions', permissions.join(','));
 
     try {
       let response;
       if (primaryId) {
         response = await axiosServices.put(`/api/user_backend/update/${primaryId}`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'application/json'
           }
         });
       } else {
         response = await axiosServices.post('/api/user_backend/create', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'application/json'
           }
         });
       }
@@ -605,7 +654,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                   </StyledTableRow>
                   <StyledTableRow>
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                      <b>เมนู Report</b>
+                      <b>เมนู Transaction</b>
                     </StyledTableCell>
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row"></StyledTableCell>
                   </StyledTableRow>
@@ -641,39 +690,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                       />
                     </StyledTableCell>
                   </StyledTableRow>
-                  <StyledTableRow>
-                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                      - Redeem Transaction
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      <Autocomplete
-                        options={Permission}
-                        getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuReportRedeemTransaction) || null}
-                        onChange={(event, val) => {
-                          setMenuReportRedeemTransaction(val ? val.id : 0);
-                        }}
-                        renderInput={(params) => <TextField {...params} />}
-                      />
-                    </StyledTableCell>
-                  </StyledTableRow>
-                  <StyledTableRow>
-                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                      - Website Analyze
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      <Autocomplete
-                        options={Permission}
-                        getOptionLabel={(option) => (option ? option.name : '')}
-                        value={Permission.find((option) => option.id === MenuReportWebsiteAnalyze) || null}
-                        onChange={(event, val) => {
-                          setMenuReportWebsiteAnalyze(val ? val.id : 0);
-                          console.log(val ? val.id : 'เอราเบะ');
-                        }}
-                        renderInput={(params) => <TextField {...params} />}
-                      />
-                    </StyledTableCell>
-                  </StyledTableRow>
+
                   <StyledTableRow>
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       <b>เมนู Config</b>

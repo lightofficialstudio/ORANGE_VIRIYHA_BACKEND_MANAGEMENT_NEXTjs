@@ -15,7 +15,7 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Mockup Logo
-const MockupLogo = '/assets/mockup/shop.png';
+const MockupLogo = '/assets/default-img/shop.jpg';
 // third-party - validation
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -70,7 +70,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
         console.log(response);
         setName(response.data.name);
         setStatus(response.data.status);
-        SetPreviewImg(`${imgUrl}/${response.data.image}`);
+        response.data.image ? SetPreviewImg(`${imgUrl}/${response.data.image}`) : SetPreviewImg(MockupLogo);
       });
     }
   }, [shopId]);
