@@ -18,7 +18,7 @@ export default function Document() {
         <meta property="og:image" content="https://berrydashboard.io/og-image/og-facebook.png" />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://berrydashboard.io" />
-        <meta property="twitter:title" content="Berry - React Material Dashboard Template" />
+        <meta property="twitter:title" content="วิริยะ - ระบบจัดการหลังบ้านวิริย" />
         <meta property="twitter:description" content="วิริยะ - ระบบจัดการหลังบ้านวิริยะ" />
         <meta property="twitter:image" content="https://berrydashboard.io/og-image/og-twitter.png" />
         <meta name="twitter:creator" content="@codedthemes" />

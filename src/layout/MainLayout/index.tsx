@@ -8,7 +8,7 @@ import { Container, AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mu
 import Header from './Header';
 import Sidebar from './Sidebar';
 import HorizontalBar from './HorizontalBar';
-import Customization from '../Customization';
+// import Customization from '../Customization';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 
@@ -147,7 +147,7 @@ const MainLayout: FC<Props> = ({ children }) => {
             {children}
           </Container>
         </Main>
-        <Customization />
+        {/* <Customization /> */}
       </Box>
     </AuthGuard>
   );

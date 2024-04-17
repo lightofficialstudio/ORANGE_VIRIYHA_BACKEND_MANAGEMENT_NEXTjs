@@ -122,10 +122,6 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
       setOpenErrorDialog(true);
       setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
-    } else if (formik.errors.Name || formik.errors.Position) {
-      setOpenErrorDialog(true);
-      setErrorMessage(String(formik.errors.Name || formik.errors.Position));
-      return;
     }
 
     event.preventDefault();
@@ -230,6 +226,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                     <InputLabel required>ลำดับการแสดงผล</InputLabel>
                     <TextField
                       fullWidth
+                      type="number"
                       name="Position"
                       placeholder="เช่น 1,2,3"
                       value={Position}

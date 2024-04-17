@@ -11,8 +11,8 @@ import CriteriaTable from 'components/viriyha_components/table/CriteriaTable';
 
 const ShopPage = () => {
   return (
-    <Page title="การแบ่งกลุ่ม (Criteria)">
-      <MainCard title="การแบ่งกลุ่ม (Criteria)" content={false}>
+    <Page title="กลุ่มเป้าหมาย (Criteria)">
+      <MainCard title="กลุ่มเป้าหมาย (Criteria)" content={false}>
         <CriteriaTable />
       </MainCard>
     </Page>

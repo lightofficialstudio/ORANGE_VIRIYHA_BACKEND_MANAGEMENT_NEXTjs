@@ -23,6 +23,8 @@ import {
   Tooltip,
   Typography
 } from '@mui/material';
+import LinkIcon from '@mui/icons-material/Link';
+
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
@@ -46,6 +48,7 @@ import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDia
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // third-party
 import Swal from 'sweetalert2';
+import { openSnackbar } from 'store/slices/snackbar';
 import axiosServices from 'utils/axios';
 // modal
 import ModalChangePosition from '../modal/banners/ChangePosition';
@@ -102,16 +105,11 @@ const headCells: HeadCell[] = [
     label: 'ชื่อแบนเนอร์',
     align: 'left'
   },
+
   {
-    id: 'link',
-    numeric: false,
-    label: 'ลิงก์แบนเนอร์',
-    align: 'left'
-  },
-  {
-    id: 'createdAt',
+    id: 'updatedAt',
     numeric: true,
-    label: 'สร้างเมื่อวันที่',
+    label: 'วันที่แก้ไขล่าสุด',
     align: 'right'
   },
   {
@@ -398,6 +396,27 @@ const BannerTable = () => {
     });
   };
 
+  const copyToClipboard = (text: string) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: 'คัดลอกลิงก์สำเร็จ',
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        },
+        close: false
+      })
+    );
+  };
+
   // modal change position
 
   const handleResponsePositionModal = (response: boolean) => {
@@ -524,9 +543,9 @@ const BannerTable = () => {
 
                       <TableCell align="left">{row.name}</TableCell>
 
-                      <TableCell align="left">{row.link}</TableCell>
+                      {/* <TableCell align="left">{row.link}</TableCell> */}
 
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
+                      <TableCell align="right">{format(new Date(row.updatedAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">{row.createdBy?.username}</TableCell>
 
                       <TableCell align="center">
@@ -535,28 +554,40 @@ const BannerTable = () => {
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/banners/edit/${row.id}`}>
-                          <Tooltip title="แก้ไขข้อมูล">
-                            <IconButton color="secondary" size="large">
-                              <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                            </IconButton>
-                          </Tooltip>
-                        </Link>
-
-                        <Tooltip title="จัดการตำแหน่ง">
-                          <IconButton
-                            color="secondary"
-                            size="large"
-                            onClick={(event: any) => {
-                              setOpenChangePositionModal(true);
-                              setSelectedTitle(row.name);
-                              setSelectedId(parseInt(row.id));
-                              setSelectedPosition(row.position.toString());
-                            }}
-                          >
-                            <ControlCameraIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
-                        </Tooltip>
+                        <Grid container justifyContent="center">
+                          <Grid item xs={12} sm={3}>
+                            <Link href={`/admin/banners/edit/${row.id}`}>
+                              <Tooltip title="แก้ไขข้อมูล">
+                                <IconButton color="secondary" size="large">
+                                  <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                                </IconButton>
+                              </Tooltip>
+                            </Link>
+                          </Grid>
+                          <Grid item xs={12} sm={3}>
+                            <Tooltip title="จัดการตำแหน่ง">
+                              <IconButton
+                                color="secondary"
+                                size="large"
+                                onClick={(event: any) => {
+                                  setOpenChangePositionModal(true);
+                                  setSelectedTitle(row.name);
+                                  setSelectedId(parseInt(row.id));
+                                  setSelectedPosition(row.position.toString());
+                                }}
+                              >
+                                <ControlCameraIcon sx={{ fontSize: '1.3rem' }} />
+                              </IconButton>
+                            </Tooltip>
+                          </Grid>
+                          <Grid item xs={12} sm={3}>
+                            <Tooltip title="คัดลอกลิงก์">
+                              <IconButton color="secondary" size="large" onClick={() => copyToClipboard(row.link)}>
+                                <LinkIcon sx={{ fontSize: '1.3rem' }} />
+                              </IconButton>
+                            </Tooltip>
+                          </Grid>
+                        </Grid>
                         <ModalChangePosition
                           isOpen={openChangePositionModal}
                           isClose={() => setOpenChangePositionModal(false)}

@@ -120,10 +120,9 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-
-    if (formik.errors.Name || formik.errors.Position || formik.errors.Status) {
+    if (!Name || !Position || !Status) {
       setOpenErrorDialog(true);
-      setErrorMessage(String(formik.errors.Name || formik.errors.Position || formik.errors.Status));
+      setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
     }
     const formData = new FormData();
@@ -268,7 +267,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                     <InputLabel>ลิงก์สิทธิพิเศษ</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="เช่น www.viriyha.com/privilege/1"
+                      placeholder="เช่น www.viriyah.co.th/privilege/1"
                       value={LinkNav}
                       onChange={(event: any) => {
                         setLinkNav(event.target.value);

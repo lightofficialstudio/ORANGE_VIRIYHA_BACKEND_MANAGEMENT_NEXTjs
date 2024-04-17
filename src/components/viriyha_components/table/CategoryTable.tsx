@@ -105,9 +105,9 @@ const headCells: HeadCell[] = [
     align: 'center'
   },
   {
-    id: 'createdAt',
+    id: 'updatedAt',
     numeric: true,
-    label: 'สร้างเมื่อวันที่',
+    label: 'วันที่แก้ไขล่าสุด',
     align: 'right'
   },
   {
@@ -485,7 +485,7 @@ const CategoryTable = () => {
                       <TableCell align="center">{row.name}</TableCell>
 
                       <TableCell align="center">{row.createdBy?.username}</TableCell>
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
+                      <TableCell align="right">{format(new Date(row.updatedAt), 'E, MMM d yyyy')}</TableCell>
                       <TableCell align="center">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
