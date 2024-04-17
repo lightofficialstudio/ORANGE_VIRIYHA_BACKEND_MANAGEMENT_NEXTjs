@@ -429,6 +429,12 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
     fetchData();
   }, [primaryId]);
 
+  useEffect(() => {
+    if (CategoryQuantity === 4) {
+      setQuantity(0);
+    }
+  }, [CategoryQuantity]);
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return; // No files selected
@@ -498,7 +504,7 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
       setErrorMessage('กรุณาเลือกประเภทสิทธิพิเศษ');
       setOpenErrorDialog(true);
     }
-    if (Quantity == 0 || Quantity == null) {
+    if (Quantity == 0 || (Quantity == 0 && CategoryQuantity == 4)) {
       setErrorMessage('กรุณาใส่จำนวนสิทธิพิเศษให้ครบถ้วน หรือใส่จำนวนมากกว่า 1');
       setOpenErrorDialog(true);
     }
@@ -869,10 +875,12 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
                   value={Quantity}
                   onChange={(event: any) => {
                     setQuantity(event.target.value);
+
                     if (event.target.value < 0) {
                       setQuantity(0);
                     }
                   }}
+                  disabled={CategoryQuotaLimit === 4}
                   endAdornment={<InputAdornment position="end">สิทธิพิเศษ</InputAdornment>}
                 />
               </FormControl>
@@ -916,6 +924,9 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
                     getOptionLabel={(option) => option.label}
                     onChange={(_event: any, value: any) => {
                       setCategoryQuotaLimit(value?.id);
+                      if (value?.id === 4) {
+                        setQuantity(0);
+                      }
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={maxQuotaPerPerson.find((Item) => Item.id === CategoryQuotaLimit) || null}
@@ -999,8 +1010,17 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
               <div style={{ height: '150px' }}>
                 <ReactQuill
                   style={{ height: '100px' }}
-                  onChange={(value) => {
-                    setDescription(value);
+                  onChange={(content, delta, source, editor) => {
+                    const plainText = editor.getText(); // ดึงข้อความโดยไม่มีรูปแบบ
+                    if (plainText.length <= 85 + 1) {
+                      // ตรวจสอบความยาวข้อความ (+1 สำหรับตัวอักษร newline ที่เพิ่มโดยอัตโนมัติ)
+                      setDescription(content); // อัปเดตสถานะเมื่อต่ำกว่าหรือเท่ากับ 85 ตัวอักษร
+                    } else if (plainText.length > 85 + 1) {
+                      setOpenErrorDialog(true);
+                      setErrorMessage('รายละเอียด ต้องไม่เกิน 85 ตัวอักษร');
+                      // ตัดข้อความที่เกิน 85 ตัวอักษร
+                      setDescription(editor.getText().slice(0, 85));
+                    }
                   }}
                   value={Description}
                 />

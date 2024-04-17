@@ -14,7 +14,7 @@ const config: ConfigProps = {
   layout: LAYOUT_CONST.VERTICAL_LAYOUT,
   drawerType: LAYOUT_CONST.DEFAULT_DRAWER,
   fontFamily: 'LineSeedTH', // เปลี่ยนเป็น 'LineSeedTH'
-  borderRadius: 20,
+  borderRadius: 9,
   outlinedFilled: true,
   navType: 'light',
   presetColor: 'theme6',
