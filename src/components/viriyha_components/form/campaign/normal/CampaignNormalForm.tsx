@@ -112,10 +112,10 @@ const quotaChoose = [
 ];
 
 const maxQuotaPerPerson = [
-  { label: 'คน/วัน', id: 1 },
-  { label: 'คน/สัปดาห์', id: 2 },
-  { label: 'คน/เดือน', id: 3 },
-  { label: 'ไม่จำกัด', id: 4 }
+  { label: 'สิทธิ์/คน/วัน', id: 1 },
+  { label: 'สิทธิ์/คน/สัปดาห์', id: 2 },
+  { label: 'สิทธิ์/คน/เดือน', id: 3 },
+  { label: 'ไม่จำกัดจำนวนคน', id: 4 }
 ];
 
 const CodeOption = [
@@ -161,26 +161,26 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
   const [ArraySegment, setArraySegment] = useState<SegmentType[]>([]);
 
   // variable
-  const [ShopId, setShopId] = useState('');
-  const [BranchCondition, setBranchCondition] = useState('include');
+  const [ShopId, setShopId] = useState<string>('');
+  const [BranchCondition, setBranchCondition] = useState<string>('include');
   const [BranchId, setBranchId] = useState<number[]>([]);
-  const [Name, setName] = useState('');
-  const [Category, setCategory] = useState('');
+  const [Name, setName] = useState<string>('');
+  const [Category, setCategory] = useState<string>('');
   const [startDate, setStartDate] = React.useState<Date | null>(new Date());
   const [endDate, setEndDate] = React.useState<Date | null>();
   const [Quantity, setQuantity] = useState<number>(0);
   const [CategoryQuantity, setCategoryQuantity] = useState<number>();
-  const [QuotaLimit, setQuotaLimit] = useState('');
+  const [QuotaLimit, setQuotaLimit] = useState<string>('');
   const [CategoryQuotaLimit, setCategoryQuotaLimit] = useState<number>();
   const [WebsiteTrafficPattern, setWebsiteTrafficPattern] = useState<string>('Auto');
   const [WebsiteTrafficPatternValue, setWebsiteTrafficPatternValue] = useState<number>();
   const [Segment, setSegment] = useState<number[]>([]);
   const [Criteria, setCriteria] = useState<number[]>([]);
-  const [Description, setDescription] = useState('');
-  const [Condition, setCondition] = useState('');
+  const [Description, setDescription] = useState<string>('');
+  const [Condition, setCondition] = useState<string>('');
   const [fileImage, setFileImage] = useState<File[]>([]);
   const [codeCondition, setCodeCondition] = useState<number>();
-  const createdById = context?.user?.userInfo?.id;
+  const createdById = context?.user?.userInfo?.id as number;
 
   // import varaible
   const [codeExcelFile, setCodeExcelFile] = React.useState<File | null>(null);
@@ -212,12 +212,12 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
   const [error, setError] = useState('');
 
   // generate table
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [quotaRange, setQuotaRange] = useState<GenerateQuotaTableProps[]>([]);
   const [codeQuatity, setCodeQuatity] = useState<number>(0);
-  const [tempQuotaId, setTempQuotaId] = useState(0);
-  const [tempQuotaQuantity, setTempQuotaQuantity] = useState(0);
+  const [tempQuotaId, setTempQuotaId] = useState<number>(0);
+  const [tempQuotaQuantity, setTempQuotaQuantity] = useState<number>(0);
 
   // modal
   const [QuotaModal, setQuotaModal] = useState(false);

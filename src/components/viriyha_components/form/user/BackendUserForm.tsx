@@ -212,10 +212,6 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
       setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
       setError('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
-    } else if (formik.errors.Username || formik.errors.Email) {
-      setOpenErrorDialog(true);
-      setErrorMessage((formik.errors.Username || formik.errors.Email) as string);
-      return;
     }
     const permissions = [];
 
