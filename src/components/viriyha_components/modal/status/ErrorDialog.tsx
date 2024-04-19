@@ -12,9 +12,9 @@ export default function ErrorDialog({ open, handleClose, errorMessage }: ErrorDi
   React.useEffect(() => {
     if (open) {
       Swal.fire({
-        title: 'เกิดข้อผิดพลาด!',
+        title: 'คำเตือน!',
         text: errorMessage,
-        icon: 'error',
+        icon: 'info',
         confirmButtonText: 'เข้าใจแล้ว',
         confirmButtonColor: '#f44336'
       }).then((result) => {

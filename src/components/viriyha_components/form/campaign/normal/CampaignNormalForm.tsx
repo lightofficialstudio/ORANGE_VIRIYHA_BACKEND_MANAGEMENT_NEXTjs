@@ -35,6 +35,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
+import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -66,23 +67,7 @@ import { CampaignDate } from 'types/viriyha_type/campaign';
 // third-party - validation
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-// styles
-const ImageWrapper = styled('div')(({ theme }) => ({
-  position: 'relative',
-  overflow: 'hidden',
-  borderRadius: '4px',
-  cursor: 'pointer',
-  width: 55,
-  height: 55,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: theme.palette.background.default,
-  '& > svg': {
-    verticalAlign: 'sub',
-    marginRight: 6
-  }
-}));
+
 // styles
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -149,6 +134,11 @@ interface GenerateQuotaTableProps {
   quantity: number;
 }
 
+type ImageType = {
+  file?: File; // `file` is now optional
+  src: string;
+};
+
 const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps) => {
   const theme = useTheme();
   const context = React.useContext(JWTContext);
@@ -170,16 +160,16 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
   const [endDate, setEndDate] = React.useState<Date | null>();
   const [Quantity, setQuantity] = useState<number>(0);
   const [CategoryQuantity, setCategoryQuantity] = useState<number>();
-  const [QuotaLimit, setQuotaLimit] = useState<string>('');
+  const [QuotaLimit, setQuotaLimit] = useState<number>(0);
   const [CategoryQuotaLimit, setCategoryQuotaLimit] = useState<number>();
   const [WebsiteTrafficPattern, setWebsiteTrafficPattern] = useState<string>('Auto');
-  const [WebsiteTrafficPatternValue, setWebsiteTrafficPatternValue] = useState<number>();
+  const [WebsiteTrafficPatternValue, setWebsiteTrafficPatternValue] = useState<number>(0);
   const [Segment, setSegment] = useState<number[]>([]);
   const [Criteria, setCriteria] = useState<number[]>([]);
   const [Description, setDescription] = useState<string>('');
   const [Condition, setCondition] = useState<string>('');
   const [fileImage, setFileImage] = useState<File[]>([]);
-  const [codeCondition, setCodeCondition] = useState<number>();
+  const [CodeType, setCodeType] = useState<number>();
   const createdById = context?.user?.userInfo?.id as number;
 
   // import varaible
@@ -223,7 +213,7 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
   const [QuotaModal, setQuotaModal] = useState(false);
 
   // image
-  const [imageSrcs, setImageSrcs] = useState<string[]>([]);
+  const [images, setImages] = useState<ImageType[]>([]);
 
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
@@ -232,6 +222,11 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const formData = new FormData();
+    // if (!ShopId || !BranchId || !Name || !Category || !startDate || !endDate || !Description || !Condition || !fileImage) {
+    //   setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+    //   setOpenErrorDialog(true);
+    //   return;
+    // }
     formData.append('shopId', ShopId);
     formData.append('type', 'normal');
     formData.append('branchId', BranchId.join(','));
@@ -242,7 +237,7 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
     formData.append('endDate', endDate ? endDate.toString() : '');
     formData.append('quantity', String(Quantity));
     formData.append('quantity_category', String(CategoryQuantity));
-    formData.append('quota_quantity_limit', QuotaLimit);
+    formData.append('quota_quantity_limit', String(QuotaLimit));
     formData.append('quota_limit_by', String(CategoryQuotaLimit));
     formData.append('segment', Segment.join(','));
     formData.append('criteria', Criteria.join(','));
@@ -250,17 +245,23 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
     formData.append('condition', Condition);
     formData.append('status', 'ACTIVE');
     formData.append('createdById', String(createdById));
+
     quotaRange.forEach((item, index) => {
       formData.append('quotaRange', JSON.stringify(item));
     });
-    if (codeCondition === 2) {
+
+    if (CodeType === 2) {
+      formData.append('codeType', 'MANUAL');
       codeExcelData.forEach((item) => {
         formData.append('codeExcelData', JSON.stringify(item));
       });
+    } else {
+      formData.append('codeType', 'AUTO');
     }
-    fileImage.forEach((file: File) => {
+    fileImage.forEach((file) => {
       formData.append('file', file);
     });
+
     if (primaryId) {
       formData.append('updatedById', String(createdById));
       formData.append('primaryShopId', String(primaryShopId));
@@ -397,7 +398,6 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
         const response = await axiosServices.get(`/api/campaign/${primaryId}`);
         const data = response.data;
         const shopId = data.Campaign_Shop[0].shopId;
-        const newImageSrcs: string[] = [];
         await BranchList(shopId);
         setShopId(data.Campaign_Shop[0].shopId);
         setPrimaryShopId(data.Campaign_Shop[0].id);
@@ -414,13 +414,14 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
         setCriteria(data.criteria);
         setDescription(data.description);
         setCondition(data.condition);
+        setCodeType(data.codeType === 'MANUAL' ? 2 : 1);
+        setWebsiteTrafficPatternValue(data.view);
         if (data.Campaign_Code.length > 0) {
-          setCodeCondition(2);
           setCodeExcelData(data.Campaign_Code.code);
         }
         data.Campaign_Image.forEach((item: any) => {
-          newImageSrcs.push(imgUrl + item.image);
-          setImageSrcs(newImageSrcs);
+          const newImageSrcs: ImageType[] = data.Campaign_Image.map((item: any) => ({ src: imgUrl + item.image }));
+          setImages(newImageSrcs);
         });
         await CampaignDateList(data.Campaign_Date);
       }
@@ -436,27 +437,25 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
   }, [CategoryQuantity]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
-      return; // No files selected
-    }
+    if (!e.target.files) return;
 
-    const files = Array.from(e.target.files).slice(0, 5);
-    setFileImage(files);
-    const newImageSrcs: string[] = [];
-    files.forEach((file) => {
-      if (file instanceof Blob) {
-        const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>) => {
-          if (typeof e.target?.result === 'string') {
-            newImageSrcs.push(e.target.result);
-          }
-          if (newImageSrcs.length === files.length) {
-            setImageSrcs(newImageSrcs);
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+    const files = Array.from(e.target.files).slice(0, 5); // Limit to 5 files
+    setFileImage(files); // Update the fileImage state to reflect the actual files
+
+    const imageFiles = files.map((file) => ({
+      file,
+      src: URL.createObjectURL(file) // This creates a temporary URL to access the file for display
+    }));
+
+    setImages(imageFiles); // Update the images state with the new array including the src for previews
+  };
+
+  const handleRemoveImage = (index: number) => {
+    // Update the images displayed
+    setImages((prev) => prev.filter((_, i) => i !== index));
+
+    // Update the fileImage state to match the previews
+    setFileImage((prev) => prev.filter((_, i) => i !== index));
   };
 
   // const handleQuotaTypeChange = (event: any, value: any) => {
@@ -503,11 +502,18 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
     if (CategoryQuantity == null) {
       setErrorMessage('กรุณาเลือกประเภทสิทธิพิเศษ');
       setOpenErrorDialog(true);
+      return;
     }
-    if (Quantity == 0 || (Quantity == 0 && CategoryQuantity == 4)) {
+    if (CategoryQuotaLimit === 4) {
+      setErrorMessage('เนื่องจากประเภทพิเศษ เป็นแบบไม่จำกัดจึงไม่สามารถสร้างตารางได้');
+      setOpenErrorDialog(true);
+      return;
+    } else if (Quantity == 0) {
       setErrorMessage('กรุณาใส่จำนวนสิทธิพิเศษให้ครบถ้วน หรือใส่จำนวนมากกว่า 1');
       setOpenErrorDialog(true);
+      return;
     }
+
     if (startDate && endDate && Quantity) {
       if (CategoryQuantity === 1) {
         generateDailyQuotaTable();
@@ -711,9 +717,20 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
         code: item[1]
       }));
       setCodeExcelData(arrayCodeList);
-      console.log(arrayCodeList);
     };
     reader.readAsArrayBuffer(file);
+  };
+
+  const handleAutoGenerateCode = () => {
+    const codeList = [];
+    for (let i = 0; i < 1; i++) {
+      codeList.push({
+        id: i + 1,
+        code: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      });
+    }
+    console.log(codeList);
+    setCodeExcelData(codeList);
   };
 
   const handleDelete = (id: number) => {
@@ -926,6 +943,7 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
                       setCategoryQuotaLimit(value?.id);
                       if (value?.id === 4) {
                         setQuantity(0);
+                        setQuotaLimit(0);
                       }
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1050,36 +1068,43 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
                     label="Enter SKU"
                     sx={{ display: 'none' }}
                     onChange={handleFileChange}
-                    inputProps={{ multiple: true }} // Allows multiple file selection
+                    inputProps={{ multiple: true }}
                   />
                   <InputLabel
                     htmlFor="file-upload"
                     sx={{
-                      background: theme.palette.background.default,
+                      background: 'theme.palette.background.default',
                       py: 3.75,
                       px: 0,
                       textAlign: 'center',
                       borderRadius: '4px',
                       cursor: 'pointer',
                       mb: 3,
-                      '& > svg': {
-                        verticalAlign: 'sub',
-                        mr: 0.5
-                      }
+                      '& > svg': { verticalAlign: 'sub', mr: 0.5 }
                     }}
                   >
                     <CloudUploadIcon /> คลิกเพื่ออัพโหลดรูปภาพ
                   </InputLabel>
                 </div>
                 <Grid container spacing={3} justifyContent="center">
-                  {imageSrcs.map((src, index) => (
-                    <Grid item key={index}>
-                      <ImageWrapper sx={{ width: '200px;', height: '250px;' }}>
-                        <CardMedia component="img" image={src} title={`Product ${index + 1}`} />
-                      </ImageWrapper>
+                  {images.map((image, index) => (
+                    <Grid item key={index} xs={12} sm={6} md={4}>
+                      <div style={{ width: '200px', height: '250px', position: 'relative', textAlign: 'center' }}>
+                        <CardMedia
+                          component="img"
+                          image={image.src}
+                          title={`Product ${index + 1}`}
+                          style={{ maxWidth: '100%', maxHeight: '200px' }}
+                        />
+                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {image.file?.name} {/* Display the file name here */}
+                        </div>
+                        <IconButton onClick={() => handleRemoveImage(index)} sx={{ position: 'absolute', top: 0, right: 0, color: 'red' }}>
+                          <DisabledByDefaultIcon />
+                        </IconButton>
+                      </div>
                     </Grid>
                   ))}
-                  {/* ... */}
                 </Grid>
               </SubCard>
             </Grid>
@@ -1202,20 +1227,23 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
                   options={CodeOption}
                   getOptionLabel={(option) => option.label}
                   onChange={(_event: any, value: any) => {
-                    setCodeCondition(value?.id);
-                    if (value?.id === 2) {
+                    setCodeType(value?.id);
+                    if (value?.id === 1) {
+                      handleAutoGenerateCode();
+                    } else if (value?.id == 2) {
                       setCodeExcelData([]);
-                      handleOpenCodeExcel();
                     }
+
+                    // handleOpenCodeExcel();
                   }}
                   isOptionEqualToValue={(option, value) => option.id === value.id}
-                  value={CodeOption.find((Item) => Item.id === codeCondition) || null}
+                  value={CodeOption.find((Item) => Item.id === CodeType) || null}
                   renderInput={(params) => <TextField {...params} label="การกำหนดโค้ด" />}
                 />
               </Grid>
             </Grid>{' '}
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ textAlign: 'right', display: codeCondition === 2 ? 'show' : 'none' }}>
+          <Grid item xs={12} sm={6} sx={{ textAlign: 'right', display: CodeType === 2 ? 'show' : 'none' }}>
             <Tooltip title="นำเข้าโค้ด">
               <IconButton size="large" onClick={handleOpenCodeExcel}>
                 <FileOpenIcon />
@@ -1225,7 +1253,7 @@ const NormalCampaignForm = ({ primaryId, title, type }: NormalCampaignFormProps)
           </Grid>
         </Grid>
 
-        <TableContainer sx={{ display: codeCondition === 2 ? 'show' : 'none' }}>
+        <TableContainer>
           <Table sx={{ minWidth: 320 }} aria-label="customized table">
             <TableHead>
               <TableRow>
