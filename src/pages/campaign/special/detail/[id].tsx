@@ -12,11 +12,11 @@ import CampaignForm from 'components/viriyha_components/form/campaign/CampaignFo
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
-const DetailCampaignPage = () => {
+const SpecialDetailCampaignPage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Page title="Normal Campaign Edit">
+    <Page title="Special campaign create">
       <Typography variant="body2">
         <CampaignForm title={'รายละเอียดสิทธิพิเศษ'} primaryId={id as string} type={'normal'} />
       </Typography>
@@ -24,8 +24,8 @@ const DetailCampaignPage = () => {
   );
 };
 
-DetailCampaignPage.getLayout = function getLayout(page: ReactElement) {
+SpecialDetailCampaignPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default DetailCampaignPage;
+export default SpecialDetailCampaignPage;

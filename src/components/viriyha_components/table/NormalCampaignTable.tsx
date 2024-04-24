@@ -356,7 +356,7 @@ const NormalCampaignTable = () => {
               'Content-Type': 'application/json'
             }
           };
-          axiosServices.post(`/api/campaign/delete`, { ids: selected }, header).then((response: any) => {
+          axiosServices.post(`/api/campaign/normal/delete`, { ids: selected }, header).then((response: any) => {
             if (response.data) {
               Swal.fire({
                 title: 'คุณทำรายการสำเร็จ',

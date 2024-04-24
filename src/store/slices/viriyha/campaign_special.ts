@@ -10,13 +10,13 @@ import { DefaultRootStateProps } from '../../../types';
 
 // ----------------------------------------------------------------------
 
-const initialState: DefaultRootStateProps['campaign'] = {
+const initialState: DefaultRootStateProps['campaign_special'] = {
   error: null,
   campaign: []
 };
 
 const slice = createSlice({
-  name: 'campaign',
+  name: 'campaign_special',
   initialState,
   reducers: {
     // HAS ERROR
@@ -39,7 +39,7 @@ export default slice.reducer;
 export function getCampaignList() {
   return async () => {
     try {
-      const response = await axios.get('/api/campaign/normal');
+      const response = await axios.get('/api/campaign/special');
       console.log(response);
       dispatch(slice.actions.getCampaignSuccess(response.data));
     } catch (error) {

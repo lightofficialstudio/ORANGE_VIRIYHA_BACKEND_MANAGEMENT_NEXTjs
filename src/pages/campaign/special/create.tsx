@@ -8,13 +8,13 @@ import Layout from 'layout';
 import Page from 'components/ui-component/Page';
 
 // form import
-import SpecialCampaignForm from 'components/viriyha_components/form/campaign/special/CampaignSpecialForm';
+import CampaignForm from 'components/viriyha_components/form/campaign/CampaignForm';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const SamplePage = () => (
   <Page title="Special Campaign Create">
     <Typography variant="body2">
-      <SpecialCampaignForm title={'สร้างสิทธิพิเศษ (Special)'} />
+      <CampaignForm title={'สร้างสิทธิพิเศษ (Special)'} type={'special'} />
     </Typography>
   </Page>
 );

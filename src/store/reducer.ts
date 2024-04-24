@@ -25,6 +25,7 @@ import segmentReducer from './slices/viriyha/segment';
 import criteriaReducer from './slices/viriyha/criteria';
 import errorLogReducer from './slices/viriyha/error_log';
 import campaignReducer from './slices/viriyha/campaign';
+import specialCampaignReducer from './slices/viriyha/campaign_special';
 import errorScenarioReducter from './slices/viriyha/error_message';
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -57,6 +58,7 @@ const reducer = combineReducers({
   criteria: criteriaReducer,
   errorLog: errorLogReducer,
   campaign: campaignReducer,
+  special_campaign: specialCampaignReducer,
   error_message: errorScenarioReducter
 });
 

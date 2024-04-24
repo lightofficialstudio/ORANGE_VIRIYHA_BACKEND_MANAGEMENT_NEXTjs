@@ -140,6 +140,7 @@ export interface DefaultRootStateProps {
   shop: ShopStateProps;
   banner: BannerStateProps;
   campaign: CampaignStateProps;
+  campaign_special: CampaignStateProps;
   user_backend: UserBackendStateProps;
   branch: BranchStateProps;
   segment: SegmentStateProps;
