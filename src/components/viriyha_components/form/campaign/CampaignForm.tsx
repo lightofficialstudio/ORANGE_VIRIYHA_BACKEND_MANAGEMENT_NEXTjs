@@ -450,7 +450,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         } else if (type === 'special_clone' || type === 'special') {
           campaign_type = 'special';
         }
-        const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/normal-campaign/';
+        const imgUrl = process.env.IMAGE_VIRIYHA_URL + '/images/campaign/';
         const response = await axiosServices.get(`/api/campaign/${campaign_type}/${primaryId}`);
         const data = response.data;
         const shopId = data.Campaign_Shop[0].shopId;

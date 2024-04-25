@@ -67,7 +67,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   });
 
   React.useEffect(() => {
-    const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/banner';
+    const imgUrl = process.env.IMAGE_VIRIYHA_URL + '/images/banner';
     if (primaryId) {
       axiosServices.get(`/api/banner/${primaryId}`).then((response) => {
         console.log(response);

@@ -66,7 +66,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
     }
   });
   React.useEffect(() => {
-    const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/category';
+    const imgUrl = process.env.IMAGE_VIRIYHA_URL + '/images/category';
 
     if (categoryId) {
       axiosServices.get(`/api/category/${categoryId}`).then((response) => {

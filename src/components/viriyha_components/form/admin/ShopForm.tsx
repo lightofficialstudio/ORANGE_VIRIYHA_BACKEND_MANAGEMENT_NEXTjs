@@ -63,7 +63,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
     }
   });
   React.useEffect(() => {
-    const imgUrl = process.env.IMAGE_VIRIYHA_URL + 'images/shop';
+    const imgUrl = process.env.IMAGE_VIRIYHA_URL + '/images/shop';
 
     if (shopId) {
       axiosServices.get(`/api/shop/${shopId}`).then((response) => {
