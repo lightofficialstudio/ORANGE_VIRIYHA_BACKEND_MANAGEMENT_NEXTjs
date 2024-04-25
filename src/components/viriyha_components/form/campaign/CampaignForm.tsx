@@ -239,15 +239,15 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       campaign_type = 'special';
     }
     const formData = new FormData();
-    if (!ShopId || !BranchId || !Name || !Category || !startDate || !endDate || !Description || !Condition || !fileImage) {
-      setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
-      setOpenErrorDialog(true);
-      return;
-    } else if (!createdById) {
-      setErrorMessage('กรุณาเกิดรีเฟรชหน้านี้ใหม่อีกครั้ง เนื่องจากเกิดข้อผิดพลาดไม่สามารถระบุตัวตนผู้ทำรายการได้');
-      setOpenErrorDialog(true);
-      return;
-    }
+    // if (!ShopId || !BranchId || !Name || !Category || !startDate || !endDate || !Description || !Condition || !fileImage) {
+    //   setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+    //   setOpenErrorDialog(true);
+    //   return;
+    // } else if (!createdById) {
+    //   setErrorMessage('กรุณาเกิดรีเฟรชหน้านี้ใหม่อีกครั้ง เนื่องจากเกิดข้อผิดพลาดไม่สามารถระบุตัวตนผู้ทำรายการได้');
+    //   setOpenErrorDialog(true);
+    //   return;
+    // }
     formData.append('shopId', ShopId);
     formData.append('type', campaign_type);
     formData.append('branchId', BranchId.join(','));
@@ -293,7 +293,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
     if (type === 'special' || type === 'special_clone') {
       ArrayPhoneNumber.forEach((item) => {
-        formData.append('phoneNumber', JSON.stringify(item));
+        formData.append('Campaign_PhoneNumber', JSON.stringify(item));
       });
     }
 
