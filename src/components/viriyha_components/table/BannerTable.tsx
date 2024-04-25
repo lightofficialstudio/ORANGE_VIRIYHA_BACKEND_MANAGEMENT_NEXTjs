@@ -247,7 +247,7 @@ const BannerTable = () => {
   const [rows, setRows] = React.useState<BannerManagementType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const { banner } = useSelector((state) => state.banner);
-  const baseUrl = process.env.IMAGE_VIRIYHA_URL + 'images/banner/';
+  const baseUrl = process.env.IMAGE_VIRIYHA_URL + '/images/banner/';
   console.log('baseUrl', baseUrl);
   // modal
   const [openChangePositionModal, setOpenChangePositionModal] = React.useState<boolean>(false);

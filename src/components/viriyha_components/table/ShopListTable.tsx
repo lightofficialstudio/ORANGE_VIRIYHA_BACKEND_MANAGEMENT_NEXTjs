@@ -231,7 +231,7 @@ const ShopListTable = () => {
   const [rows, setRows] = React.useState<ShopManagementType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const { shop } = useSelector((state) => state.shop);
-  const baseUrl = process.env.IMAGE_VIRIYHA_URL + 'images/shop';
+  const baseUrl = process.env.IMAGE_VIRIYHA_URL + '/images/shop';
 
   React.useEffect(() => {
     dispatch(getShopList());

@@ -232,7 +232,7 @@ const CategoryTable = () => {
   const [rows, setRows] = React.useState<CategoryType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const { category } = useSelector((state) => state.category);
-  const baseUrl = process.env.IMAGE_VIRIYHA_URL + 'images/category/';
+  const baseUrl = process.env.IMAGE_VIRIYHA_URL + '/images/category/';
   // modal
   const [openChangePositionModal, setOpenChangePositionModal] = React.useState<boolean>(false);
   // response
