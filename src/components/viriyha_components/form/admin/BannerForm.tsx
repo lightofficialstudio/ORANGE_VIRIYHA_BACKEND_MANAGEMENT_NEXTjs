@@ -180,7 +180,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
         }}
       >
         <DialogContent>
-          <Image src={PreviewImg} alt="Preview" height={542} width={1374} />
+          <img src={PreviewImg} alt="Preview" height={542} width={1374} />
         </DialogContent>
       </Dialog>
       <MainCard>
