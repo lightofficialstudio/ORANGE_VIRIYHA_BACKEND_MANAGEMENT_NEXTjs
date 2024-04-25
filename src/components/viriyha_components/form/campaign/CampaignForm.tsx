@@ -150,7 +150,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   // array
   const [ArrayCategory, setArrayCategory] = useState<CategoryType[]>([]);
   const [ArrayShop, setArrayShop] = useState<ShopManagementType[]>([]);
-  const [ArrayBranchList, setArrayBranchList] = useState<any[]>([{ id: '0', name: 'Please select a branch' }]);
+  const [ArrayBranchList, setArrayBranchList] = useState<any[]>([]);
   const [ArrayCriteria, setArrayCriteria] = useState<CriteriaType[]>([]);
   const [ArraySegment, setArraySegment] = useState<SegmentType[]>([]);
   const [ArrayPhoneNumber, setArrayPhoneNumber] = useState<any[]>([]);
@@ -340,7 +340,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        // window.location.href = '/campaign/normal/';
+        window.location.href = '/campaign/normal/';
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -353,29 +353,43 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
   useEffect(() => {
     const CategoryList = async () => {
-      const response = await axiosServices.get('/api/category');
       try {
-        const categoryArray: CategoryType[] = response.data.map((item: CategoryType) => ({
-          id: item.id,
-          name: item.name
-        }));
+        const response = await axiosServices.get('/api/category');
+        const categoryArray: CategoryType[] = response.data
+          .map((item: CategoryType) => {
+            if (item.status === 'ACTIVE') {
+              return {
+                id: item.id,
+                name: item.name
+              };
+            }
+            return null; // Explicitly return null for non-active items.
+          })
+          .filter((item: any) => item !== null); // Filter out null values.
+
         setArrayCategory(categoryArray);
       } catch (error) {
-        console.log(error);
+        console.log('Error fetching categories:', error);
       }
     };
 
     const ShopList = async () => {
       const response = await axiosServices.get('/api/shop');
       try {
-        const shopArray: ShopManagementType[] = response.data.map((item: ShopManagementType) => ({
-          id: item.id,
-          shopId: item.shopId,
-          name: item.name
-        }));
+        const shopArray: ShopManagementType[] = response.data
+          .map((item: ShopManagementType) => {
+            if (item.status === 'ACTIVE') {
+              return {
+                id: item.id,
+                shopId: item.shopId,
+                name: item.name
+              };
+            }
+            return null;
+          })
+          .filter((item: any) => item !== null);
         setArrayShop(shopArray);
-        console.log(shopArray);
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
       }
     };
@@ -383,10 +397,17 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     const CriteriaList = async () => {
       const response = await axiosServices.get('/api/criteria');
       try {
-        const criteriaArray: CriteriaType[] = response.data.map((item: CriteriaType) => ({
-          id: item.id,
-          name: item.name
-        }));
+        const criteriaArray: CriteriaType[] = response.data
+          .map((item: CriteriaType) => {
+            if (item.status === 'ACTIVE') {
+              return {
+                id: item.id,
+                name: item.name
+              };
+            }
+            return null;
+          })
+          .filter((item: any) => item !== null);
         setArrayCriteria(criteriaArray);
       } catch (error) {
         console.log(error);
@@ -396,10 +417,17 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     const SegmentList = async () => {
       const response = await axiosServices.get('/api/segment');
       try {
-        const segmentArray: SegmentType[] = response.data.map((item: SegmentType) => ({
-          id: item.id,
-          name: item.name
-        }));
+        const segmentArray: SegmentType[] = response.data
+          .map((item: SegmentType) => {
+            if (item.status === 'ACTIVE') {
+              return {
+                id: item.id,
+                name: item.name
+              };
+            }
+            return null;
+          })
+          .filter((item: any) => item !== null);
         setArraySegment(segmentArray);
       } catch (error) {
         console.log(error);
@@ -519,12 +547,15 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   // };
 
   const handleShopChange = async (value: string) => {
-    const res = await axiosServices.get(`/api/shop/${value}/branch`);
     try {
-      const branchArray = res.data.map((item: BranchType) => ({
-        id: item.id,
-        name: item.name
-      }));
+      const res = await axiosServices.get(`/api/shop/${value}/branch`);
+      const branchArray = [
+        { id: 0, name: 'ทั้งหมด' },
+        ...res.data.map((item: BranchType) => ({
+          id: item.id,
+          name: item.name
+        }))
+      ]; // Include "ทั้งหมด" as the first option
       setArrayBranchList(branchArray);
       console.log(branchArray);
     } catch (error) {
@@ -944,7 +975,12 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                       getOptionLabel={(option) => option.name}
                       value={ArrayBranchList.filter((item) => BranchId.includes(Number(item.id)))}
                       onChange={(_event, value) => {
-                        setBranchId(value.map((item) => item.id));
+                        // Check if "ทั้งหมด" is selected
+                        if (value.some((item) => item.id === 0)) {
+                          setBranchId(ArrayBranchList.filter((item) => item.id !== 0).map((item) => item.id));
+                        } else {
+                          setBranchId(value.map((item) => item.id));
+                        }
                       }}
                       renderInput={(params) => <TextField {...params} />}
                     />
