@@ -333,7 +333,7 @@ const SegmentTable = () => {
               'Content-Type': 'application/json'
             }
           };
-          axiosServices.post(`/api/shop/delete`, { ids: selected }, header);
+          axiosServices.post(`/api/segment/delete`, { ids: selected }, header);
           Swal.fire('ลบรายการนี้เรียบร้อยแล้ว!', '', 'success');
           dispatch(getSegment());
           setSelected([]);

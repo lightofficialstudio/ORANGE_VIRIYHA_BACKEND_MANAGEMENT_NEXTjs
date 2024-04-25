@@ -242,7 +242,7 @@ const BannerTable = () => {
   const [orderBy, setOrderBy] = React.useState<string>('position');
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<BannerManagementType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
@@ -618,7 +618,7 @@ const BannerTable = () => {
 
       {/* table pagination */}
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[25, 50, 100]}
         component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}

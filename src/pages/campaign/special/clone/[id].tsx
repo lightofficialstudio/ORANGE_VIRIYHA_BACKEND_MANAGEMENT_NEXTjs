@@ -15,7 +15,7 @@ import CampaignForm from 'components/viriyha_components/form/campaign/CampaignFo
 const SpecialCloneCampaignPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const type = 'clone';
+  const type = 'special_clone';
   return (
     <Page title="Normal campaign create">
       <Typography variant="body2">

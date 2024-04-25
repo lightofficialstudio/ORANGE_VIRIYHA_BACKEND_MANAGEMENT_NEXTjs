@@ -306,6 +306,11 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
           }
         });
       } else if (type == 'special_clone') {
+        response = await axiosServices.post('/api/campaign/special/create', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
       } else if (type == 'normal') {
         if (!primaryId) {
           response = await axiosServices.post('/api/campaign/normal/create', formData, {
@@ -340,7 +345,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = '/campaign/normal/';
+        window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
