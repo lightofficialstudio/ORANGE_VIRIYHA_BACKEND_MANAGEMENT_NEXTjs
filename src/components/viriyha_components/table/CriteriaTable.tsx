@@ -224,7 +224,7 @@ const CriteriaTable = () => {
   const [orderBy, setOrderBy] = React.useState<string>('calories');
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<CriteriaType[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');

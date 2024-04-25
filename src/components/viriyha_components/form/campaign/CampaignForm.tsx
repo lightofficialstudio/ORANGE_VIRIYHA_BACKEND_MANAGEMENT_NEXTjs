@@ -1091,6 +1091,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
             <Grid item md={6} xs={12}>
               <InputLabel>จำกัดจำนวน</InputLabel>
               <OutlinedInput
+                type="number"
                 fullWidth
                 placeholder="จำนวนคน"
                 onChange={(event: any) => {

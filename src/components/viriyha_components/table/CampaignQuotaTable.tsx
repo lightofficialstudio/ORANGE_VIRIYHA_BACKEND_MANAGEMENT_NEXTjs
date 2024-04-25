@@ -199,7 +199,7 @@ const CampaignQuotaTable = () => {
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('calories');
   const [page, setPage] = React.useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [rows, setRows] = React.useState<ShopManagementType[]>([]);
   const { shop } = useSelector((state) => state.shop);
   const paramUsedCode = 3242;

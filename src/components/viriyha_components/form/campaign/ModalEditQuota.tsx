@@ -73,7 +73,7 @@ export default function ModalEditQuota({ isOpen, isClose, onSave, primaryId, qua
                 </Typography>
               </Grid>
               <InputLabel required>จำนวนที่ต้องการแก้ไข</InputLabel>
-              <input type="text" value={primaryId} />
+              <input type="hidden" value={primaryId} />
               <TextField
                 fullWidth
                 type="number"

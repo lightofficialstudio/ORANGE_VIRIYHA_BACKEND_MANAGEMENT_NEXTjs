@@ -240,7 +240,7 @@ const NormalCampaignTable = () => {
   const [orderBy, setOrderBy] = React.useState<string>('calories');
   const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<CampaignType[]>([]);
   const { campaign } = useSelector((state) => state.campaign);

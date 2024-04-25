@@ -226,7 +226,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
   const [orderBy, setOrderBy] = React.useState<string>('position');
   const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<BranchType[]>([]);
   const { branch } = useSelector((state) => state.branch);
