@@ -191,7 +191,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <Image alt="User 1" src={PreviewImg} style={{ margin: '0 auto' }} width={600} height={250} />
+                      <img alt="User 1" src={PreviewImg} style={{ margin: '0 auto' }} width={600} height={250} />
                     </Grid>
                     <Grid item>
                       <Button variant="outlined" onClick={() => setOpenImageDialog(true)}>
