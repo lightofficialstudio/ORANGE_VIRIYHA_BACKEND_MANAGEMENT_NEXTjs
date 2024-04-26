@@ -47,6 +47,9 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
   const [Status, setStatus] = useState<string>('');
   const [ImageFile, setImageFile] = useState<File | null>(null);
   const MadeById = context?.user?.userInfo?.id;
+  if (!MadeById) {
+    window.location.reload();
+  }
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');

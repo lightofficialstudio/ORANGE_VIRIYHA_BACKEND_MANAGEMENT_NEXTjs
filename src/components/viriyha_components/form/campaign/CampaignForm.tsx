@@ -241,15 +241,15 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       campaign_type = 'special';
     }
     const formData = new FormData();
-    // if (!ShopId || !BranchId || !Name || !Category || !startDate || !endDate || !Description || !Condition || !fileImage) {
-    //   setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
-    //   setOpenErrorDialog(true);
-    //   return;
-    // } else if (!createdById) {
-    //   setErrorMessage('กรุณาเกิดรีเฟรชหน้านี้ใหม่อีกครั้ง เนื่องจากเกิดข้อผิดพลาดไม่สามารถระบุตัวตนผู้ทำรายการได้');
-    //   setOpenErrorDialog(true);
-    //   return;
-    // }
+    if (!ShopId || !BranchId || !Name || !Category || !startDate || !endDate || !Description || !Condition || !fileImage) {
+      setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+      setOpenErrorDialog(true);
+      return;
+    } else if (!createdById) {
+      setErrorMessage('กรุณาเกิดรีเฟรชหน้านี้ใหม่อีกครั้ง เนื่องจากเกิดข้อผิดพลาดไม่สามารถระบุตัวตนผู้ทำรายการได้');
+      setOpenErrorDialog(true);
+      return;
+    }
     formData.append('shopId', ShopId);
     formData.append('type', campaign_type);
     formData.append('branchId', BranchId.join(','));
@@ -269,21 +269,19 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     formData.append('status', 'ACTIVE');
     formData.append('createdById', String(createdById));
 
-    quotaRange.forEach((item, index) => {
+    quotaRange.forEach((item) => {
       formData.append('quotaRange', JSON.stringify(item));
     });
-
+    const ArrayCodeNumber: any = [];
+    codeExcelData.forEach((item) => {
+      ArrayCodeNumber.push(item.code);
+    });
     if (CodeType === 2) {
       formData.append('codeType', 'MANUAL');
-      codeExcelData.forEach((item) => {
-        formData.append('Campaign_Code', JSON.stringify(item));
-      });
     } else {
       formData.append('codeType', 'AUTO');
-      codeExcelData.forEach((item) => {
-        formData.append('Campaign_Code', JSON.stringify(item));
-      });
     }
+    formData.append('Campaign_Code', ArrayCodeNumber.join(','));
     fileImage.forEach((file) => {
       formData.append('file', file);
     });
@@ -294,8 +292,9 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     }
 
     if (type === 'special' || type === 'special_clone') {
+      const LocalArrayPhoneNumber: any = [];
       ArrayPhoneNumber.forEach((item) => {
-        formData.append('Campaign_PhoneNumber', JSON.stringify(item));
+        LocalArrayPhoneNumber.push(item.phoneNumber);
       });
     }
 
@@ -347,7 +346,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        // window.location.href = `/campaign/${campaign_type}/`;
+        window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -508,8 +507,28 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         setCodeType(data.codeType === 'MANUAL' ? 2 : 1);
         setWebsiteTrafficPatternValue(data.view);
         if (data.Campaign_Code.length > 0) {
-          setCodeExcelData(data.Campaign_Code.code);
+          data.Campaign_Code.forEach((item: any) => {
+            setCodeExcelData([
+              ...codeExcelData,
+              {
+                id: item.id,
+                code: item.code
+              }
+            ]);
+          });
         }
+        if (data.Campaign_PhoneNumber.length > 0) {
+          data.Campaign_PhoneNumber.forEach((item: any) => {
+            setArrayPhoneNumber([
+              ...ArrayPhoneNumber,
+              {
+                id: item.id,
+                phoneNumber: item.phoneNumber
+              }
+            ]);
+          });
+        }
+
         data.Campaign_Image.forEach((item: any) => {
           const newImageSrcs: ImageType[] = data.Campaign_Image.map((item: any) => ({ src: imgUrl + item.image }));
           setImages(newImageSrcs);

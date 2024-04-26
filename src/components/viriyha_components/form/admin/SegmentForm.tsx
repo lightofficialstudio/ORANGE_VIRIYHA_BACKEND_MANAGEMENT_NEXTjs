@@ -39,6 +39,9 @@ const SegmentForm = ({ titleMessage, confirmMessage, primaryId }: SegmentFormPro
   const [Name, setName] = useState('');
   const [Status, setStatus] = useState('');
   const MadeById = context?.user?.userInfo?.id;
+  if (!MadeById) {
+    window.location.reload();
+  }
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');

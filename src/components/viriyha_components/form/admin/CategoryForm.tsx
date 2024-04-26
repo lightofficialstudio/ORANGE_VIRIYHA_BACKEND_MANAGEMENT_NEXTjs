@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 // import { useRouter } from 'next/router';
 import JWTContext from 'contexts/JWTContext';
 import { Grid, TextField, Typography, Button, Autocomplete, Stack } from '@mui/material';
@@ -49,6 +49,9 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
   const [ImageFile, setImageFile] = useState<File | null>(null);
   const [Status, setStatus] = useState('');
   const MadeById = context?.user?.userInfo?.id;
+  if (!MadeById) {
+    window.location.reload();
+  }
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -176,7 +179,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <Image alt="User 1" src={PreviewImg} width={251} height={331} style={{ margin: '0 auto' }} />
+                      <img alt="User 1" src={PreviewImg} width={251} height={331} style={{ margin: '0 auto' }} />
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>

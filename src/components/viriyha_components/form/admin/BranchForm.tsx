@@ -35,7 +35,9 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
   const [Longitude, setLongitude] = useState('');
   const [Status, setStatus] = useState('');
   const MadeById = context?.user?.userInfo?.id;
-
+  if (!MadeById) {
+    window.location.reload();
+  }
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
