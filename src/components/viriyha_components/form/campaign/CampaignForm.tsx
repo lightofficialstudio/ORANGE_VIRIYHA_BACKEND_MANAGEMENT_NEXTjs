@@ -177,7 +177,9 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [filePhoneNumberExcel, setFilePhoneNumberExcel] = useState<Blob>();
   const [CodeType, setCodeType] = useState<number>();
   const createdById = context?.user?.userInfo?.id as number;
-
+  if (!createdById) {
+    window.location.reload();
+  }
   // import varaible
   const [codeExcelFile, setCodeExcelFile] = React.useState<File | null>(null);
   const [codeExcelData, setCodeExcelData] = React.useState<any[]>([]);
@@ -345,7 +347,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = `/campaign/${campaign_type}/`;
+        // window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
