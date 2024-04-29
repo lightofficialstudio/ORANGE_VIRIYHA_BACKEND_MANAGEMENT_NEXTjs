@@ -15,7 +15,7 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 import SuccessDialog from 'components/viriyha_components/modal/status/SuccessDialog';
 import ErrorDialog from 'components/viriyha_components/modal/status/ErrorDialog';
 // Avatar
-const Avatar1 = '/assets/banner/mockup-banner.webp';
+const MockupBanner = '/assets/default-img/banner.jpg';
 // third-party - validation
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -40,7 +40,7 @@ const validationSchema = yup.object({
 
 const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormProps) => {
   const context = React.useContext(JWTContext);
-  const [PreviewImg, SetPreviewImg] = useState(Avatar1);
+  const [PreviewImg, SetPreviewImg] = useState(MockupBanner);
   const [Name, setName] = useState<string>('');
   const [Position, setPosition] = useState<string>('');
   const [LinkNav, setLinkNav] = useState<string>('');
@@ -197,7 +197,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                       <img alt="User 1" src={PreviewImg} style={{ margin: '0 auto' }} width={600} height={250} />
                     </Grid>
                     <Grid item>
-                      <Button variant="outlined" onClick={() => setOpenImageDialog(true)}>
+                      <Button sx={{ display: 'none' }} variant="outlined" onClick={() => setOpenImageDialog(true)}>
                         ดูขนาดรูปภาพจริง
                       </Button>
                     </Grid>

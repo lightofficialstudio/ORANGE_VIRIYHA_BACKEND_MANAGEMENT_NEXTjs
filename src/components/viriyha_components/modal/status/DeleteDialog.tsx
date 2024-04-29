@@ -23,7 +23,6 @@ export default function DeleteDialog({ open, handleClose, message, id, link, sta
       if (response.status === 200) {
         Swal.fire({
           title: 'ลบข้อมูลสำเร็จ!',
-          html: response.data.message,
           icon: 'success',
           confirmButtonText: 'เข้าใจแล้ว',
           confirmButtonColor: '#3f51b5'
@@ -54,7 +53,7 @@ export default function DeleteDialog({ open, handleClose, message, id, link, sta
         cancelButtonText: 'ยกเลิก',
         cancelButtonColor: '#3f51b5'
       }).then(async (result) => {
-        if (result.isConfirmed || result.isDismissed) {
+        if (result.isConfirmed) {
           await deleteId();
           handleClose();
         }

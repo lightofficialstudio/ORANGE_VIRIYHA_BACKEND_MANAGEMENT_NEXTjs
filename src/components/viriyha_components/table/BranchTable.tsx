@@ -132,13 +132,6 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
       </Typography>
     )}
     <Box sx={{ flexGrow: 1 }} />
-    {numSelected > 0 && (
-      <Tooltip title="ลบรายการ">
-        <IconButton size="large">
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    )}
   </Toolbar>
 );
 
@@ -405,7 +398,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
       <DeleteDialog
         open={openDeleteDialog}
         handleClose={() => setOpenDeleteDialog(false)}
-        message={`คุณต้องการลบรายการที่เลือกไว้หรือไม่? <br> มีรายการดังนี้ ${selected.join(', ')}`}
+        message={`คุณต้องการลบรายการที่เลือกไว้หรือไม่? `}
         id={selected}
         link={'/api/branch/delete'}
         status={(statusDelete) => {

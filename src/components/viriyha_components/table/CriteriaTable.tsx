@@ -79,7 +79,7 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อ Segment',
+    label: 'ชื่อ Criteria',
     align: 'left'
   },
   {

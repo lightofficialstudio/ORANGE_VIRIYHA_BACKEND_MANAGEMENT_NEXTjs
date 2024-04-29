@@ -887,8 +887,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
           errorMessage = ` (ผิดรูปแบบที่กำหนด: ซ้ำกับ id ${phoneNumbersSeen[phoneNumber]})`;
         } else if (/[^0-9]/.test(phoneNumber)) {
           errorMessage = ' (ผิดรูปแบบที่กำหนด: มีตัวอักษรพิเศษอยู่)';
-        } else if (phoneNumber.length < 9) {
-          errorMessage = ' (ผิดรูปแบบที่กำหนด: น้อยกว่า 9 ตัวอักษร)';
+        } else if (phoneNumber.length < 12) {
+          errorMessage = ' (ผิดรูปแบบที่กำหนด: น้อยกว่า 12 ตัวอักษร)';
         } else {
           // ถ้าไม่พบข้อผิดพลาด, เก็บหมายเลขไว้ใน object เพื่อ track
           phoneNumbersSeen[phoneNumber] = item[0];
@@ -1494,10 +1494,10 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       />
 
       {type == 'special' && (
-        <MainCard title="เบอร์มือถือที่เข้าร่วมรายการ" sx={{ marginTop: '50px' }}>
+        <MainCard title="เลขบัตรประชาชนที่เข้าร่วม" sx={{ marginTop: '50px' }}>
           <Grid container spacing={gridSpacing} sx={{ marginBottom: '20px' }} justifyContent="end">
             <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-              <Tooltip title="นำเข้าเบอร์มือถือ">
+              <Tooltip title="นำเข้าเลขบัตรประชาชน">
                 <IconButton size="large">
                   <SimCardDownloadIcon onClick={handlExcelFilePhoneNumberClick} />
                   <input type="file" style={{ display: 'none' }} id="excelFilePhoneNumber" onChange={handleExcelFilePhoneNumberChange} />

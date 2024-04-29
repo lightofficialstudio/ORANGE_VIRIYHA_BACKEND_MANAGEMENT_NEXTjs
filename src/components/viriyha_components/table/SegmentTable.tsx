@@ -325,7 +325,7 @@ const SegmentTable = () => {
       showCancelButton: true,
       confirmButtonText: 'ลบทันที!',
       cancelButtonText: 'ยกเลิก'
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const header = {
@@ -333,10 +333,14 @@ const SegmentTable = () => {
               'Content-Type': 'application/json'
             }
           };
-          axiosServices.post(`/api/segment/delete`, { ids: selected }, header);
-          Swal.fire('ลบรายการนี้เรียบร้อยแล้ว!', '', 'success');
-          dispatch(getSegment());
-          setSelected([]);
+          const response = await axiosServices.post(`/api/segment/delete`, { ids: selected }, header);
+          if (response.status === 200) {
+            Swal.fire('ทำรายการสำเร็จ!', '', 'success');
+            dispatch(getSegment());
+            setSelected([]);
+          } else {
+            Swal.fire('เกิดข้อผิดพลาดในการลบรายการนี้!', '', 'error');
+          }
         } catch (error: any) {
           setErrorMessage(error.message);
           Swal.fire({

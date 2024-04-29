@@ -1,4 +1,4 @@
-import { useEffect, useState, ReactElement } from 'react';
+import { useEffect, useState, ReactElement, useContext } from 'react';
 
 // material-ui
 import { Grid } from '@mui/material';
@@ -12,11 +12,17 @@ import DashboardCard2 from 'components/viriyha_components/dashboard/DashboardCar
 import DashboardCard3 from 'components/viriyha_components/dashboard/DashboardCard3';
 import DashboardGraph from 'components/viriyha_components/dashboard/DashboardGraph';
 import DashboardLightCard from 'components/viriyha_components/dashboard/DashboardLightCard';
+import JWTContext from 'contexts/JWTContext';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
+  const context = useContext(JWTContext);
+  const MadeById = context?.user?.userInfo?.id;
+  if (!MadeById) {
+    window.location.reload();
+  }
   useEffect(() => {
     setLoading(false);
   }, []);

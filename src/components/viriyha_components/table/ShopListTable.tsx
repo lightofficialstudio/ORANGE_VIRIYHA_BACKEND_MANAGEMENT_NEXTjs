@@ -296,7 +296,7 @@ const ShopListTable = () => {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
-    console.log(newSelected);
+    console.log(newSelected, errorMessage);
 
     setSelected(newSelected);
   };
@@ -327,7 +327,7 @@ const ShopListTable = () => {
       showCancelButton: true,
       confirmButtonText: 'ลบทันที!',
       cancelButtonText: 'ยกเลิก'
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const header = {
@@ -335,15 +335,19 @@ const ShopListTable = () => {
               'Content-Type': 'application/json'
             }
           };
-          axiosServices.post(`/api/shop/delete`, { ids: selected }, header);
-          Swal.fire('ลบรายการนี้เรียบร้อยแล้ว!', '', 'success');
-          dispatch(getShopList());
-          setSelected([]);
+          const response = await axiosServices.post(`/api/shop/delete`, { ids: selected }, header);
+          if (response.status === 200) {
+            Swal.fire('ทำรายการสำเร็จ!', '', 'success');
+            dispatch(getShopList());
+            setSelected([]);
+          } else {
+            Swal.fire('เกิดข้อผิดพลาดในการลบรายการนี้!', 'โปรดลองเช็คสาขา การลบร้านค้าต้องไม่มีสาขาเหลืออยู่', 'error');
+          }
         } catch (error: any) {
           setErrorMessage(error.message);
           Swal.fire({
             title: 'เกิดข้อผิดพลาดในการลบรายการนี้!',
-            text: errorMessage,
+            text: 'โปรดลองเช็คสาขา การลบร้านค้าต้องไม่มีสาขาเหลืออยู่',
             icon: 'error',
             showCancelButton: false,
             confirmButtonText: 'เข้าใจแล้ว'

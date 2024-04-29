@@ -17,6 +17,7 @@ import DashboardLightCard from 'components/viriyha_components/dashboard/Dashboar
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
+
   useEffect(() => {
     setLoading(false);
   }, []);

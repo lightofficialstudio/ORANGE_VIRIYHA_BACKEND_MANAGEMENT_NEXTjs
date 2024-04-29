@@ -456,6 +456,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuWebAnalytics(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -472,6 +477,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuDashboardCampaign(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -488,6 +498,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuDashboardRedeem(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -510,6 +525,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuAdminBanner(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -526,6 +546,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuAdminCategory(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -542,6 +567,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuAdminShop(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -559,6 +589,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           console.log(val ? val.id : 'เอราเบะ');
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -575,6 +610,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuAdminCriteria(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -591,6 +631,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuAdminFrontendUsers(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -607,6 +652,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuAdminBackendUsers(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -629,6 +679,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuCampaignNormal(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -645,6 +700,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuCampaignSpecial(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -667,6 +727,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuReportAttempt(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -683,6 +748,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuReportLocation(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -707,6 +777,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           console.log(val ? val.id : 'เอราเบะ');
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
@@ -729,6 +804,11 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                           setMenuLogsErrorLogs(val ? val.id : 0);
                         }}
                         renderInput={(params) => <TextField {...params} />}
+                        renderOption={(props, option) => (
+                          <li {...props} style={{ color: option.id === 1 ? 'green' : 'red' }}>
+                            {option.name}
+                          </li>
+                        )}
                       />
                     </StyledTableCell>
                   </StyledTableRow>
