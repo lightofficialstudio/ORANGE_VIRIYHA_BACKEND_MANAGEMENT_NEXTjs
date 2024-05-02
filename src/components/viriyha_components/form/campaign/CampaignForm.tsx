@@ -292,10 +292,11 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     }
 
     if (type === 'special' || type === 'special_clone') {
-      const LocalArrayPhoneNumber: any = [];
+      const LocalArrayIdCard: any = [];
       ArrayPhoneNumber.forEach((item) => {
-        LocalArrayPhoneNumber.push(item.phoneNumber);
+        LocalArrayIdCard.push(item.phoneNumber);
       });
+      formData.append('Campaign_Member', LocalArrayIdCard.join(','));
     }
 
     try {
