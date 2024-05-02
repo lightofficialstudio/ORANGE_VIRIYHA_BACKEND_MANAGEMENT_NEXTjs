@@ -74,7 +74,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'ID',
+    label: 'โค้ด',
     align: 'left'
   },
   {
@@ -147,7 +147,7 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
 
 interface OrderListEnhancedTableHeadProps extends EnhancedTableHeadProps {
   theme: Theme;
-  selected: string[];
+  selected: number[];
 }
 
 function EnhancedTableHead({
@@ -224,7 +224,7 @@ const ShopListTable = () => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('calories');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
@@ -239,6 +239,10 @@ const ShopListTable = () => {
   React.useEffect(() => {
     setRows(shop);
   }, [shop]);
+  const formatId = (id: number): string => {
+    const formattedId = id.toString().padStart(4, '0');
+    return `SHOP-${formattedId}`;
+  };
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -283,9 +287,9 @@ const ShopListTable = () => {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: string) => {
+  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: number) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
+    let newSelected: number[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -359,7 +363,7 @@ const ShopListTable = () => {
     });
   };
 
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
@@ -447,7 +451,7 @@ const ShopListTable = () => {
                       <TableCell>
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
                           {' '}
-                          #{row.id}{' '}
+                          {formatId(row.id)}
                         </Typography>
                       </TableCell>
                       <TableCell align="center">

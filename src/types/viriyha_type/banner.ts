@@ -6,7 +6,7 @@ export interface BannerStateProps {
 }
 
 export type BannerManagementType = {
-  id: string;
+  id: number;
   name: string;
   image: string;
   link: string;

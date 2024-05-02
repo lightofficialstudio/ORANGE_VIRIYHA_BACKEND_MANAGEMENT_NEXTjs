@@ -35,6 +35,8 @@ import { CriteriaStateProps } from './viriyha_type/criteria';
 import { ErrorLogStateProps } from './viriyha_type/error_logs';
 import { ErrorMessageStateProps } from './viriyha_type/error_message';
 import { CampaignStateProps } from './viriyha_type/campaign';
+import { LocationTransactionStateProps } from './viriyha_type/location';
+import { AttemptTransactionStateProps } from './viriyha_type/attempt';
 
 export type ArrangementOrder = 'asc' | 'desc' | undefined;
 
@@ -147,6 +149,8 @@ export interface DefaultRootStateProps {
   criteria: CriteriaStateProps;
   error_log: ErrorLogStateProps;
   error_message: ErrorMessageStateProps;
+  location_transaction: LocationTransactionStateProps;
+  attempt_transaction: AttemptTransactionStateProps;
 }
 
 export interface ColorProps {

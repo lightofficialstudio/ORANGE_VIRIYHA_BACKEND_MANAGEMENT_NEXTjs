@@ -73,7 +73,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'ID',
+    label: 'โค้ด',
     align: 'left'
   },
   {
@@ -131,13 +131,6 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
       </Typography>
     )}
     <Box sx={{ flexGrow: 1 }} />
-    {numSelected > 0 && (
-      <Tooltip title="ลบรายการ">
-        <IconButton size="large">
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    )}
   </Toolbar>
 );
 
@@ -145,7 +138,7 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
 
 interface OrderListEnhancedTableHeadProps extends EnhancedTableHeadProps {
   theme: Theme;
-  selected: string[];
+  selected: number[];
 }
 
 function EnhancedTableHead({
@@ -221,8 +214,8 @@ const CriteriaTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
-  const [orderBy, setOrderBy] = React.useState<string>('calories');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [orderBy, setOrderBy] = React.useState<string>('id');
+  const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
@@ -237,6 +230,10 @@ const CriteriaTable = () => {
   React.useEffect(() => {
     setRows(criteria);
   }, [criteria]);
+  const formatId = (id: number): string => {
+    const formattedId = id.toString().padStart(4, '0');
+    return `CRI-${formattedId}`;
+  };
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -281,9 +278,9 @@ const CriteriaTable = () => {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: string) => {
+  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: number) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
+    let newSelected: number[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -353,7 +350,7 @@ const CriteriaTable = () => {
     });
   };
 
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
@@ -441,7 +438,7 @@ const CriteriaTable = () => {
                       <TableCell>
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
                           {' '}
-                          #{row.id}{' '}
+                          {formatId(row.id)}
                         </Typography>
                       </TableCell>
                       <TableCell align="left">{row.name}</TableCell>

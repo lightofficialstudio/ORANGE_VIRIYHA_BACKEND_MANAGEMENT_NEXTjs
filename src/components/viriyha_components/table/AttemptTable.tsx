@@ -5,7 +5,6 @@ import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
   CardContent,
-  Fab,
   Grid,
   IconButton,
   InputAdornment,
@@ -25,19 +24,15 @@ import {
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
-import Chip from 'ui-component/extended/Chip';
-import { CategoryType } from 'types/viriyha_type/category';
+
 import { useDispatch, useSelector } from 'store';
-import { getCategory } from 'store/slices/viriyha/category';
+import { getAttemptTransaction } from 'store/slices/viriyha/attempt';
 // assets
-import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
-import AddIcon from '@mui/icons-material/AddTwoTone';
-import Link from 'next/link';
+import { AttemptTransactionType } from 'types/viriyha_type/attempt';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -53,10 +48,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: CategoryType[], comparator: (a: CategoryType, b: CategoryType) => number) {
-  const stabilizedThis = array?.map((el: CategoryType, index: number) => [el, index]);
+function stableSort(array: AttemptTransactionType[], comparator: (a: AttemptTransactionType, b: AttemptTransactionType) => number) {
+  const stabilizedThis = array?.map((el: AttemptTransactionType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as CategoryType, b[0] as CategoryType);
+    const order = comparator(a[0] as AttemptTransactionType, b[0] as AttemptTransactionType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -69,32 +64,27 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'Code',
+    label: 'โค้ด',
     align: 'center'
   },
   {
     id: 'name',
     numeric: false,
-    label: 'ผู้ใช้งาน',
-    align: 'center'
+    label: 'แคมเปญ',
+    align: 'left'
   },
   {
-    id: 'created_by',
-    numeric: true,
+    id: 'place',
+    numeric: false,
     label: 'ข้อความ',
     align: 'center'
   },
+
   {
     id: 'createdAt',
     numeric: true,
-    label: 'เกิดเหตุการณ์เมื่อวันที่',
+    label: 'เหตุการณ์เกิดขึ้นเมื่อวันที่',
     align: 'right'
-  },
-  {
-    id: 'status',
-    numeric: false,
-    label: 'สถานะ',
-    align: 'center'
   }
 ];
 
@@ -121,13 +111,6 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
       </Typography>
     )}
     <Box sx={{ flexGrow: 1 }} />
-    {numSelected > 0 && (
-      <Tooltip title="ลบรายการ">
-        <IconButton size="large">
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    )}
   </Toolbar>
 );
 
@@ -135,7 +118,7 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
 
 interface OrderListEnhancedTableHeadProps extends EnhancedTableHeadProps {
   theme: Theme;
-  selected: string[];
+  selected: number[];
 }
 
 function EnhancedTableHead({
@@ -193,20 +176,20 @@ const AttemptTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
-  const [orderBy, setOrderBy] = React.useState<string>('calories');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [orderBy, setOrderBy] = React.useState<string>('id');
+  const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<CategoryType[]>([]);
-  const { category } = useSelector((state) => state.category);
+  const [rows, setRows] = React.useState<AttemptTransactionType[]>([]);
+  const { attempt_transaction } = useSelector((state) => state.attempt_transaction);
 
   React.useEffect(() => {
-    dispatch(getCategory());
+    dispatch(getAttemptTransaction());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(category);
-  }, [category]);
+    setRows(attempt_transaction);
+  }, [attempt_transaction]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -231,7 +214,7 @@ const AttemptTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(category);
+      setRows(attempt_transaction);
     }
   };
 
@@ -243,29 +226,11 @@ const AttemptTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.name);
+      const newSelectedId = rows.map((n) => n.id);
       setSelected(newSelectedId);
       return;
     }
     setSelected([]);
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    console.log(newSelected);
-
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
@@ -277,9 +242,12 @@ const AttemptTable = () => {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
+  const formatId = (id: number): string => {
+    const formattedId = id.toString().padStart(4, '0');
+    return `AT-${formattedId}`;
+  };
   return (
     <>
       <CardContent>
@@ -297,28 +265,15 @@ const AttemptTable = () => {
               placeholder="ค้นหารายการ"
               value={search}
               size="medium"
+              sx={{ display: 'none' }}
             />
           </Grid>
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-            <Tooltip title="ลบ">
-              <IconButton size="large">
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
             <Tooltip title="ตัวกรอง">
               <IconButton size="large">
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
-
-            {/* product add & dialog */}
-            <Link href={'/admin/category/create'}>
-              <Tooltip title="เพิ่มหมวดหมู่">
-                <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
-                  <AddIcon fontSize="small" />
-                </Fab>
-              </Tooltip>
-            </Link>
           </Grid>
         </Grid>
       </CardContent>
@@ -344,74 +299,25 @@ const AttemptTable = () => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                  const isItemSelected = isSelected(row.id);
 
                   return (
                     <TableRow hover aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
+                      <TableCell align="center">
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
                           {' '}
-                          #{row.id}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
+                          {formatId(row.id)}{' '}
                         </Typography>
                       </TableCell>
 
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
+                      <TableCell align="left">{row.Campaign.name}</TableCell>
+                      <TableCell align="center">{row.message}</TableCell>
 
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
-                      <TableCell align="center">
-                        {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                        {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
-                        {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
-                      </TableCell>
-                      <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/category/edit/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
-                        </Link>
-                      </TableCell>
                     </TableRow>
                   );
                 })}
-            <TableRow hover tabIndex={-1}>
-              <TableCell align="center">#ATMP001</TableCell>
-              <TableCell align="left">นาย ธนาธร (รหัส 4123)</TableCell>
-              <TableCell align="center">พยายามเข้ารับสิทธิ์การใช้งานที่ campaign xxx</TableCell>
-              <TableCell align="right">11/02/2024</TableCell>
-              <TableCell align="center">
-                {' '}
-                <Chip label="ล้มเหลว" size="small" chipcolor="orange" />
-              </TableCell>
-            </TableRow>
-            <TableRow hover tabIndex={-1}>
-              <TableCell align="center">#ATMP002</TableCell>
-              <TableCell align="left">นางสาว อำไภ (รหัส 3214)</TableCell>
-              <TableCell align="center">พยายามกดใช้งานสิทธิ์นอกเหนือเวลาที่กำหนด ที่ campaign xxx</TableCell>
-              <TableCell align="right">12/02/2024</TableCell>
-              <TableCell align="center">
-                {' '}
-                <Chip label="ล้มเหลว" size="small" chipcolor="orange" />
-              </TableCell>
-            </TableRow>
+
             {emptyRows > 0 && (
               <TableRow
                 style={{

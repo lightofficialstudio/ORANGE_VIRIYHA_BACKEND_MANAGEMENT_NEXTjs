@@ -12,8 +12,8 @@ import LocationTable from 'components/viriyha_components/table/LocationTable';
 
 const LocationPage = () => {
   return (
-    <Page title="Location Transaction">
-      <MainCard title="Location Transaction" content={false}>
+    <Page title="ประวัติที่อยู่การกดรับสิทธิ์ (Location Transaction)">
+      <MainCard title="ประวัติที่อยู่การกดรับสิทธิ์ (Location Transaction)" content={false}>
         {/* table */}
         <LocationTable />
       </MainCard>

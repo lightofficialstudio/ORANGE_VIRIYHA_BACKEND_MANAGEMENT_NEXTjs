@@ -27,6 +27,8 @@ import errorLogReducer from './slices/viriyha/error_log';
 import campaignReducer from './slices/viriyha/campaign';
 import specialCampaignReducer from './slices/viriyha/campaign_special';
 import errorScenarioReducter from './slices/viriyha/error_message';
+import locationTransactionReducer from './slices/viriyha/location';
+import attemptTransactionReducer from './slices/viriyha/attempt';
 // ==============================|| COMBINE REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -59,7 +61,9 @@ const reducer = combineReducers({
   errorLog: errorLogReducer,
   campaign: campaignReducer,
   special_campaign: specialCampaignReducer,
-  error_message: errorScenarioReducter
+  error_message: errorScenarioReducter,
+  location_transaction: locationTransactionReducer,
+  attempt_transaction: attemptTransactionReducer
 });
 
 export default reducer;

@@ -156,11 +156,11 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [ArrayPhoneNumber, setArrayPhoneNumber] = useState<any[]>([]);
 
   // variable
-  const [ShopId, setShopId] = useState<string>('');
+  const [ShopId, setShopId] = useState<number>();
   const [BranchCondition, setBranchCondition] = useState<string>('include');
   const [BranchId, setBranchId] = useState<number[]>([]);
   const [Name, setName] = useState<string>('');
-  const [Category, setCategory] = useState<string>('');
+  const [Category, setCategory] = useState<number>();
   const [startDate, setStartDate] = React.useState<Date | null>(new Date());
   const [endDate, setEndDate] = React.useState<Date | null>();
   const [Quantity, setQuantity] = useState<number>(0);
@@ -250,12 +250,12 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       setOpenErrorDialog(true);
       return;
     }
-    formData.append('shopId', ShopId);
+    formData.append('shopId', String(ShopId));
     formData.append('type', campaign_type);
     formData.append('branchId', BranchId.join(','));
     formData.append('branch_condition', BranchCondition);
     formData.append('name', Name);
-    formData.append('category_type_id', Category);
+    formData.append('category_type_id', String(Category));
     formData.append('startDate', startDate ? startDate.toString() : '');
     formData.append('endDate', endDate ? endDate.toString() : '');
     formData.append('quantity', String(Quantity));
@@ -517,8 +517,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
             ]);
           });
         }
-        if (data.Campaign_PhoneNumber.length > 0) {
-          data.Campaign_PhoneNumber.forEach((item: any) => {
+        if (data.Campaign_Member.length > 0) {
+          data.Campaign_Member.forEach((item: any) => {
             setArrayPhoneNumber([
               ...ArrayPhoneNumber,
               {
@@ -538,6 +538,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [primaryId]);
 
   useEffect(() => {
@@ -572,7 +573,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   //   setIsQuotaDisabled(value.id === 4);
   // };
 
-  const handleShopChange = async (value: string) => {
+  const handleShopChange = async (value: number) => {
     try {
       const res = await axiosServices.get(`/api/shop/${value}/branch`);
       const branchArray = [
@@ -806,13 +807,21 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     document.getElementById('excelFileCode')?.click();
   };
 
-  const handleExcelFileCodeChange = (event: any) => {
+  const handleExcelFileCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files;
-    if (file) {
-      setCodeExcelFile(file[0]);
-      console.log(codeExcelFile);
-      handleExcelFileCodeUpload(file[0]);
-      event.target.value = null;
+    if (file && file.length > 0) {
+      const selectedFile = file[0];
+      const fileExtension = selectedFile.name.split('.').pop();
+
+      if (fileExtension === 'xlsx') {
+        setCodeExcelFile(selectedFile);
+        console.log(codeExcelFile);
+        handleExcelFileCodeUpload(selectedFile);
+        event.target.value = '';
+      } else {
+        setOpenErrorDialog(true);
+        setErrorMessage('ไฟล์ที่อัพโหลดเข้ามาไม่ถูกต้อง โปรดตรวจสอบไฟล์อีกครั้ง โดยชนิดของไฟล์ต้องเป็น .xlsx');
+      }
     }
   };
 
@@ -941,8 +950,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                       isOptionEqualToValue={(option, value) => option.id === value.id}
                       value={ArrayShop.find((Item) => Item.id === ShopId) || null}
                       onChange={(_event, value) => {
-                        handleShopChange(value?.id ? value.id : '');
-                        setShopId(value?.id ? value.id : '');
+                        handleShopChange(value?.id ? value.id : 0);
+                        setShopId(value?.id ? value.id : 0);
                       }}
                       renderInput={(params) => <TextField {...params} />}
                     />

@@ -4,7 +4,7 @@ export interface UserBackendStateProps {
 }
 
 export type User_BackendType = {
-  id: string;
+  id: number;
   image: string;
   username: string;
   email: string;

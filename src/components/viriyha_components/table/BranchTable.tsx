@@ -90,9 +90,15 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
-    id: 'created_by',
-    numeric: true,
-    label: 'ผู้ที่สร้าง',
+    id: 'latitude',
+    numeric: false,
+    label: 'ละติจูด',
+    align: 'center'
+  },
+  {
+    id: 'longitude',
+    numeric: false,
+    label: 'ลองติดจูด',
     align: 'center'
   },
   {
@@ -100,12 +106,6 @@ const headCells: HeadCell[] = [
     numeric: false,
     label: 'สถานะ',
     align: 'center'
-  },
-  {
-    id: 'createdAt',
-    numeric: true,
-    label: 'สร้างเมื่อวันที่',
-    align: 'right'
   }
 ];
 
@@ -227,7 +227,10 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
   // import varaible
   const [branchExcelFile, setBranchExcelFile] = React.useState<File | null>(null);
   const [branchExcelData, setBranchExcelData] = React.useState<BranchType[]>([]);
-  const createdById = context?.user?.id;
+  const createdById = context?.user?.userInfo?.id as number;
+  if (!createdById) {
+    window.location.reload();
+  }
   // condition
   const [openSuccessDialog, setOpenSuccessDialog] = React.useState(false);
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
@@ -238,13 +241,9 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
     dispatch(getBranchFromShopBy(paramShopId));
   }, [dispatch, paramShopId]);
   React.useEffect(() => {
-    setRows(branch);
+    setBranchExcelData(branch);
   }, [branch]);
-  React.useEffect(() => {
-    if (branchExcelData.length > 0) {
-      handleSubmitExcelFileBranch(branchExcelData);
-    }
-  });
+
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -341,17 +340,21 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const dataParse = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-      const arrayBranch: BranchType[] = dataParse.map((item: any) => ({
+      const arrayBranch = dataParse.slice(1).map((item: any) => ({
+        // Skip the first row explicitly if needed
         id: item[0],
         name: item[1],
         latitude: item[2],
         longitude: item[3],
         status: 'ACTIVE'
       }));
+
       setBranchExcelData(arrayBranch);
-      console.log(branchExcelData);
     };
     reader.readAsArrayBuffer(file);
+    if (branchExcelData.length > 0) {
+      handleSubmitExcelFileBranch(branchExcelData);
+    }
   };
 
   const handleSubmitExcelFileBranch = async (branchExcelData: BranchType[]) => {
@@ -387,6 +390,35 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
     }
   };
 
+  const exportToExcel = () => {
+    // Create a worksheet with no initial data but with specified headers
+    const ws = XLSX.utils.json_to_sheet([], {
+      header: ['ลำดับ', 'สาขา', 'ละติจูด', 'ลองติจูด'],
+      skipHeader: false
+    });
+
+    // Start adding data from the second row, keeping the first row for headers
+    XLSX.utils.sheet_add_json(
+      ws,
+      branchExcelData.map((item, index) => ({
+        ลำดับ: index + 1, // Sequence number starting from 1
+        สาขา: item.name,
+        ละติจูด: item.latitude,
+        ลองติจูด: item.longitude
+      })),
+      { origin: -1, skipHeader: true }
+    ); // Origin -1 appends rows after the last nonempty row
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'BranchData');
+
+    // Create a name for the file with current date-time to avoid overwriting previous files
+    const fileName = `BranchData_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
+
+    // Write the file and trigger download
+    XLSX.writeFile(wb, fileName);
+  };
+
   const handleDelete = async () => {
     setOpenDeleteDialog(true);
   };
@@ -403,7 +435,10 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
         link={'/api/branch/delete'}
         status={(statusDelete) => {
           if (statusDelete) {
-            dispatch(getBranchFromShopBy(paramShopId));
+            if (shopId) {
+              dispatch(getBranchFromShopBy(paramShopId));
+            }
+            setSelected([]);
           }
         }}
       />
@@ -437,10 +472,11 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
               </IconButton>
             </Tooltip>
             <Tooltip title="ส่งออกเอกสาร">
-              <IconButton size="large">
+              <IconButton size="large" onClick={exportToExcel}>
                 <IosShareIcon />
               </IconButton>
             </Tooltip>
+
             <Tooltip title="ตัวกรอง">
               <IconButton size="large">
                 <FilterListIcon />
@@ -468,10 +504,12 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={branchExcelData.length}
             theme={theme}
             selected={selected}
           />
+
+          {/* new */}
           <TableBody>
             {Array.isArray(rows) &&
               stableSort(rows, getComparator(order, orderBy))
@@ -498,30 +536,23 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
                         component="th"
                         id={labelId}
                         scope="row"
-                        onClick={(event) => handleClick(event, row.id)}
+                        onClick={(event) => handleClick(event, row.id as number)}
                         sx={{ cursor: 'pointer' }}
                       >
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          #{row.id}{' '}
+                          #{row.id}
                         </Typography>
                       </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.id)}
-                        sx={{ cursor: 'pointer' }}
-                      >
+                      <TableCell>
                         <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
+                          {row.name}
                         </Typography>
                       </TableCell>
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
+                      <TableCell align="center">{row.longitude}</TableCell>
+                      <TableCell align="center">{row.latitude}</TableCell>
                       <TableCell align="center">
-                        {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                        {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
+                        {row.status === 'ACTIVE' && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
+                        {row.status === 'INACTIVE' && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
                       <TableCell align="right">{row.createdAt ? format(new Date(row.createdAt), 'E, MMM d yyyy') : ''}</TableCell>
@@ -552,7 +583,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={branchExcelData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -6,7 +6,7 @@ export interface CategoryStateProps {
 }
 
 export type CategoryType = {
-  id: string;
+  id: number;
   position: number;
   name: string;
   email: string;

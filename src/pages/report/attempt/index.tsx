@@ -12,8 +12,8 @@ import AttemptTable from 'components/viriyha_components/table/AttemptTable';
 
 const AttemptPage = () => {
   return (
-    <Page title="Attmept">
-      <MainCard title="Attempt Transaction" content={false}>
+    <Page title="ประวัติการพยายามเข้ารับสิทธิ์ (Attempt Transaction)">
+      <MainCard title="ประวัติการพยายามเข้ารับสิทธิ์ (Attempt Transaction)" content={false}>
         {/* table */}
         <AttemptTable />
       </MainCard>

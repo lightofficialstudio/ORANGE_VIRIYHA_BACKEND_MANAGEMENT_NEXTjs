@@ -6,7 +6,7 @@ export interface CriteriaStateProps {
 }
 
 export type CriteriaType = {
-  id: string;
+  id: number;
   name: string;
   status: string;
   createdAt: Date;

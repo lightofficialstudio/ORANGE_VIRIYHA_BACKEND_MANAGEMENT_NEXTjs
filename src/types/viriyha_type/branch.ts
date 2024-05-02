@@ -8,8 +8,8 @@ export interface BranchStateProps {
 export type BranchType = {
   id: number;
   name: string;
-  latitude: number;
-  longitude: number;
+  latitude: string;
+  longitude: string;
   shopId?: number;
   status: string;
   description?: string;

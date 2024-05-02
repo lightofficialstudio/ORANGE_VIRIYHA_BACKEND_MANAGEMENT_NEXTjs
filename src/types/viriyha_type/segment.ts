@@ -6,7 +6,7 @@ export interface SegmentStateProps {
 }
 
 export type SegmentType = {
-  id: string;
+  id: number;
   name: string;
   status: string;
   createdAt: Date;

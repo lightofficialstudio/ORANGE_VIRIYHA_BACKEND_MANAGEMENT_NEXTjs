@@ -77,7 +77,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'ID',
+    label: 'โค้ด',
     align: 'left'
   },
   {
@@ -148,7 +148,7 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
 
 interface OrderListEnhancedTableHeadProps extends EnhancedTableHeadProps {
   theme: Theme;
-  selected: string[];
+  selected: number[];
 }
 
 function EnhancedTableHead({
@@ -225,7 +225,7 @@ const CategoryTable = () => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('position');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
@@ -249,6 +249,10 @@ const CategoryTable = () => {
   React.useEffect(() => {
     setRows(category);
   }, [category]);
+  const formatId = (id: number): string => {
+    const formattedId = id.toString().padStart(4, '0');
+    return `C-${formattedId}`;
+  };
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -292,12 +296,12 @@ const CategoryTable = () => {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: string[] = [];
+  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, id: number) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected: number[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -348,7 +352,7 @@ const CategoryTable = () => {
             if (response.data) {
               Swal.fire({
                 title: 'คุณทำรายการสำเร็จ',
-                text: response.data.message,
+                text: 'รายการถูกลบเรียบร้อยแล้ว',
                 icon: 'success',
                 confirmButtonText: 'รับทราบ!'
               });
@@ -389,7 +393,7 @@ const CategoryTable = () => {
     }
   };
 
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
@@ -476,7 +480,7 @@ const CategoryTable = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell align="left">{row.id}</TableCell>
+                      <TableCell align="left">{formatId(row.id)}</TableCell>
                       <TableCell align="right">{row.position}</TableCell>
                       <TableCell align="center">
                         <Avatar src={`${baseUrl}${row.image}`} size="md" variant="rounded" alt="category images" />
@@ -505,7 +509,7 @@ const CategoryTable = () => {
                             size="large"
                             onClick={(event: any) => {
                               setOpenChangePositionModal(true);
-                              setSelectedId(parseInt(row.id));
+                              setSelectedId(row.id);
                               setSelectedPosition(row.position.toString());
                               setSelectedTitle(row.name);
                             }}
