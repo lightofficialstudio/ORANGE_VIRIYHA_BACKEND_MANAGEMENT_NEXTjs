@@ -241,7 +241,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
     dispatch(getBranchFromShopBy(paramShopId));
   }, [dispatch, paramShopId]);
   React.useEffect(() => {
-    setBranchExcelData(branch);
+    setRows(branch);
   }, [branch]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
