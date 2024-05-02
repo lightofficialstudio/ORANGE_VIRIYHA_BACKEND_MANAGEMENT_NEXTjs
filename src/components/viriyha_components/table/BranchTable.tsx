@@ -349,7 +349,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
         status: 'ACTIVE'
       }));
 
-      setBranchExcelData(arrayBranch);
+      setRows(arrayBranch);
     };
     reader.readAsArrayBuffer(file);
     if (branchExcelData.length > 0) {
