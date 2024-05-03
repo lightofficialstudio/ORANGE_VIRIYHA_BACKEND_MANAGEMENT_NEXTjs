@@ -252,6 +252,7 @@ const RedeemTransactionTable = () => {
 
   // function
   const formatId = (id: number): string => {
+    if (!id) return 'N/A';
     const formattedId = id.toString().padStart(4, '0');
     return `T-${formattedId}`;
   };
@@ -310,10 +311,10 @@ const RedeemTransactionTable = () => {
 
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell align="left">{formatId(row.Campaign_Code[0].id)}</TableCell>
-                      <TableCell align="left">{row.Campaign_Code[0].Campaign_Transaction[0]?.id_card}</TableCell>
-                      <TableCell align="left">{row.Campaign_Code[0].code}</TableCell>
-                      <TableCell align="right"> {row.Campaign_Code[0].Campaign_Transaction[0]?.usedAt}</TableCell>
+                      <TableCell align="left">{formatId(row.Campaign_Code[0]?.id)}</TableCell>
+                      <TableCell align="left">{row.Campaign_Code[0]?.Campaign_Transaction[0]?.id_card}</TableCell>
+                      <TableCell align="left">{row.Campaign_Code[0]?.code}</TableCell>
+                      <TableCell align="left"> {row.Campaign_Code[0]?.Campaign_Transaction[0]?.usedAt}</TableCell>
                       {/* format(new Date(row.Campaign_Code[0].Campaign_Transaction[0]?.usedAt), 'dd/MM/yyyy')} */}
                     </TableRow>
                   );
