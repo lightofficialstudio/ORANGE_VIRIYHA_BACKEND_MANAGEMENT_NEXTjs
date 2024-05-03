@@ -348,7 +348,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
         longitude: item[3],
         status: 'ACTIVE'
       }));
-
+      setBranchExcelData(arrayBranch);
       setRows(arrayBranch);
     };
     reader.readAsArrayBuffer(file);

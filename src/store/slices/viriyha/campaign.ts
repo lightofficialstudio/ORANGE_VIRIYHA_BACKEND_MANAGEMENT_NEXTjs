@@ -27,6 +27,11 @@ const slice = createSlice({
     // GET CAMPAIGN
     getCampaignSuccess(state, action) {
       state.campaign = action.payload;
+    },
+
+    // GET CAMPAIGN ALL
+    getCampaignAllSuccess(state, action) {
+      state.campaign = action.payload;
     }
   }
 });
@@ -41,6 +46,28 @@ export function getCampaignList() {
     try {
       const response = await axios.get('/api/campaign/normal');
       console.log(response);
+      dispatch(slice.actions.getCampaignSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function getCampaignAll() {
+  return async () => {
+    try {
+      const response = await axios.get(`/api/campaign/normal/all`);
+      dispatch(slice.actions.getCampaignAllSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function getCampaignTransaction() {
+  return async () => {
+    try {
+      const response = await axios.get('/api/campaign/transaction');
       dispatch(slice.actions.getCampaignSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

@@ -5,10 +5,7 @@ import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
   CardContent,
-  Checkbox,
-  // Fab,
   Grid,
-  IconButton,
   InputAdornment,
   Table,
   TableBody,
@@ -20,25 +17,22 @@ import {
   TableSortLabel,
   TextField,
   Toolbar,
-  Tooltip,
   Typography
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import { CategoryType } from 'types/viriyha_type/category';
 import { useDispatch, useSelector } from 'store';
-import { getCategory } from 'store/slices/viriyha/category';
-// assets
-import DeleteIcon from '@mui/icons-material/Delete';
-// import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
-
-import SearchIcon from '@mui/icons-material/Search';
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+// project data
+import { CampaignType } from 'types/viriyha_type/campaign';
+import { getCampaignAll } from 'store/slices/viriyha/campaign';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
-// import AddIcon from '@mui/icons-material/AddTwoTone';
-import Link from 'next/link';
+
+// assets
+
+// icon
+import SearchIcon from '@mui/icons-material/Search';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -54,10 +48,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: CategoryType[], comparator: (a: CategoryType, b: CategoryType) => number) {
-  const stabilizedThis = array?.map((el: CategoryType, index: number) => [el, index]);
+function stableSort(array: CampaignType[], comparator: (a: CampaignType, b: CampaignType) => number) {
+  const stabilizedThis = array?.map((el: CampaignType, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as CategoryType, b[0] as CategoryType);
+    const order = comparator(a[0] as CampaignType, b[0] as CampaignType);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -68,28 +62,42 @@ function stableSort(array: CategoryType[], comparator: (a: CategoryType, b: Cate
 
 const headCells: HeadCell[] = [
   {
-    id: 'name',
-    numeric: false,
-    label: 'ชื่อผู้ใช้งาน',
+    id: 'id',
+    numeric: true,
+    label: 'โค้ด',
     align: 'left'
   },
   {
-    id: 'web_visit',
-    numeric: true,
-    label: 'เข้าชมเว็บไซต์',
-    align: 'center'
+    id: 'name',
+    numeric: false,
+    label: 'ชื่อสิทธิพิเศษ',
+    align: 'left'
   },
   {
-    id: 'web_count_nonUnique',
-    numeric: true,
-    label: 'จำนวนครั้งที่เข้าชม (non-unique)',
-    align: 'center'
+    id: 'shop_name',
+    numeric: false,
+    label: 'การเข้าชม (view)',
+    align: 'left'
   },
   {
-    id: 'web_count_unique',
-    numeric: true,
-    label: 'จำนวนคนที่เข้าชม (unique)',
+    id: 'start_Date',
+    numeric: false,
+    label: 'การเข้าชมเฉพาะ (unqiue view)',
+    align: 'left'
+  },
+
+  {
+    id: 'status',
+    numeric: false,
+    label: 'สถานะ',
     align: 'center'
+  },
+
+  {
+    id: 'createdAt',
+    numeric: true,
+    label: 'ถูกสร้างขึ้นเมื่อวันที่',
+    align: 'right'
   }
 ];
 
@@ -116,13 +124,6 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
       </Typography>
     )}
     <Box sx={{ flexGrow: 1 }} />
-    {numSelected > 0 && (
-      <Tooltip title="ลบรายการ">
-        <IconButton size="large">
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
-    )}
   </Toolbar>
 );
 
@@ -130,7 +131,7 @@ const EnhancedTableToolbar = ({ numSelected }: EnhancedTableToolbarProps) => (
 
 interface OrderListEnhancedTableHeadProps extends EnhancedTableHeadProps {
   theme: Theme;
-  selected: string[];
+  selected: number[];
 }
 
 function EnhancedTableHead({
@@ -150,17 +151,6 @@ function EnhancedTableHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" sx={{ pl: 3 }}>
-          {/* <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts'
-            }}
-          /> */}
-        </TableCell>
         {numSelected > 0 && (
           <TableCell padding="none" colSpan={8}>
             <EnhancedTableToolbar numSelected={selected.length} />
@@ -207,19 +197,19 @@ const WebsiteAnalyzedTable = () => {
   const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('calories');
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<CategoryType[]>([]);
-  const { category } = useSelector((state) => state.category);
+  const [rows, setRows] = React.useState<CampaignType[]>([]);
+  const { campaign } = useSelector((state) => state.campaign);
 
   React.useEffect(() => {
-    dispatch(getCategory());
+    dispatch(getCampaignAll());
   }, [dispatch]);
   React.useEffect(() => {
-    setRows(category);
-  }, [category]);
+    setRows(campaign);
+  }, [campaign]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -244,7 +234,7 @@ const WebsiteAnalyzedTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(category);
+      setRows(campaign);
     }
   };
 
@@ -256,29 +246,11 @@ const WebsiteAnalyzedTable = () => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelectedId = rows.map((n) => n.name);
+      const newSelectedId = rows.map((n) => n.id);
       setSelected(newSelectedId);
       return;
     }
     setSelected([]);
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    console.log(newSelected);
-
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
@@ -290,8 +262,14 @@ const WebsiteAnalyzedTable = () => {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+  // function
+  const formatId = (id: number): string => {
+    const formattedId = id.toString().padStart(4, '0');
+    return `NMC-${formattedId}`;
+  };
 
   return (
     <>
@@ -312,26 +290,13 @@ const WebsiteAnalyzedTable = () => {
               size="medium"
             />
           </Grid>
-          {/* <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-            <Tooltip title="ลบ">
-              <IconButton size="large">
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="ตัวกรอง">
+          <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
+            {/* <Tooltip title="ตัวกรอง">
               <IconButton size="large">
                 <FilterListIcon />
               </IconButton>
-            </Tooltip>
-
-            <Link href={'/admin/category/create'}>
-              <Tooltip title="เพิ่มหมวดหมู่">
-                <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
-                  <AddIcon fontSize="small" />
-                </Fab>
-              </Tooltip>
-            </Link>
-          </Grid> */}
+            </Tooltip> */}
+          </Grid>
         </Grid>
       </CardContent>
 
@@ -356,60 +321,21 @@ const WebsiteAnalyzedTable = () => {
                   /** Make sure no display bugs if row isn't an OrderData object */
                   if (typeof row === 'number') return null;
 
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                  const isItemSelected = isSelected(row.id);
 
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
-                      <TableCell padding="checkbox" sx={{ pl: 3 }} onClick={(event) => handleClick(event, row.name)}>
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          #{row.id}{' '}
-                        </Typography>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        onClick={(event) => handleClick(event, row.name)}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <Typography variant="subtitle1" sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}>
-                          {' '}
-                          {row.name}{' '}
-                        </Typography>
-                      </TableCell>
-
-                      <TableCell align="center">{row.createdBy?.username}</TableCell>
-
-                      <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
-                      <TableCell align="center">
+                      <TableCell align="left">{formatId(row.id)}</TableCell>
+                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="center">{row.view}</TableCell>
+                      <TableCell align="center">{row.unique_view}</TableCell>
+                      <TableCell align="right">
                         {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
-                      <TableCell align="center" sx={{ pr: 3 }}>
-                        <Link href={`/admin/category/edit/${row.id}`}>
-                          <IconButton color="secondary" size="large">
-                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                          </IconButton>
-                        </Link>
-                      </TableCell>
+
+                      <TableCell align="right">{format(new Date(row.updatedAt), 'dd/MM/yyyy')}</TableCell>
                     </TableRow>
                   );
                 })}

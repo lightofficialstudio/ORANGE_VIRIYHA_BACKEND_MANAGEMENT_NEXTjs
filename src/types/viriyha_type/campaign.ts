@@ -10,6 +10,8 @@ export type CampaignType = {
   id: number;
   name: string;
   type: string;
+  view: number;
+  unique_view: number;
   category_type_id: number;
   used_quantity: number;
   quantity: number;
@@ -36,6 +38,7 @@ export type CampaignType = {
   Campaign_Shop: CampaignShop[];
   Campaign_User: CampaignUser[];
   Campaign_Code: CampaignCode[];
+  Campaign_Transaction: CampaignTransaction[];
   createdBy: User_BackendType;
   updatedBy?: User_BackendType;
 };
@@ -87,4 +90,14 @@ export type CampaignCode = {
   code: string;
   campaignId: number;
   usedAt: Date;
+  Campaign_Transaction: CampaignTransaction[];
+};
+
+export type CampaignTransaction = {
+  id: number;
+  id_card: string;
+  latitude: number;
+  longitude: number;
+  status: 'ACTIVE' | 'INACTIVE';
+  usedAt: string;
 };
