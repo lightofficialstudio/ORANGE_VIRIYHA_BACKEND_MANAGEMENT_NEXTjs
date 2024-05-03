@@ -350,6 +350,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
       }));
       setBranchExcelData(arrayBranch);
       setRows(arrayBranch);
+      handleSubmitExcelFileBranch(arrayBranch);
     };
     reader.readAsArrayBuffer(file);
     if (branchExcelData.length > 0) {
@@ -400,7 +401,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
     // Start adding data from the second row, keeping the first row for headers
     XLSX.utils.sheet_add_json(
       ws,
-      branchExcelData.map((item, index) => ({
+      rows.map((item, index) => ({
         ลำดับ: index + 1, // Sequence number starting from 1
         สาขา: item.name,
         ละติจูด: item.latitude,

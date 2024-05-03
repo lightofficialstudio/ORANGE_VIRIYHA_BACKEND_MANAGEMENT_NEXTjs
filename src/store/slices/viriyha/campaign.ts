@@ -68,8 +68,6 @@ export function getCampaignTransaction() {
   return async () => {
     try {
       const response = await axios.get('/api/campaign/transaction');
-      if (response.data.Campaign_Code != null) {
-      }
       dispatch(slice.actions.getCampaignSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
