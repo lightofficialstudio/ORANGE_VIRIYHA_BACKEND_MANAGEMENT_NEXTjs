@@ -15,10 +15,12 @@ import CampaignForm from 'components/viriyha_components/form/campaign/CampaignFo
 const SpecialDetailCampaignPage = () => {
   const router = useRouter();
   const { id } = router.query;
+  const type = 'special_clone';
+
   return (
     <Page title="Special campaign create">
       <Typography variant="body2">
-        <CampaignForm title={'รายละเอียดสิทธิพิเศษ'} primaryId={id as string} type={'normal'} />
+        <CampaignForm title={'รายละเอียดสิทธิพิเศษ'} primaryId={id as string} type={type} />
       </Typography>
     </Page>
   );

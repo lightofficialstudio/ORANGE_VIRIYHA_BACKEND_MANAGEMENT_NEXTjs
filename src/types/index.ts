@@ -113,6 +113,7 @@ export type NavItemType = {
   children?: NavItemType[];
   elements?: NavItemType[];
   search?: string;
+  requiredPermission?: string;
 };
 
 export type AuthSliderProps = {

@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
   Box,
   CardContent,
   Grid,
+  IconButton,
   InputAdornment,
   Table,
   TableBody,
@@ -17,6 +20,7 @@ import {
   TableSortLabel,
   TextField,
   Toolbar,
+  Tooltip,
   Typography
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
@@ -33,6 +37,7 @@ import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, H
 
 // icon
 import SearchIcon from '@mui/icons-material/Search';
+import IosShareIcon from '@mui/icons-material/IosShare';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -91,13 +96,6 @@ const headCells: HeadCell[] = [
     numeric: false,
     label: 'สถานะ',
     align: 'center'
-  },
-
-  {
-    id: 'createdAt',
-    numeric: true,
-    label: 'ถูกสร้างขึ้นเมื่อวันที่',
-    align: 'right'
   }
 ];
 
@@ -271,6 +269,30 @@ const WebsiteAnalyzedTable = () => {
     return `NMC-${formattedId}`;
   };
 
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet([], {
+      header: ['ลำดับ', 'โค้ด', 'ชื่อสิทธิพิเศษ', 'การเข้าชม (view)', 'การเข้าชมเฉพาะ (unqiue view)', 'สถานะ'],
+      skipHeader: false
+    });
+
+    XLSX.utils.sheet_add_json(
+      ws,
+      rows.map((item, index) => ({
+        ลำดับ: index + 1,
+        โค้ด: formatId(item.id),
+        ชื่อสิทธิพิเศษ: item.name,
+        'การเข้าชม (view)': item.view,
+        'การเข้าชมเฉพาะ (unqiue view)': item.unique_view,
+        สถานะ: item.status === `ACTIVE` ? 'เปิดการใช้งาน' : item.status === `INACTIVE` ? 'ปิดการใช้งาน' : 'ยังไม่ได้ตั้งค่า'
+      })),
+      { origin: -1, skipHeader: true }
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'WebsiteAnalyzedData');
+    const fileName = `WebsiteAnalyzedData_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   return (
     <>
       <CardContent>
@@ -291,11 +313,11 @@ const WebsiteAnalyzedTable = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-            {/* <Tooltip title="ตัวกรอง">
-              <IconButton size="large">
-                <FilterListIcon />
+            <Tooltip title="ส่งออกเอกสาร">
+              <IconButton size="large" onClick={exportToExcel}>
+                <IosShareIcon />
               </IconButton>
-            </Tooltip> */}
+            </Tooltip>
           </Grid>
         </Grid>
       </CardContent>
@@ -334,8 +356,6 @@ const WebsiteAnalyzedTable = () => {
                         {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
                         {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
                       </TableCell>
-
-                      <TableCell align="right">{format(new Date(row.updatedAt), 'dd/MM/yyyy')}</TableCell>
                     </TableRow>
                   );
                 })}

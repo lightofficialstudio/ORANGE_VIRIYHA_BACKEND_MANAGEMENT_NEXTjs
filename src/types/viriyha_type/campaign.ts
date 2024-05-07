@@ -96,6 +96,8 @@ export type CampaignCode = {
 export type CampaignTransaction = {
   id: number;
   id_card: string;
+  name?: string;
+  surname?: string;
   latitude: number;
   longitude: number;
   status: 'ACTIVE' | 'INACTIVE';

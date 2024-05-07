@@ -3,6 +3,7 @@ import * as React from 'react';
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
+  IconButton,
   Box,
   CardContent,
   Grid,
@@ -17,9 +18,11 @@ import {
   TableSortLabel,
   TextField,
   Toolbar,
-  Typography
+  Typography,
+  Tooltip
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+import * as XLSX from 'xlsx';
 
 // project imports
 import { useDispatch, useSelector } from 'store';
@@ -32,6 +35,7 @@ import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, H
 
 // icon
 import SearchIcon from '@mui/icons-material/Search';
+import IosShareIcon from '@mui/icons-material/IosShare';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -70,6 +74,18 @@ const headCells: HeadCell[] = [
     id: 'id_card',
     numeric: false,
     label: 'รหัสบัตรประชาชนผู้ใช้งาน',
+    align: 'left'
+  },
+  {
+    id: 'name',
+    numeric: false,
+    label: 'ชื่อ',
+    align: 'left'
+  },
+  {
+    id: 'surname',
+    numeric: false,
+    label: 'นามสกุล',
     align: 'left'
   },
   {
@@ -196,26 +212,12 @@ const RedeemTransactionTable = () => {
     setRows(campaign);
   }, [campaign]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
-    const newString = event?.target.value;
-    setSearch(newString || '');
-
+    const newString = event?.target.value ?? '';
+    setSearch(newString);
     if (newString) {
       const newRows = rows.filter((row: KeyedObject) => {
-        let matches = true;
-
-        const properties = ['name', 'id'];
-        let containsQuery = false;
-
-        properties.forEach((property) => {
-          if (row[property].toString().toLowerCase().includes(newString.toString().toLowerCase())) {
-            containsQuery = true;
-          }
-        });
-
-        if (!containsQuery) {
-          matches = false;
-        }
-        return matches;
+        const code = row.Campaign_Code[0]?.code?.toString().toLowerCase() || '';
+        return code.includes(newString.toLowerCase());
       });
       setRows(newRows);
     } else {
@@ -257,6 +259,38 @@ const RedeemTransactionTable = () => {
     return `T-${formattedId}`;
   };
 
+  const censorIdCard = (idCard: string) => {
+    if (idCard && idCard.length > 5) {
+      return `${idCard.substring(0, idCard.length - 5)}xxxxx`;
+    }
+    return idCard;
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet([], {
+      header: ['ลำดับ', 'โค้ด', 'รหัสบัตรประชาชนผู้ใช้งาน', 'ชื่อ', 'นามสกุล', 'โค้ดที่ใช้งาน', 'ใช้งานเมื่อวันที่'],
+      skipHeader: false
+    });
+
+    XLSX.utils.sheet_add_json(
+      ws,
+      rows.map((item, index) => ({
+        ลำดับ: index + 1,
+        โค้ด: formatId(item.Campaign_Code[0]?.id),
+        รหัสบัตรประชาชนผู้ใช้งาน: censorIdCard(item.Campaign_Code[0]?.Campaign_Transaction[0]?.id_card),
+        ชื่อ: item.Campaign_Code[0]?.Campaign_Transaction[0]?.name,
+        นามสกุล: item.Campaign_Code[0]?.Campaign_Transaction[0]?.surname,
+        โค้ดที่ใช้งาน: item.Campaign_Code[0]?.code,
+        ใช้งานเมื่อวันที่: item.Campaign_Code[0]?.Campaign_Transaction[0]?.usedAt
+      })),
+      { origin: -1, skipHeader: true }
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'RedeemTransaction');
+    const fileName = `RedeemTransactionData_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   return (
     <>
       <CardContent>
@@ -271,12 +305,17 @@ const RedeemTransactionTable = () => {
                 )
               }}
               onChange={handleSearch}
-              placeholder="ค้นหารายการ"
+              placeholder="ค้นหาโค้ดที่ถูกงานใช้งาน"
               value={search}
               size="medium"
             />
           </Grid>
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
+            <Tooltip title="ส่งออกเอกสาร">
+              <IconButton size="large" onClick={exportToExcel}>
+                <IosShareIcon />
+              </IconButton>
+            </Tooltip>
             {/* <Tooltip title="ตัวกรอง">
               <IconButton size="large">
                 <FilterListIcon />
@@ -312,7 +351,9 @@ const RedeemTransactionTable = () => {
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
                       <TableCell align="left">{formatId(row.Campaign_Code[0]?.id)}</TableCell>
-                      <TableCell align="left">{row.Campaign_Code[0]?.Campaign_Transaction[0]?.id_card}</TableCell>
+                      <TableCell align="left">{censorIdCard(row.Campaign_Code[0]?.Campaign_Transaction[0]?.id_card)}</TableCell>
+                      <TableCell align="left">{row.Campaign_Code[0]?.Campaign_Transaction[0]?.name}</TableCell>
+                      <TableCell align="left">{row.Campaign_Code[0]?.Campaign_Transaction[0]?.surname}</TableCell>
                       <TableCell align="left">{row.Campaign_Code[0]?.code}</TableCell>
                       <TableCell align="left"> {row.Campaign_Code[0]?.Campaign_Transaction[0]?.usedAt}</TableCell>
                       {/* format(new Date(row.Campaign_Code[0].Campaign_Transaction[0]?.usedAt), 'dd/MM/yyyy')} */}

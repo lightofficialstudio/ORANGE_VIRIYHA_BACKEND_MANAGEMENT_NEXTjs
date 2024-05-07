@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { format } from 'date-fns';
+// excel
+import * as XLSX from 'xlsx';
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
@@ -22,13 +24,15 @@ import {
   Typography
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+import Chip from 'ui-component/extended/Chip';
 
 // project imports
 
 import { useDispatch, useSelector } from 'store';
 import { getAttemptTransaction } from 'store/slices/viriyha/attempt';
 // assets
-import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
+// import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
+import IosShareIcon from '@mui/icons-material/IosShare';
 
 import SearchIcon from '@mui/icons-material/Search';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
@@ -68,7 +72,7 @@ const headCells: HeadCell[] = [
     align: 'center'
   },
   {
-    id: 'name',
+    id: 'campaign_name',
     numeric: false,
     label: 'แคมเปญ',
     align: 'left'
@@ -79,7 +83,12 @@ const headCells: HeadCell[] = [
     label: 'ข้อความ',
     align: 'center'
   },
-
+  {
+    id: 'status',
+    numeric: false,
+    label: 'สถานะ',
+    align: 'center'
+  },
   {
     id: 'createdAt',
     numeric: true,
@@ -181,6 +190,7 @@ const AttemptTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
+  const [countSearch, setCountSearch] = React.useState<number>(0);
   const [rows, setRows] = React.useState<AttemptTransactionType[]>([]);
   const { attempt_transaction } = useSelector((state) => state.attempt_transaction);
 
@@ -191,30 +201,18 @@ const AttemptTable = () => {
     setRows(attempt_transaction);
   }, [attempt_transaction]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
-    const newString = event?.target.value;
-    setSearch(newString || '');
-
+    const newString = event?.target.value ?? '';
+    setSearch(newString);
     if (newString) {
       const newRows = rows.filter((row: KeyedObject) => {
-        let matches = true;
-
-        const properties = ['name', 'id'];
-        let containsQuery = false;
-
-        properties.forEach((property) => {
-          if (row[property].toString().toLowerCase().includes(newString.toString().toLowerCase())) {
-            containsQuery = true;
-          }
-        });
-
-        if (!containsQuery) {
-          matches = false;
-        }
-        return matches;
+        const campaignName = row.Campaign?.name?.toString().toLowerCase() || '';
+        return campaignName.includes(newString.toLowerCase());
       });
       setRows(newRows);
+      setCountSearch(newRows.length);
     } else {
       setRows(attempt_transaction);
+      setCountSearch(attempt_transaction.length);
     }
   };
 
@@ -248,6 +246,29 @@ const AttemptTable = () => {
     const formattedId = id.toString().padStart(4, '0');
     return `AT-${formattedId}`;
   };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet([], {
+      header: ['ลำดับ', 'แคมเปญ', 'ข้อความ', 'สถานะ', 'เหตุการณ์เกิดขึ้นเมื่อวันที่'],
+      skipHeader: false
+    });
+
+    XLSX.utils.sheet_add_json(
+      ws,
+      rows.map((item, index) => ({
+        ลำดับ: index + 1,
+        แคมเปญ: item.Campaign.name,
+        ข้อความ: item.message,
+        สถานะ: 'ล้มเหลว',
+        เหตุการณ์เกิดขึ้นเมื่อวันที่: format(new Date(item.createdAt), 'd MMM yyyy')
+      })),
+      { origin: -1, skipHeader: true }
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'AttemptTransactionData');
+    const fileName = `AttemptTransactionData_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
   return (
     <>
       <CardContent>
@@ -265,15 +286,16 @@ const AttemptTable = () => {
               placeholder="ค้นหารายการ"
               value={search}
               size="medium"
-              sx={{ display: 'none' }}
             />
           </Grid>
+
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-            <Tooltip title="ตัวกรอง">
-              <IconButton size="large">
-                <FilterListIcon />
+            <Tooltip title="ส่งออกเอกสาร">
+              <IconButton size="large" onClick={exportToExcel}>
+                <IosShareIcon />
               </IconButton>
             </Tooltip>
+            <Chip label={`รายการที่ล้มเหลวทั้งหมด : ${countSearch}`} size="medium" chipcolor="error" />
           </Grid>
         </Grid>
       </CardContent>
@@ -312,6 +334,10 @@ const AttemptTable = () => {
 
                       <TableCell align="left">{row.Campaign.name}</TableCell>
                       <TableCell align="center">{row.message}</TableCell>
+                      <TableCell align="center">
+                        {' '}
+                        <Chip label="ล้มเหลว" size="small" chipcolor="orange" />{' '}
+                      </TableCell>
 
                       <TableCell align="right">{format(new Date(row.createdAt), 'E, MMM d yyyy')}</TableCell>
                     </TableRow>

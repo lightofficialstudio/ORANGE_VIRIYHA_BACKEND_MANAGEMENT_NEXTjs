@@ -35,6 +35,12 @@ export type UserProfile = {
   tier?: string;
   Progress?: ProfileProgress;
   userInfo?: userInfo;
+  permission?: Permission[];
+};
+
+export type Permission = {
+  id: number;
+  name: string;
 };
 
 export type userInfo = {

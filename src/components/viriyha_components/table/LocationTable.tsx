@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
@@ -28,11 +29,11 @@ import { visuallyHidden } from '@mui/utils';
 import { useDispatch, useSelector } from 'store';
 import { getLocationTransaction } from 'store/slices/viriyha/location';
 // assets
-import FilterListIcon from '@mui/icons-material/FilterListTwoTone';
 
 import SearchIcon from '@mui/icons-material/Search';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import { LocationTransactionType } from 'types/viriyha_type/location';
+import IosShareIcon from '@mui/icons-material/IosShare';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -68,7 +69,7 @@ const headCells: HeadCell[] = [
     align: 'center'
   },
   {
-    id: 'myCodeNameEiei',
+    id: 'code_used',
     numeric: false,
     label: 'โค้ดที่ถูกใช้งาน',
     align: 'left'
@@ -260,6 +261,30 @@ const LocationTable = () => {
     const formattedId = id.toString().padStart(4, '0');
     return `L-${formattedId}`;
   };
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet([], {
+      header: ['ลำดับ', 'โค้ด', 'โค้ดที่ถูกใช้งาน', 'ละติจูด', 'ลองจิจูด', 'สถานที่กดรับสิทธิ์', 'รับสิทธิ์เมื่อวันที่'],
+      skipHeader: false
+    });
+
+    XLSX.utils.sheet_add_json(
+      ws,
+      rows.map((item, index) => ({
+        ลำดับ: index + 1,
+        โค้ด: formatId(item.id),
+        โค้ดที่ถูกใช้งาน: item.code.code,
+        ละติจูด: item.latitude,
+        ลองจิจูด: item.longitude,
+        สถานที่กดรับสิทธิ์: '-',
+        รับสิทธิ์เมื่อวันที่: format(new Date(item.usedAt), 'd MMM yyyy')
+      })),
+      { origin: -1, skipHeader: true }
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'LocationTransactionData');
+    const fileName = `LocationTransactionData_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
   return (
     <>
       <CardContent>
@@ -274,16 +299,15 @@ const LocationTable = () => {
                 )
               }}
               onChange={handleSearch}
-              placeholder="ค้นหารายการ"
+              placeholder="ค้นหาสถานที่กดรับสิทธิ์"
               value={search}
               size="medium"
-              sx={{ display: 'none' }}
             />
           </Grid>
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
-            <Tooltip title="ตัวกรอง">
-              <IconButton size="large">
-                <FilterListIcon />
+            <Tooltip title="ส่งออกเอกสาร">
+              <IconButton size="large" onClick={exportToExcel}>
+                <IosShareIcon />
               </IconButton>
             </Tooltip>
           </Grid>

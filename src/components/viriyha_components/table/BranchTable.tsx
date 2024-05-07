@@ -392,31 +392,24 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
   };
 
   const exportToExcel = () => {
-    // Create a worksheet with no initial data but with specified headers
     const ws = XLSX.utils.json_to_sheet([], {
       header: ['ลำดับ', 'สาขา', 'ละติจูด', 'ลองติจูด'],
       skipHeader: false
     });
 
-    // Start adding data from the second row, keeping the first row for headers
     XLSX.utils.sheet_add_json(
       ws,
       rows.map((item, index) => ({
-        ลำดับ: index + 1, // Sequence number starting from 1
+        ลำดับ: index + 1,
         สาขา: item.name,
         ละติจูด: item.latitude,
         ลองติจูด: item.longitude
       })),
       { origin: -1, skipHeader: true }
-    ); // Origin -1 appends rows after the last nonempty row
-
+    );
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'BranchData');
-
-    // Create a name for the file with current date-time to avoid overwriting previous files
     const fileName = `BranchData_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
-
-    // Write the file and trigger download
     XLSX.writeFile(wb, fileName);
   };
 

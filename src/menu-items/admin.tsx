@@ -33,7 +33,8 @@ const admin: NavItemType = {
       type: 'item',
       url: '/admin/banners',
       icon: icons.IconPhoto,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'admin.banner'
     },
     {
       id: 'category_management',
