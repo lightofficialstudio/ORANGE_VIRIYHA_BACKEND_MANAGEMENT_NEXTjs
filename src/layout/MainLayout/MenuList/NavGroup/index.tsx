@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/router';
 
 // material-ui
@@ -32,6 +32,7 @@ import { dispatch, useSelector } from 'store';
 import { IconChevronDown, IconChevronRight, IconMinusVertical } from '@tabler/icons';
 import { NavItemType } from 'types';
 import { activeID } from 'store/slices/menu';
+import JWTContext from 'contexts/JWTContext';
 
 // mini-menu - wrapper
 const PopperStyled = styled(Popper)(({ theme }) => ({
@@ -70,6 +71,8 @@ interface NavGroupProps {
 
 const NavGroup = ({ item, lastItem, remItems, lastItemId }: NavGroupProps) => {
   const theme = useTheme();
+  const context = useContext(JWTContext);
+  const userPermissions = context?.user?.permission;
 
   const { pathname } = useRouter();
   const { drawerOpen, selectedID } = useSelector((state) => state.menu);
@@ -141,9 +144,9 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId }: NavGroupProps) => {
   const items = currentItem.children?.map((menu) => {
     switch (menu?.type) {
       case 'collapse':
-        return <NavCollapse key={menu.id} menu={menu} level={1} parentId={currentItem.id!} />;
+        return <NavCollapse key={menu.id} permission={userPermissions} menu={menu} level={1} parentId={currentItem.id!} />;
       case 'item':
-        return <NavItem key={menu.id} item={menu} level={1} parentId={currentItem.id!} />;
+        return <NavItem key={menu.id} permission={userPermissions} item={menu} level={1} parentId={currentItem.id!} />;
       default:
         return (
           <Typography key={menu?.id} variant="h6" color="error" align="center">

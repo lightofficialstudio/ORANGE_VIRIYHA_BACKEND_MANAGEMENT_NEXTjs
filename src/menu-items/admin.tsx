@@ -34,7 +34,7 @@ const admin: NavItemType = {
       url: '/admin/banners',
       icon: icons.IconPhoto,
       breadcrumbs: false,
-      requiredPermission: 'admin.banner'
+      requiredPermission: 'MenuAdminBanner'
     },
     {
       id: 'category_management',
@@ -43,7 +43,8 @@ const admin: NavItemType = {
       type: 'item',
       url: '/admin/category',
       icon: icons.IconCategory,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuAdminCategory'
     },
     {
       id: 'shop_management',
@@ -52,7 +53,8 @@ const admin: NavItemType = {
       type: 'item',
       url: '/admin/shop',
       icon: icons.IconBuildingStore,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuAdminShop'
     },
     {
       id: 'segment_management',
@@ -61,7 +63,8 @@ const admin: NavItemType = {
       type: 'item',
       url: '/admin/segment',
       icon: icons.IconAdjustments,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuAdminSegment'
     },
     {
       id: 'criteria_management',
@@ -70,34 +73,17 @@ const admin: NavItemType = {
       type: 'item',
       url: '/admin/criteria',
       icon: icons.IconVectorTriangle,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuAdminCriteria'
     },
     {
       id: 'user_management',
       title: <FormattedMessage id="User Management" />,
       caption: <FormattedMessage id="จัดการผู้ใช้งาน" />,
       icon: icons.IconUser,
-      type: 'collapse',
-      children: [
-        {
-          id: 'user_frontend',
-          title: <FormattedMessage id="Frontend Users" />,
-          type: 'item',
-          url: '/admin/users/frontend',
-          external: true,
-          target: true,
-          breadcrumbs: false
-        },
-        {
-          id: 'user_frontend',
-          title: <FormattedMessage id="Backend Users" />,
-          type: 'item',
-          url: '/admin/users/backend',
-          external: true,
-          target: true,
-          breadcrumbs: false
-        }
-      ]
+      type: 'item',
+      url: '/admin/users/backend',
+      requiredPermission: 'MenuAdminBackendUsers'
     }
   ]
 };

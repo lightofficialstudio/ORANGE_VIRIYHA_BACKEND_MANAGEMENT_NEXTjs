@@ -17,9 +17,9 @@ const logs: NavItemType = {
   id: 'config',
   title: <FormattedMessage id="Config" />,
   caption: <FormattedMessage id="ปรับแต่งระบบ" />,
-
   icon: icons.IconMessage,
   type: 'group',
+
   children: [
     {
       id: 'config_error',
@@ -28,7 +28,8 @@ const logs: NavItemType = {
       type: 'item',
       url: '/config/error',
       icon: icons.IconMessage,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuConfigErrorMessage'
     }
   ]
 };

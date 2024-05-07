@@ -17,9 +17,9 @@ const logs: NavItemType = {
   id: 'logs',
   title: <FormattedMessage id="Logs" />,
   caption: <FormattedMessage id="ข้อความระบบ" />,
-
   icon: icons.IconBrandTabler,
   type: 'group',
+  requiredPermission: 'MenuAdminBanner',
   children: [
     {
       id: 'errpr_logs',
@@ -28,7 +28,8 @@ const logs: NavItemType = {
       type: 'item',
       url: '/logs/error',
       icon: icons.IconBrandTabler,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuLogsErrorLogs'
     }
   ]
 };

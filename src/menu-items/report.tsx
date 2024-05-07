@@ -21,7 +21,7 @@ const report: NavItemType = {
   id: 'report',
   title: <FormattedMessage id="Transaction" />,
   caption: <FormattedMessage id="ประวัติทำรายการ" />,
-
+  requiredPermission: 'test',
   icon: icons.IconPhoto,
   type: 'group',
   children: [
@@ -29,11 +29,11 @@ const report: NavItemType = {
       id: 'report_attempt',
       title: <FormattedMessage id="Attempt" />,
       caption: <FormattedMessage id="ประวัติการพยายามเข้ารับสิทธิ์" />,
-
       type: 'item',
       url: '/report/attempt',
       icon: icons.IconFocus2,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuReportAttempt'
     },
     {
       id: 'report_location',
@@ -42,7 +42,8 @@ const report: NavItemType = {
       type: 'item',
       url: '/report/location',
       icon: icons.IconLocation,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuReportLocation'
     }
   ]
 };

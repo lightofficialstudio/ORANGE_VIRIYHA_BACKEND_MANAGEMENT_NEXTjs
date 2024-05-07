@@ -93,9 +93,10 @@ interface NavCollapseProps {
   menu: NavItemType;
   level: number;
   parentId: string;
+  permission?: any;
 }
 
-const NavCollapse = ({ menu, level, parentId }: NavCollapseProps) => {
+const NavCollapse = ({ menu, level, parentId, permission }: NavCollapseProps) => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -183,6 +184,7 @@ const NavCollapse = ({ menu, level, parentId }: NavCollapseProps) => {
   const isSelected = selected === menu.id;
 
   const Icon = menu.icon!;
+  const requiredPermission = menu.requiredPermission;
   const menuIcon = menu.icon ? (
     <Icon
       strokeWidth={1.5}
@@ -217,6 +219,7 @@ const NavCollapse = ({ menu, level, parentId }: NavCollapseProps) => {
         <>
           <ListItemButton
             sx={{
+              display: permission?.some((p: any) => p.name === requiredPermission) ? '' : 'none',
               zIndex: 1201,
               borderRadius: `${borderRadius}px`,
               mb: 0.5,

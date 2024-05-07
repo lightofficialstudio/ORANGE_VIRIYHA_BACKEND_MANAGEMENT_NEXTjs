@@ -18,9 +18,9 @@ const campaign: NavItemType = {
   id: 'campaign',
   title: <FormattedMessage id="Campaign" />,
   caption: <FormattedMessage id="สิทธิพิเศษ" />,
-
   icon: icons.IconSquarePlus,
   type: 'group',
+  requiredPermission: 'MenuAdminBanner',
   children: [
     {
       id: 'normal_campaign',
@@ -29,17 +29,18 @@ const campaign: NavItemType = {
       url: '/campaign/normal',
       caption: <FormattedMessage id="สิทธิพิเศษ (ธรรมดา)" />,
       icon: icons.IconBrandCampaignmonitor,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuCampaignNormal'
     },
     {
       id: 'special_campaign',
       title: <FormattedMessage id="Special Campaign" />,
       caption: <FormattedMessage id="สิทธิพิเศษ (พิเศษ)" />,
-
       type: 'item',
       url: '/campaign/special',
       icon: icons.IconBrandCampaignmonitor,
-      breadcrumbs: false
+      breadcrumbs: false,
+      requiredPermission: 'MenuCampaignSpecial'
     }
   ]
 };

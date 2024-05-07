@@ -29,20 +29,23 @@ const dashboard: NavItemType = {
       caption: <FormattedMessage id="ระบบรายงานเว็บไซต์" />,
       type: 'collapse',
       icon: icons.IconGraph,
+      requiredPermission: 'MenuWebAnalytics',
       children: [
         {
           id: 'web_analytics_dashboard',
           title: <FormattedMessage id="Dashboard" />,
           type: 'item',
           url: '/dashboard/web-analytics',
-          breadcrumbs: false
+          breadcrumbs: false,
+          requiredPermission: 'MenuWebAnalytics'
         },
         {
           id: 'report_website',
           title: <FormattedMessage id="Report" />,
           type: 'item',
           url: '/report/website',
-          breadcrumbs: false
+          breadcrumbs: false,
+          requiredPermission: 'MenuWebAnalytics'
         }
       ]
     },
@@ -52,20 +55,24 @@ const dashboard: NavItemType = {
       caption: <FormattedMessage id="ระบบรายงานการรับสิทธิ์" />,
       type: 'collapse',
       icon: icons.IconGraph,
+      requiredPermission: 'MenuDashboardRedeem',
+
       children: [
         {
           id: 'redeem_transaction_dasboard',
           title: <FormattedMessage id="Dashboard" />,
           type: 'item',
           url: '/dashboard/redeem-transaction',
-          breadcrumbs: false
+          breadcrumbs: false,
+          requiredPermission: 'MenuDashboardRedeem'
         },
         {
           id: 'report_redeem',
           title: <FormattedMessage id="Report" />,
           type: 'item',
           url: '/report/redeem',
-          breadcrumbs: false
+          breadcrumbs: false,
+          requiredPermission: 'MenuDashboardRedeem'
         }
       ]
     },
@@ -75,29 +82,19 @@ const dashboard: NavItemType = {
       caption: <FormattedMessage id="ระบบรายงานสิทธิพิเศษ" />,
       type: 'collapse',
       icon: icons.IconGraph,
+      requiredPermission: 'MenuDashboardCampaign',
       children: [
         {
           id: 'campaign_analytics_dashboard',
           title: <FormattedMessage id="Dashboard" />,
           type: 'item',
           url: '/dashboard/campaign-analytics',
-          breadcrumbs: false
+          breadcrumbs: false,
+          requiredPermission: 'MenuDashboardCampaign'
         }
       ]
     }
   ]
 };
 
-// สมมติฐาน: รายการสิทธิ์ของผู้ใช้
-const userPermissions = ['Campaign_Analytics', 'Redeem_Transaction', 'Web_Anylytics'];
-
-// ฟังก์ชันสำหรับตรวจสอบว่าผู้ใช้มีสิทธิ์ตามที่ต้องการหรือไม่
-const hasPermission = (itemId: any) => userPermissions.includes(itemId);
-
-// กรองรายการเมนูตามสิทธิ์ของผู้ใช้
-const filteredChildren = dashboard.children?.filter((child) => hasPermission(child.id));
-
-// สร้าง object ใหม่สำหรับ dashboard ที่ได้กรองแล้ว
-const filteredDashboard = { ...dashboard, children: filteredChildren };
-
-export default filteredDashboard;
+export default dashboard;

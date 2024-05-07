@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Avatar, ButtonBase, Chip, ListItemButton, ListItemIcon, ListItemText, Typography, useMediaQuery } from '@mui/material';
@@ -23,9 +22,13 @@ interface NavItemProps {
   level: number;
   parentId?: string;
   isParents?: boolean;
+  permission?: any;
 }
 
-const NavItem = ({ item, level, parentId, isParents = false }: NavItemProps) => {
+const NavItem = ({ item, level, parentId, permission, isParents = false }: NavItemProps) => {
+  //permission
+  console.log('permission', permission);
+
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down('lg'));
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
@@ -101,6 +104,7 @@ const NavItem = ({ item, level, parentId, isParents = false }: NavItemProps) => 
             ...(drawerOpen &&
               level === 1 &&
               theme.palette.mode !== 'dark' && {
+                display: permission?.some((p: any) => p.name === item.requiredPermission) ? '' : 'none',
                 '&:hover': {
                   background: theme.palette.secondary.light
                 },
