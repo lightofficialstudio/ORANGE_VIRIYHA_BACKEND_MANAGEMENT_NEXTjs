@@ -1,212 +1,104 @@
-import React, { useState } from 'react';
-
-// material-ui
-import { useTheme } from '@mui/material/styles';
-
-// third-party
-import { Props as ChartProps } from 'react-apexcharts';
+import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-// project import
-import { Autocomplete, Grid, TextField } from '@mui/material';
+import { Grid, TextField, Autocomplete } from '@mui/material';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-// project import
-import useConfig from 'hooks/useConfig';
+const DashboardColumnGraph = ({ data }: any) => {
+  const [comparisonType, setComparisonType] = useState<string>('Campaign');
+  const [selectedOptions, setSelectedOptions] = useState<any>([]);
+  const [options, setOptions] = useState<any>([]);
 
-// chart options
-const columnChartOptions = {
-  chart: {
-    type: 'bar',
-    height: 350
-  },
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      columnWidth: '55%',
-      endingShape: 'rounded'
-    }
-  },
-  dataLabels: {
-    enabled: false
-  },
-  stroke: {
-    show: true,
-    width: 2,
-    colors: ['transparent']
-  },
-  xaxis: {
-    categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct']
-  },
-  yaxis: {
-    title: {
-      text: '$ (thousands)'
-    }
-  },
-  fill: {
-    opacity: 1
-  },
-  tooltip: {
-    y: {
-      formatter(val: number) {
-        return ` ${val} ครั้ง`;
-      }
-    }
-  },
-  legend: {
-    show: true,
-    fontFamily: `'Roboto', sans-serif`,
-    position: 'bottom',
-    offsetX: 10,
-    offsetY: 10,
-    labels: {
-      useSeriesColors: false
-    },
-    markers: {
-      width: 16,
-      height: 16,
-      radius: 5
-    },
-    itemMargin: {
-      horizontal: 15,
-      vertical: 8
-    }
-  },
-  responsive: [
-    {
-      breakpoint: 600,
-      options: {
-        yaxis: {
-          show: false
-        }
-      }
-    }
-  ]
-};
-
-// ==============================|| COLUMN CHART ||============================== //
-
-const DashboardColumnGraph = () => {
-  const brand = ['Brand A', 'Brand B', 'Brand C', 'Brand D', 'Brand E', 'Brand F', 'Brand G', 'Brand H', 'Brand I'];
-  const campaign = [
-    'Campaign A',
-    'Campaign B',
-    'Campaign C',
-    'Campaign D',
-    'Campaign E',
-    'Campaign F',
-    'Campaign G',
-    'Campaign H',
-    'Campaign I'
+  // Mockup brand data
+  const mockBrands = [
+    { id: 'brandA', name: 'Brand A', transactions: 50 },
+    { id: 'brandB', name: 'Brand B', transactions: 75 },
+    { id: 'brandC', name: 'Brand C', transactions: 25 }
   ];
-  const [selectedOption, setSelectOption] = useState(1);
-  const [selectedArray, setSelectedArray] = useState<string[]>([]);
-  const [selectedOnlyArray, setSelectedOnlyArray] = useState<string[]>([]);
 
-  const optionData = [
-    { id: 2, name: 'สิทธิพิเศษ' },
-    { id: 1, name: 'แบรนด์' }
-  ];
-  const theme = useTheme();
-  const { navType } = useConfig();
+  useEffect(() => {
+    if (comparisonType === 'Campaign' && data) {
+      setOptions(data.map((item: any) => ({ id: item.CampaignId, name: item.CampaignName, transactions: item.Transaction_Count })));
+    } else if (comparisonType === 'Brand') {
+      setOptions(mockBrands);
+    }
+  }, [data, comparisonType]);
 
-  const { primary } = theme.palette.text;
-  const darkLight = theme.palette.dark.light;
-  const grey200 = theme.palette.grey[200];
-
-  const secondary = theme.palette.secondary.main;
-  const primaryMain = theme.palette.dark.main;
-  const successDark = theme.palette.success.dark;
-
-  const [options, setOptions] = useState<ChartProps>(columnChartOptions);
-  // Generate random series data
-  const generateRandomSeries = (selectedArray: string[]) => {
-    const filteredSeries = selectedArray.map((item) => ({
-      name: item,
-      data: Array.from({ length: 9 }, () => Math.floor(Math.random() * 100) + 1)
-    }));
-    return filteredSeries;
+  const chartOptions = {
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        endingShape: 'rounded'
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ['transparent']
+    },
+    xaxis: {
+      categories: selectedOptions.map((option: any) => option.name)
+    },
+    yaxis: {
+      title: {
+        text: 'Transactions'
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    tooltip: {
+      y: {
+        formatter: (val: any) => `${val} ครั้ง`
+      }
+    },
+    legend: {
+      show: true,
+      position: 'bottom' as 'bottom' // Explicitly casting the type to match the expected literal type
+    }
   };
 
-  const [series, setSeries] = useState(() => generateRandomSeries(brand)); // Default to brand
-
-  React.useEffect(() => {
-    setOptions((prevState) => ({
-      ...prevState,
-      colors: [secondary, primaryMain, successDark],
-      xaxis: {
-        labels: {
-          style: {
-            colors: [primary, primary, primary, primary, primary, primary, primary, primary, primary]
-          }
-        }
-      },
-      yaxis: {
-        labels: {
-          style: {
-            colors: [primary]
-          }
-        }
-      },
-      grid: {
-        borderColor: navType === 'dark' ? darkLight + 20 : grey200
-      },
-      tooltip: {
-        theme: navType === 'dark' ? 'dark' : 'light'
-      },
-      legend: {
-        labels: {
-          colors: 'grey.500'
-        }
-      }
-    }));
-  }, [navType, primary, darkLight, grey200, secondary, primaryMain, successDark]);
-
-  React.useEffect(() => {
-    if (selectedOption === 1) {
-      setSelectedArray(brand);
-      setSeries(generateRandomSeries(brand)); // Generate random series for brand
-    } else if (selectedOption === 2) {
-      setSelectedArray(campaign);
-      setSeries(generateRandomSeries(campaign)); // Generate random series for campaign
+  const series = [
+    {
+      name: 'Transactions',
+      data: selectedOptions.map((option: any) => option.transactions)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption]);
+  ];
 
-  React.useEffect(() => {
-    setSeries(generateRandomSeries(selectedArray));
-  }, [selectedArray]);
-
-  React.useEffect(() => {
-    setSeries(generateRandomSeries(selectedOnlyArray));
-  }, [selectedOnlyArray]);
+  const handleComparisonChange = (event: any, newValue: any) => {
+    setComparisonType(newValue);
+    setSelectedOptions([]); // Clear the selected options when the type changes
+  };
 
   return (
     <div id="chart">
-      <Grid container spacing={4}>
-        <Grid item xs={6} md={6} sx={{ marginBottom: '15px' }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
           <Autocomplete
-            options={optionData.map((option) => option.name)}
-            onChange={(e, value) => {
-              const selectedOptionId = optionData.find((option) => option.name === value)?.id ?? null;
-              setSelectOption(selectedOptionId as number);
-            }}
-            renderInput={(params) => <TextField {...params} label="เปรียบเทียบ Brand" />}
+            options={['Campaign', 'Brand']}
+            value={comparisonType}
+            onChange={handleComparisonChange}
+            renderInput={(params) => <TextField {...params} label="เปรียบเทียบโดย" />}
           />
         </Grid>
-        <Grid item xs={6} md={6} sx={{ marginBottom: '15px' }}>
+        <Grid item xs={12} md={6}>
           <Autocomplete
             multiple
-            options={selectedArray}
-            onChange={(e, value) => {
-              setSelectedOnlyArray(value);
+            options={options}
+            getOptionLabel={(option) => option.name}
+            value={selectedOptions}
+            onChange={(event, newValue) => {
+              setSelectedOptions(newValue);
             }}
             renderInput={(params) => <TextField {...params} label="ตัวเลือก" />}
           />
         </Grid>
       </Grid>
-
-      <ReactApexChart options={options} series={series} type="bar" height={350} />
+      <ReactApexChart options={chartOptions} type="bar" series={series} height={350} />
     </div>
   );
 };

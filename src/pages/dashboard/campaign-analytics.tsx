@@ -53,16 +53,16 @@ const Dashboard = () => {
             <Grid item xs={12} md={4}>
               <Grid container spacing={gridSpacing}>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardCard3 isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์วันนี้'} paramClick={'23,423'} />
+                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์วันนี้'} param={'302,532'} />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์อาทิตย์นี้'} paramClick={'302,532'} />
+                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์อาทิตย์นี้'} param={'302,532'} />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์เดือนนี้'} paramClick={'582,532'} />
+                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์เดือนนี้'} param={'582,532'} />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์ทั้งหมด'} paramClick={'802,532'} />
+                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์ทั้งหมด'} param={'802,532'} />
                 </Grid>
               </Grid>
             </Grid>
@@ -80,7 +80,7 @@ const Dashboard = () => {
                   <DashboardCard3 isLoading={isLoading} titleMessage={'โค้ดที่ใช้งานแล้ว วันนี้'} paramClick={'23,423'} />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardLightCard isLoading={isLoading} titleMessage={'โค้ดที่ยังไม่ถูกใช้งาน วันนี้'} paramClick={'802,532'} />
+                  <DashboardLightCard isLoading={isLoading} titleMessage={'โค้ดที่ยังไม่ถูกใช้งาน วันนี้'} param={'802,532'} />
                 </Grid>
               </Grid>
             </Grid>

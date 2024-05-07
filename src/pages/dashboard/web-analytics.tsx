@@ -1,30 +1,44 @@
-import { useEffect, useState, ReactElement, useContext } from 'react';
-
-// material-ui
+import React, { useEffect, useState, ReactElement, useContext } from 'react';
 import { Grid } from '@mui/material';
 
-// project imports
+// Import your components and context
 import Layout from 'layout';
 import Page from 'components/ui-component/Page';
 import { gridSpacing } from 'store/constant';
 import DashboardCard from 'components/viriyha_components/dashboard/DashboardCard';
-import DashboardCard2 from 'components/viriyha_components/dashboard/DashboardCard2';
-import DashboardCard3 from 'components/viriyha_components/dashboard/DashboardCard3';
-import DashboardGraph from 'components/viriyha_components/dashboard/DashboardGraph';
 import DashboardLightCard from 'components/viriyha_components/dashboard/DashboardLightCard';
+import DashboardGraph from 'components/viriyha_components/dashboard/DashboardGraph';
 import JWTContext from 'contexts/JWTContext';
-
-// ==============================|| DEFAULT DASHBOARD ||============================== //
+import axiosServices from 'utils/axios';
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState({
+    viewsToday: 0,
+    viewsWeek: 0,
+    viewsMonth: 0,
+    viewsTotal: 0,
+    viewMonthSummary: []
+  });
+
   const context = useContext(JWTContext);
   const MadeById = context?.user?.userInfo?.id;
+
   if (!MadeById) {
     window.location.reload();
   }
+
   useEffect(() => {
-    setLoading(false);
+    const fetchDashboard = async () => {
+      try {
+        const response = await axiosServices.get('/api/dashboard/website');
+        setData(response.data);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+      setLoading(false);
+    };
+    fetchDashboard();
   }, []);
 
   return (
@@ -33,41 +47,50 @@ const Dashboard = () => {
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item lg={6} md={6} sm={6} xs={12}>
-              <DashboardCard isLoading={isLoading} param={'23,423'} titleMessage={'การเข้าชมเว็บไซต์ทั้งหมด'} />
+              <DashboardCard isLoading={isLoading} param={data.viewsTotal.toLocaleString()} titleMessage={'การเข้าชมเว็บไซต์ทั้งหมด'} />
             </Grid>
             <Grid item lg={6} md={6} sm={6} xs={12}>
-              <DashboardCard2 isLoading={isLoading} />
+              <DashboardCard
+                isLoading={isLoading}
+                param={data.viewsMonth.toLocaleString() ? data.viewsMonth.toLocaleString() : '0'}
+                titleMessage={'การเข้าชมเว็บไซต์เดือนนี้'}
+              />
             </Grid>
-            {/* <Grid item lg={4} md={12} sm={12} xs={12}>
-              <Grid container spacing={gridSpacing}>
-                <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardCard3 isLoading={isLoading} titleMessage={'การเยี่ยมชมเว็บไซต์วันนี้'} paramClick={'23,142'} />
-                </Grid>
-                <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardCard3 isLoading={isLoading} titleMessage={'การเยี่ยมชมเว็บไซต์ทั้งหมด'} paramClick={'1,273,156'} />
-                </Grid>
-              </Grid>
-            </Grid> */}
           </Grid>
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12} md={8}>
-              <DashboardGraph titleMessage={'กราฟการเข้าใช้งานเว็บไซต์'} />
+              <DashboardGraph
+                titleMessage={'กราฟการเข้าใช้งานเว็บไซต์'}
+                month={data.viewMonthSummary} // Pass the array directly
+              />
             </Grid>
             <Grid item xs={12} md={4}>
               <Grid container spacing={gridSpacing}>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardCard3 isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์วันนี้'} paramClick={'23,423'} />
+                  <DashboardCard isLoading={isLoading} param={data.viewsToday.toLocaleString()} titleMessage={'การเข้าชมเว็บไซต์วันนี้'} />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์อาทิตย์นี้'} paramClick={'302,532'} />
+                  <DashboardLightCard
+                    isLoading={isLoading}
+                    param={data.viewsWeek.toLocaleString()}
+                    titleMessage={'การเข้าชมเว็บไซต์สัปดาห์นี้'}
+                  />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์เดือนนี้'} paramClick={'582,532'} />
+                  <DashboardLightCard
+                    isLoading={isLoading}
+                    param={data.viewsMonth.toLocaleString() ? data.viewsMonth.toLocaleString() : '0'}
+                    titleMessage={'การเข้าชมเว็บไซต์เดือนนี้'}
+                  />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <DashboardLightCard isLoading={isLoading} titleMessage={'การเข้าชมเว็บไซต์ทั้งหมด'} paramClick={'802,532'} />
+                  <DashboardLightCard
+                    isLoading={isLoading}
+                    param={data.viewsTotal.toLocaleString()}
+                    titleMessage={'การเข้าชมเว็บไซต์ทั้งหมด'}
+                  />
                 </Grid>
               </Grid>
             </Grid>

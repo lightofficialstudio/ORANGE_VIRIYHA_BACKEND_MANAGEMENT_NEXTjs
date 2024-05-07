@@ -97,7 +97,8 @@ const DashboardCard = ({ isLoading, titleMessage, param }: DashboardCardProps) =
                         ...theme.typography.commonAvatar,
                         ...theme.typography.largeAvatar,
                         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.secondary[800],
-                        mt: 1
+                        mt: 1,
+                        display: 'none'
                       }}
                     >
                       <Image src={EarningIcon} height={30} width={30} alt="Notification" />
@@ -111,7 +112,8 @@ const DashboardCard = ({ isLoading, titleMessage, param }: DashboardCardProps) =
                         ...theme.typography.mediumAvatar,
                         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : theme.palette.secondary.dark,
                         color: theme.palette.secondary[200],
-                        zIndex: 1
+                        zIndex: 1,
+                        display: 'none'
                       }}
                       aria-controls="menu-earning-card"
                       aria-haspopup="true"
@@ -154,7 +156,7 @@ const DashboardCard = ({ isLoading, titleMessage, param }: DashboardCardProps) =
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
-                    <Typography sx={{ fontSize: '33px', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>12,734 ครั้ง</Typography>
+                    <Typography sx={{ fontSize: '33px', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{param} ครั้ง</Typography>
                   </Grid>
                   <Grid item>
                     <Avatar
@@ -162,7 +164,8 @@ const DashboardCard = ({ isLoading, titleMessage, param }: DashboardCardProps) =
                         cursor: 'pointer',
                         ...theme.typography.smallAvatar,
                         backgroundColor: theme.palette.secondary[200],
-                        color: theme.palette.secondary.dark
+                        color: theme.palette.secondary.dark,
+                        display: 'none'
                       }}
                     >
                       <ArrowUpwardIcon fontSize="inherit" sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }} />

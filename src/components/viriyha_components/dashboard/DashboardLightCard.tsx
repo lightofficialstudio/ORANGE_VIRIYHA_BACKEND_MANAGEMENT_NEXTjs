@@ -40,10 +40,10 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 interface DashboardLightCardProps {
   isLoading: boolean;
   titleMessage: string;
-  paramClick: string;
+  param: string;
 }
 
-const DashboardLightCard = ({ isLoading, titleMessage, paramClick }: DashboardLightCardProps) => {
+const DashboardLightCard = ({ isLoading, titleMessage, param }: DashboardLightCardProps) => {
   const theme = useTheme();
 
   return (
@@ -74,7 +74,7 @@ const DashboardLightCard = ({ isLoading, titleMessage, paramClick }: DashboardLi
                     mt: 0.45,
                     mb: 0.45
                   }}
-                  primary={<Typography variant="h4">{paramClick} ครั้ง</Typography>}
+                  primary={<Typography variant="h4">{param} ครั้ง</Typography>}
                   secondary={
                     <Typography
                       variant="subtitle2"
