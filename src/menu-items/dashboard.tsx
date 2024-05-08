@@ -77,22 +77,14 @@ const dashboard: NavItemType = {
       ]
     },
     {
-      id: 'Campaign_Analytics',
-      title: <FormattedMessage id="Campaign Analytics" />,
-      caption: <FormattedMessage id="ระบบรายงานสิทธิพิเศษ" />,
-      type: 'collapse',
+      id: 'Location_Analytics',
+      title: <FormattedMessage id="Location Analytics" />,
+      caption: <FormattedMessage id="ระบบรายงานสถานที่รับสิทธิ์" />,
+      type: 'item',
       icon: icons.IconGraph,
-      requiredPermission: 'MenuDashboardCampaign',
-      children: [
-        {
-          id: 'campaign_analytics_dashboard',
-          title: <FormattedMessage id="Dashboard" />,
-          type: 'item',
-          url: '/dashboard/campaign-analytics',
-          breadcrumbs: false,
-          requiredPermission: 'MenuDashboardCampaign'
-        }
-      ]
+      breadcrumbs: false,
+      url: '/dashboard/location-analytics',
+      requiredPermission: 'MenuDashboardCampaign'
     }
   ]
 };

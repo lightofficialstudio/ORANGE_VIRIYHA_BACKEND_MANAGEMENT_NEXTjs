@@ -471,7 +471,7 @@ const NormalCampaignTable = () => {
                       </TableCell>
                       <TableCell align="left">{formatId(row.id)}</TableCell>
                       <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{String(row.Campaign_Shop[0].Shop.name)}</TableCell>
+                      <TableCell align="left">{String(row.Campaign_Shop[0]?.Shop?.name)}</TableCell>
                       <TableCell align="left">{format(new Date(row.startDate), 'dd/MM/yyyy')}</TableCell>
                       <TableCell align="left">{format(new Date(row.endDate), 'dd/MM/yyyy')}</TableCell>
                       <TableCell align="center">
