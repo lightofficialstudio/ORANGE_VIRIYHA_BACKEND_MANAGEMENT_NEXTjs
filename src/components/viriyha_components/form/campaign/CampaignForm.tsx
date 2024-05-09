@@ -114,7 +114,8 @@ const CodeOption = [
 
 const WebsiteTrafficPatternList = [
   { label: 'อัตโนมัติ', value: 'Auto' },
-  { label: 'ปรับด้วยตัวเอง', value: 'Manual' }
+  { label: 'ปรับด้วยตัวเอง', value: 'Manual' },
+  { label: 'ปิดการแสดงผล', value: 'Close' }
 ];
 
 // validation schema
@@ -154,6 +155,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [ArrayCriteria, setArrayCriteria] = useState<CriteriaType[]>([]);
   const [ArraySegment, setArraySegment] = useState<SegmentType[]>([]);
   const [ArrayPhoneNumber, setArrayPhoneNumber] = useState<any[]>([]);
+  const [ArrayImageName, setArrayImageName] = useState<any[]>([]);
 
   // variable
   const [ShopId, setShopId] = useState<number>();
@@ -180,6 +182,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   if (!createdById) {
     window.location.reload();
   }
+  // images
   // import varaible
   const [codeExcelFile, setCodeExcelFile] = React.useState<File | null>(null);
   const [codeExcelData, setCodeExcelData] = React.useState<any[]>([]);
@@ -268,6 +271,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     formData.append('condition', Condition);
     formData.append('status', 'ACTIVE');
     formData.append('createdById', String(createdById));
+    formData.append('view_format', WebsiteTrafficPattern);
+    formData.append('view', String(WebsiteTrafficPatternValue));
 
     quotaRange.forEach((item) => {
       formData.append('quotaRange', JSON.stringify(item));
@@ -289,6 +294,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     if (primaryId) {
       formData.append('updatedById', String(createdById));
       formData.append('primaryShopId', String(primaryShopId));
+      const localArrayImageName = ArrayImageName.map((item) => item.image);
+      formData.append('Campaign_Image', localArrayImageName.join(','));
     }
 
     if (type === 'special' || type === 'special_clone') {
@@ -347,7 +354,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = `/campaign/${campaign_type}/`;
+        // window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -444,10 +451,13 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     const BranchList = async (shopId: number) => {
       const response = await axiosServices.get(`/api/shop/${shopId}/branch`);
       try {
-        const branchArray: BranchType[] = response.data.map((item: BranchType) => ({
-          id: item.id,
-          name: item.name
-        }));
+        const branchArray = [
+          { id: 0, name: 'ทั้งหมด' },
+          ...response.data.map((item: BranchType) => ({
+            id: item.id,
+            name: item.name
+          }))
+        ];
         setArrayBranchList(branchArray);
         setBranchId(branchArray.map((item: any) => item.id));
       } catch (error) {
@@ -507,6 +517,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         setCondition(data.condition);
         setCodeType(data.codeType === 'MANUAL' ? 2 : 1);
         setWebsiteTrafficPatternValue(data.view);
+
         if (data.Campaign_Code.length > 0) {
           data.Campaign_Code.forEach((item: any) => {
             setCodeExcelData([
@@ -530,10 +541,23 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
           });
         }
 
-        data.Campaign_Image.forEach((item: any) => {
-          const newImageSrcs: ImageType[] = data.Campaign_Image.map((item: any) => ({ src: imgUrl + item.image }));
-          setImages(newImageSrcs);
-        });
+        // สร้าง array สำหรับเก็บข้อมูล image sources
+        const newImageSrcs = data.Campaign_Image.map((item: any) => ({
+          src: imgUrl + item.image
+        }));
+
+        // อัพเดท state สำหรับ images
+        setImages(newImageSrcs);
+
+        // สร้าง array สำหรับเก็บชื่อรูปและ id
+        const newArrayImageName = data.Campaign_Image.map((item: any) => ({
+          id: item.id,
+          image: item.image
+        }));
+
+        // อัพเดท state สำหรับ array image names
+        setArrayImageName(newArrayImageName);
+
         await CampaignDateList(data.Campaign_Date);
       }
     };
@@ -845,15 +869,16 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   };
 
   const handleAutoGenerateCode = () => {
-    const codeList = [];
-    for (let i = 0; i < 1; i++) {
-      codeList.push({
-        id: i + 1,
-        code: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-      });
+    // ตรวจสอบก่อนว่า codeExcelData มีข้อมูลหรือยัง
+    if (codeExcelData.length === 0) {
+      const codeList = [
+        {
+          id: 1,
+          code: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+        }
+      ];
+      setCodeExcelData(codeList); // บันทึก array ใหม่ลงใน state
     }
-    console.log(codeList);
-    setCodeExcelData(codeList);
   };
 
   const handleDeleteCode = (id: number) => {
@@ -971,7 +996,6 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                       value={BranchCondition}
                       onChange={(event: any) => {
                         setBranchCondition(event.target.value);
-                        console.log(event.target.value);
                       }}
                       name="row-radio-buttons-group"
                     >
@@ -1216,7 +1240,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                   endAdornment={<InputAdornment position="end">ครั้ง</InputAdornment>}
                   placeholder="จำนวนการรับชม"
                   value={WebsiteTrafficPatternValue}
-                  disabled={WebsiteTrafficPattern === 'Auto'}
+                  disabled={WebsiteTrafficPattern === 'Auto' || WebsiteTrafficPattern === 'Close'}
                   onChange={(event: any) => {
                     setWebsiteTrafficPatternValue(event.target.value);
                   }}
