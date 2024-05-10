@@ -69,14 +69,20 @@ const DashboardColumnGraph = ({ data }: any) => {
     const formData = new FormData();
     formData.append('startDate', startDate);
     formData.append('endDate', endDate);
-    formData.append('compareType', comparisonType);
-    formData.append('compareData', JSON.stringify(compareData));
+    // formData.append('compareType', comparisonType);
+    // formData.append('compareData', JSON.stringify(compareData));
     const response = await axiosServices.post('/api/dashboard/redeem/search', formData, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
-    setCompareData(response.data);
+    setCompareData(
+      response.data.Campaign_Count.map((option: any) => ({
+        CampaignId: option.CampaignId,
+        CampaignName: option.CampaignName,
+        Transaction_Count: option.Transaction_Count
+      }))
+    );
   };
 
   const chartOptions = {

@@ -42,6 +42,7 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 import axiosServices from 'utils/axios';
 import ErrorDialog from '../modal/status/ErrorDialog';
 import Chip from 'ui-component/extended/Chip';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -228,6 +229,7 @@ const RedeemTransactionTable = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<CampaignType[]>([]);
+  const [transactionLength, setTransactionLength] = React.useState<number>(0);
   const { campaign } = useSelector((state) => state.campaign);
   // variable
   const [campaignOption, setCampaignOption] = React.useState<CampaignType[]>([]);
@@ -267,6 +269,16 @@ const RedeemTransactionTable = () => {
     };
     fetchData();
   }, []);
+  React.useEffect(() => {
+    let transactionCount = 0;
+    rows.forEach((row) => {
+      row.Campaign_Code.forEach((campaign) => {
+        transactionCount += campaign.Campaign_Transaction.length;
+      });
+    });
+
+    setTransactionLength(transactionCount); // Update state with total count
+  }, [rows]);
 
   const handleRequestSort = (event: React.SyntheticEvent<Element, Event>, property: string) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -319,7 +331,7 @@ const RedeemTransactionTable = () => {
   };
 
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - transactionLength) : 0;
 
   // function
   const formatId = (id: number): string => {
@@ -443,7 +455,7 @@ const RedeemTransactionTable = () => {
             </Grid>
             <Grid item xs={6} sx={{ textAlign: 'right', alignItems: 'center' }}></Grid>
           </Grid>
-          <Chip label={`ประวัติการใช้งานสิทธิ์ทั้งหมด : ${rows.length} รายการ`} color="primary" />
+          <Chip label={`ประวัติการใช้งานสิทธิ์ทั้งหมด : ${transactionLength} รายการ`} color="primary" />
 
           <Grid item xs={12} sm={8} container spacing={2}>
             <Grid item xs={6}>
@@ -517,7 +529,7 @@ const RedeemTransactionTable = () => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={transactionLength}
             theme={theme}
             selected={selected}
           />
@@ -533,6 +545,7 @@ const RedeemTransactionTable = () => {
                     campaign.Campaign_Transaction.map((transaction, transactionIndex) => {
                       const isItemSelected = isSelected(transaction.id);
 
+                      // Logic and JSX for TableRow
                       return (
                         <TableRow
                           hover
@@ -566,7 +579,7 @@ const RedeemTransactionTable = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={transactionLength}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

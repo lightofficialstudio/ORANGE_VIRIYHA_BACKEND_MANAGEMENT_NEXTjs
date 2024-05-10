@@ -262,6 +262,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     formData.append('startDate', startDate ? startDate.toString() : '');
     formData.append('endDate', endDate ? endDate.toString() : '');
     formData.append('quantity', String(Quantity));
+    formData.append('used_quantity', String(Quantity));
     formData.append('quantity_category', String(CategoryQuantity));
     formData.append('quota_quantity_limit', String(QuotaLimit));
     formData.append('quota_limit_by', String(CategoryQuotaLimit));

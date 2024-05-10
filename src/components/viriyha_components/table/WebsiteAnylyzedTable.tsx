@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
+  Autocomplete,
   Box,
   CardContent,
   Grid,
@@ -38,7 +39,14 @@ import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, H
 // icon
 import SearchIcon from '@mui/icons-material/Search';
 import IosShareIcon from '@mui/icons-material/IosShare';
-
+import InputLabel from 'ui-component/extended/Form/InputLabel';
+const optionRank = [
+  { id: 'All', name: 'ทั้งหมด' },
+  { id: 'Top_View', name: '10 อันดับยอดวิวรายครั้งสูงสุด' },
+  { id: 'Bottom_View', name: '10 อันดับยอดวิวรายครั้งต่ำสุด' },
+  { id: 'Top_Unique_View', name: '10 อันดับยอดวิวรายคนสูงสุด' },
+  { id: 'Bottom_Unique_View', name: '10 อันดับยอดวิวรายคนต่ำสุด' }
+];
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
   if (b[orderBy] < a[orderBy]) {
@@ -70,6 +78,12 @@ const headCells: HeadCell[] = [
     id: 'id',
     numeric: true,
     label: 'โค้ด',
+    align: 'left'
+  },
+  {
+    id: 'brand',
+    numeric: false,
+    label: 'แบรนด์',
     align: 'left'
   },
   {
@@ -200,6 +214,8 @@ const WebsiteAnalyzedTable = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<CampaignType[]>([]);
+  const [rank, setRank] = React.useState<string>('All');
+
   const { campaign } = useSelector((state) => state.campaign);
 
   React.useEffect(() => {
@@ -208,6 +224,9 @@ const WebsiteAnalyzedTable = () => {
   React.useEffect(() => {
     setRows(campaign);
   }, [campaign]);
+  React.useEffect(() => {
+    handleSettingRank();
+  }, [rank]);
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
     setSearch(newString || '');
@@ -233,6 +252,20 @@ const WebsiteAnalyzedTable = () => {
       setRows(newRows);
     } else {
       setRows(campaign);
+    }
+  };
+
+  const handleSettingRank = () => {
+    if (rank === 'All') {
+      setRows(campaign);
+    } else if (rank === 'Top_View') {
+      setRows([...rows].sort((a, b) => b.view - a.view));
+    } else if (rank === 'Bottom_View') {
+      setRows([...rows].sort((a, b) => a.view - b.view));
+    } else if (rank === 'Top_Unique_View') {
+      setRows([...rows].sort((a, b) => b.unique_view - a.unique_view));
+    } else if (rank === 'Bottom_Unique_View') {
+      setRows([...rows].sort((a, b) => a.unique_view - b.unique_view));
     }
   };
 
@@ -296,9 +329,12 @@ const WebsiteAnalyzedTable = () => {
   return (
     <>
       <CardContent>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-          <Grid item xs={12} sm={6}>
+        <Grid container justifyContent="space-between" alignItems="center" spacing={2} marginBottom={3}>
+          <Grid item xs={12} sm={4}>
+            <InputLabel>ค้นหารายการ</InputLabel>
+
             <TextField
+              fullWidth
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -318,6 +354,21 @@ const WebsiteAnalyzedTable = () => {
                 <IosShareIcon />
               </IconButton>
             </Tooltip>
+          </Grid>
+        </Grid>
+        <Grid item xs={12} sm={8} container spacing={2}>
+          <Grid item xs={6}>
+            <InputLabel>แสดงอันดับสูงสุด</InputLabel>
+            <Autocomplete
+              fullWidth
+              options={optionRank}
+              getOptionLabel={(option) => option.name}
+              value={optionRank.find((option) => option.id === rank) || optionRank[0]}
+              onChange={(event, newValue: any) => {
+                setRank(newValue?.id);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />{' '}
           </Grid>
         </Grid>
       </CardContent>
@@ -348,6 +399,15 @@ const WebsiteAnalyzedTable = () => {
                   return (
                     <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
                       <TableCell align="left">{formatId(row.id)}</TableCell>
+                      <TableCell align="left">
+                        {row.Campaign_Shop.map((shop, index) => {
+                          if (index < row.Campaign_Shop.length - 1) {
+                            return shop.Shop.name + ', ';
+                          } else {
+                            return shop.Shop.name;
+                          }
+                        })}
+                      </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="center">{row.view}</TableCell>
                       <TableCell align="center">{row.unique_view}</TableCell>

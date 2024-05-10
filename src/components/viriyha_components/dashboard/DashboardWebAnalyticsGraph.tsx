@@ -98,7 +98,7 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
       <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
 
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6} marginBottom={2}>
+        <Grid item xs={12} md={12} marginBottom={2}>
           <InputLabel>แคมเปญ</InputLabel>
           <Autocomplete
             fullWidth
