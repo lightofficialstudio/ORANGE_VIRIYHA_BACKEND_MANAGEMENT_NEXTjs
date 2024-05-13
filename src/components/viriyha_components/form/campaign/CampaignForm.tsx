@@ -377,7 +377,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = `/campaign/${campaign_type}/`;
+        // window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -1340,16 +1340,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                 <ReactQuill
                   style={{ height: '100px' }}
                   onChange={(content, delta, source, editor) => {
-                    const plainText = editor.getText(); // ดึงข้อความโดยไม่มีรูปแบบ
-                    if (plainText.length <= 85 + 1) {
-                      // ตรวจสอบความยาวข้อความ (+1 สำหรับตัวอักษร newline ที่เพิ่มโดยอัตโนมัติ)
-                      setDescription(content); // อัปเดตสถานะเมื่อต่ำกว่าหรือเท่ากับ 85 ตัวอักษร
-                    } else if (plainText.length > 85 + 1) {
-                      setOpenErrorDialog(true);
-                      setErrorMessage('รายละเอียด ต้องไม่เกิน 85 ตัวอักษร');
-                      // ตัดข้อความที่เกิน 85 ตัวอักษร
-                      setDescription(editor.getText().slice(0, 85));
-                    }
+                    setDescription(content); // อัปเดตสถานะเมื่อต่ำกว่าหรือเท่ากับ 85 ตัวอักษร
                   }}
                   value={Description}
                 />
