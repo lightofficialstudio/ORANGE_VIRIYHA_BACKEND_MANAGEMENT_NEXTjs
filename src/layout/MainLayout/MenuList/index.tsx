@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -10,7 +10,6 @@ import NavGroup from './NavGroup';
 import useConfig from 'hooks/useConfig';
 
 import menuItem from 'menu-items';
-import { Menu } from 'menu-items/widget';
 import { useSelector } from 'store';
 import { LAYOUT_CONST } from 'constant';
 import { HORIZONTAL_MAX_ITEM } from 'config';
@@ -24,24 +23,6 @@ const MenuList = () => {
   const theme = useTheme();
   const { layout } = useConfig();
   const { drawerOpen } = useSelector((state) => state.menu);
-
-  let getMenu = Menu();
-  const handlerMenuItem = () => {
-    const isFound = menuItem.items.some((element) => {
-      if (element.id === 'widget') {
-        return true;
-      }
-      return false;
-    });
-
-    if (getMenu?.id !== undefined && !isFound) {
-      menuItem.items.splice(1, 0, getMenu);
-    }
-  };
-  useEffect(() => {
-    handlerMenuItem();
-    // eslint-disable-next-line
-  }, []);
 
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
 
