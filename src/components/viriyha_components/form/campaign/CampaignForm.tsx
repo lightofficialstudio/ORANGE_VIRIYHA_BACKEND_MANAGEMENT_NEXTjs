@@ -69,6 +69,7 @@ import { SegmentType } from 'types/viriyha_type/segment';
 // modal
 import ModalEditQuota from './ModalEditQuota';
 import ModalEditPhoneNumber from './ModalEditPhoneNumber';
+import ModalEditCodeNumber from './ModalEditCodeNumber';
 import GoBackButton from 'components/viriyha_components/button/go_back';
 import { CampaignDate } from 'types/viriyha_type/campaign';
 // third-party - validation
@@ -239,7 +240,10 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [tempPhoneNumber, setTempPhoneNumber] = React.useState<string>('');
   const [successIdCardCount, setSuccessIdCardCount] = React.useState<number>(0);
   const [errorIdCardCount, setErrorIdCardCount] = React.useState<number>(0);
-
+  // code modal
+  const [openEditCodeModal, setOpenEditCodeModal] = React.useState<boolean>(false);
+  const [tempCodeId, setTempCodeId] = React.useState<number>(0);
+  const [tempCode, setTempCode] = React.useState<string>('');
   // image
   const [images, setImages] = useState<ImageType[]>([]);
 
@@ -1027,6 +1031,19 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     setArrayPhoneNumber(filteredData);
   };
 
+  // Code Modal
+  const handleOpenEditCodeModal = (id: number, code: string) => {
+    setTempCodeId(id);
+    setTempCode(code);
+    setOpenEditCodeModal(true);
+  };
+
+  const handleSaveCode = (id: number, code: string) => {
+    const index = codeExcelData.findIndex((item) => item.id === id);
+    codeExcelData[index].code = code;
+    setOpenEditCodeModal(false);
+  };
+
   return (
     <>
       <GoBackButton Link={'/campaign/normal'} />
@@ -1565,11 +1582,31 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                   <TableCell>{item.code}</TableCell>
 
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
-                    <AnimateButton>
-                      <IconButton size="large" onClick={() => handleDeleteCode(item.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </AnimateButton>
+                    <Grid container sx={{ textAlign: 'right' }} justifyContent={'end'}>
+                      <Grid item>
+                        <Tooltip title="แก้ไขโค้ด">
+                          <AnimateButton>
+                            <IconButton
+                              size="large"
+                              onClick={(_event: any) => {
+                                handleOpenEditCodeModal(item.id, item.code);
+                              }}
+                            >
+                              <EditTwoToneIcon />
+                            </IconButton>
+                          </AnimateButton>
+                        </Tooltip>
+                      </Grid>
+                      <Grid item>
+                        <Tooltip title="ลบโค้ด">
+                          <AnimateButton>
+                            <IconButton size="large" onClick={() => handleDeleteCode(item.id)}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </AnimateButton>
+                        </Tooltip>
+                      </Grid>
+                    </Grid>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
@@ -1594,6 +1631,14 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         onSave={handleSavePhoneNumber}
         primaryId={tempPhoneNumberId}
         phonenumber={tempPhoneNumber}
+      />
+
+      <ModalEditCodeNumber
+        isOpen={openEditCodeModal}
+        isClose={() => setOpenEditCodeModal(false)}
+        onSave={handleSaveCode}
+        primaryId={tempCodeId}
+        code_number={tempCode}
       />
 
       {type == 'special' && (
