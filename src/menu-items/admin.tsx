@@ -81,6 +81,7 @@ const admin: NavItemType = {
       title: <FormattedMessage id="User Management" />,
       caption: <FormattedMessage id="จัดการผู้ใช้งาน" />,
       icon: icons.IconUser,
+      breadcrumbs: false,
       type: 'item',
       url: '/admin/users/backend',
       requiredPermission: 'MenuAdminBackendUsers'

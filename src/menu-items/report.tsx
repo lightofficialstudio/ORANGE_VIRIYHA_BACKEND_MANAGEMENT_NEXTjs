@@ -35,16 +35,7 @@ const report: NavItemType = {
       breadcrumbs: false,
       requiredPermission: 'MenuReportAttempt'
     },
-    {
-      id: 'report_location',
-      title: <FormattedMessage id="Location" />,
-      caption: <FormattedMessage id="ประวัติที่อยู่การกดรับสิทธิ์" />,
-      type: 'item',
-      url: '/report/location',
-      icon: icons.IconLocation,
-      breadcrumbs: false,
-      requiredPermission: 'MenuReportLocation'
-    }
+    
   ]
 };
 

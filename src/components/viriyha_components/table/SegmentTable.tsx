@@ -386,7 +386,7 @@ const SegmentTable = () => {
                 />
               </IconButton>
             </Tooltip>
-            <Tooltip title="ตัวกรอง">
+            <Tooltip title="ตัวกรอง" sx={{ display: 'none' }}>
               <IconButton size="large">
                 <FilterListIcon />
               </IconButton>

@@ -39,7 +39,8 @@ import FileOpenIcon from '@mui/icons-material/FileOpen';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
 import IosShareIcon from '@mui/icons-material/IosShare';
-
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import ErrorIcon from '@mui/icons-material/Error';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 
 // project imports
@@ -99,7 +100,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const quotaChoose = [
   { label: 'รายวัน', id: 1 },
   { label: 'รายสัปดาห์', id: 2 },
-  { label: 'รายเดือน', id: 3 }
+  { label: 'รายเดือน', id: 3 },
+  { label: 'รายแคมเปญ', id: 4 }
 ];
 
 const maxQuotaPerPerson = [
@@ -184,6 +186,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   if (!createdById) {
     window.location.reload();
   }
+
   // images
   // import varaible
   const [codeExcelFile, setCodeExcelFile] = React.useState<File | null>(null);
@@ -234,6 +237,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [openEditPhoneNumberModal, setOpenEditPhoneNumberModal] = React.useState<boolean>(false);
   const [tempPhoneNumberId, setTempPhoneNumberId] = React.useState<number>(0);
   const [tempPhoneNumber, setTempPhoneNumber] = React.useState<string>('');
+  const [successIdCardCount, setSuccessIdCardCount] = React.useState<number>(0);
+  const [errorIdCardCount, setErrorIdCardCount] = React.useState<number>(0);
 
   // image
   const [images, setImages] = useState<ImageType[]>([]);
@@ -244,6 +249,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    // validated section
     let campaign_type = '-';
     if (type === 'clone' || type === 'normal') {
       campaign_type = 'normal';
@@ -259,7 +265,12 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       setErrorMessage('กรุณาเกิดรีเฟรชหน้านี้ใหม่อีกครั้ง เนื่องจากเกิดข้อผิดพลาดไม่สามารถระบุตัวตนผู้ทำรายการได้');
       setOpenErrorDialog(true);
       return;
+    } else if (errorIdCardCount > 0) {
+      setErrorMessage('กรุณาตรวจสอบเลขบัตรประชาชนให้ถูกต้อง');
+      setOpenErrorDialog(true);
+      return;
     }
+    // form append section
     formData.append('shopId', String(ShopId));
     formData.append('type', campaign_type);
     formData.append('branchId', BranchId.join(','));
@@ -543,15 +554,12 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
           });
         }
         if (data.Campaign_Member.length > 0) {
-          data.Campaign_Member.forEach((item: any) => {
-            setArrayPhoneNumber([
-              ...ArrayPhoneNumber,
-              {
-                id: item.id,
-                phoneNumber: item.phoneNumber
-              }
-            ]);
-          });
+          setArrayPhoneNumber(
+            data.Campaign_Member.map((item: any) => ({
+              id: item.id,
+              phoneNumber: item.id_card_number
+            }))
+          );
         }
 
         // สร้าง array สำหรับเก็บข้อมูล image sources
@@ -942,31 +950,39 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       const dataParse = XLSX.utils.sheet_to_json(sheet, { range: updatedRef, header: 1 });
       const arrayPhoneNumber: any[] = [];
       const phoneNumbersSeen: { [key: string]: number } = {}; // เก็บ track หมายเลขที่เห็นแล้ว
-
+      let successIdCardCount = 0;
+      let errorIdCardCount = 0;
       dataParse.forEach((item: any) => {
         let phoneNumber = item[1].toString().replace(/\s+/g, '');
-        let errorMessage = '';
+        let validatedMessage = '';
 
         if (phoneNumbersSeen[phoneNumber]) {
           // หมายเลขซ้ำกับที่เห็นก่อนหน้า
-          errorMessage = ` (ผิดรูปแบบที่กำหนด: ซ้ำกับ id ${phoneNumbersSeen[phoneNumber]})`;
+          validatedMessage = ` (ผิดรูปแบบที่กำหนด: ซ้ำกับ id ${phoneNumbersSeen[phoneNumber]})`;
+          errorIdCardCount++;
         } else if (/[^0-9]/.test(phoneNumber)) {
-          errorMessage = ' (ผิดรูปแบบที่กำหนด: มีตัวอักษรพิเศษอยู่)';
-        } else if (phoneNumber.length < 12) {
-          errorMessage = ' (ผิดรูปแบบที่กำหนด: น้อยกว่า 12 ตัวอักษร)';
+          validatedMessage = ' (ผิดรูปแบบที่กำหนด: มีตัวอักษรพิเศษอยู่)';
+          errorIdCardCount++;
+        } else if (phoneNumber.length <= 12) {
+          validatedMessage = ' (ผิดรูปแบบที่กำหนด: น้อยกว่า 12 ตัวอักษร)';
+          errorIdCardCount++;
         } else {
           // ถ้าไม่พบข้อผิดพลาด, เก็บหมายเลขไว้ใน object เพื่อ track
           phoneNumbersSeen[phoneNumber] = item[0];
+          successIdCardCount++;
         }
 
         // ทุก entry จะถูกเพิ่มเข้าไปใน array โดยจะมีข้อความแสดงข้อผิดพลาดถ้ามี
         arrayPhoneNumber.push({
           id: item[0],
-          phoneNumber: phoneNumber + errorMessage
+          phoneNumber: phoneNumber,
+          validated: validatedMessage
         });
       });
 
       setArrayPhoneNumber(arrayPhoneNumber);
+      setSuccessIdCardCount(successIdCardCount);
+      setErrorIdCardCount(errorIdCardCount);
     };
     reader.readAsArrayBuffer(file);
   };
@@ -1293,7 +1309,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                   endAdornment={<InputAdornment position="end">ครั้ง</InputAdornment>}
                   placeholder="จำนวนการรับชม"
                   value={WebsiteTrafficPatternValue}
-                  disabled={WebsiteTrafficPattern === 'Auto' || WebsiteTrafficPattern === 'Close'}
+                  disabled={WebsiteTrafficPattern === 'AUTO' || WebsiteTrafficPattern === 'CLOSE'}
                   onChange={(event: any) => {
                     setWebsiteTrafficPatternValue(event.target.value);
                   }}
@@ -1582,7 +1598,31 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       {type == 'special' && (
         <MainCard title="เลขบัตรประชาชนที่เข้าร่วม" sx={{ marginTop: '50px' }}>
-          <Grid container spacing={gridSpacing} sx={{ marginBottom: '20px' }} justifyContent="end">
+          <Grid container spacing={gridSpacing} sx={{ marginBottom: '20px' }} justifyContent="between">
+            <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
+                <IconButton size="small" sx={{ color: 'green' }}>
+                  <CheckBoxIcon />
+                </IconButton>
+                <Chip label="สำเร็จ" chipcolor="success" sx={{ marginRight: '10px;' }} />
+                <Chip label={successIdCardCount.toString()} chipcolor="success" sx={{ marginRight: '10px;' }} />
+              </Grid>
+              <Grid item xs={12} sm={6} marginTop={2}>
+                <IconButton size="small" sx={{ color: 'red' }}>
+                  <ErrorIcon />
+                </IconButton>
+                <Chip label="ล้มเหลว" chipcolor="error" sx={{ marginRight: '10px;' }} />
+                <Chip label={errorIdCardCount.toString()} chipcolor="error" sx={{ marginRight: '10px;' }} />
+              </Grid>
+
+              {/* product add & dialog */}
+
+              <Tooltip title="เพิ่มเบอร์มือถือ">
+                <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32, display: 'none' }}>
+                  <AddIcon fontSize="small" />
+                </Fab>
+              </Tooltip>
+            </Grid>
             <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
               <Tooltip title="นำเข้าเลขบัตรประชาชน">
                 <IconButton size="large">
@@ -1599,7 +1639,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
               {/* product add & dialog */}
 
               <Tooltip title="เพิ่มเบอร์มือถือ">
-                <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32 }}>
+                <Fab color="primary" size="small" sx={{ boxShadow: 'none', ml: 1, width: 32, height: 32, minHeight: 32, display: 'none' }}>
                   <AddIcon fontSize="small" />
                 </Fab>
               </Tooltip>
@@ -1610,7 +1650,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
               <TableHead>
                 <TableRow>
                   <StyledTableCell align="left">ลำดับ</StyledTableCell>
-                  <StyledTableCell sx={{ pl: 3 }}>เบอร์มือถือ</StyledTableCell>
+                  <StyledTableCell sx={{ pl: 3 }}>เลขบัตรประชาชน</StyledTableCell>
+                  <StyledTableCell sx={{ pl: 3 }}>การตรวจสอบ</StyledTableCell>
                   <StyledTableCell align="right">จัดการ</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -1623,6 +1664,13 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                       </StyledTableCell>
                       <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                         <b>{phone.phoneNumber}</b>
+                      </StyledTableCell>
+                      <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                        {phone.validated != '' ? (
+                          <b style={{ color: 'red' }}>{phone.validated}</b>
+                        ) : (
+                          <b style={{ color: 'green' }}>(ผ่าน)</b>
+                        )}
                       </StyledTableCell>
                       <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
                         <Tooltip title="แก้ไข">

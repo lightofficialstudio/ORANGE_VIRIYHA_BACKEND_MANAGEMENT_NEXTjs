@@ -55,7 +55,7 @@ export default function ModalEditPhoneNumber({ isOpen, isClose, onSave, primaryI
           }}
         >
           <MainCard
-            title="แก้ไขเบอร์มือถือ"
+            title="แก้ไขเลขบัตรประชาชน"
             content={false}
             secondary={
               <IconButton onClick={isClose} size="large">
@@ -65,14 +65,18 @@ export default function ModalEditPhoneNumber({ isOpen, isClose, onSave, primaryI
           >
             <CardContent>
               <Grid container justifyContent="end">
-                <Typography variant="h4" sx={{ mb: 2 }}>
-                  เบอร์ปัจจุบัน :
-                </Typography>
-                <Typography variant="h5" sx={{ mb: 2 }}>
-                  {phonenumber}
-                </Typography>
+                <Grid md={12} sm={12}>
+                  <Typography variant="h4" sx={{ mb: 2 }}>
+                    เลขบัตรประชาชนปัจจุบัน
+                  </Typography>
+                </Grid>
+                <Grid md={12} sm={12}>
+                  <Typography variant="h5" sx={{ mb: 2 }}>
+                    {phonenumber}
+                  </Typography>
+                </Grid>
               </Grid>
-              <InputLabel required>เบอร์มือถือที่ต้องการแก้ไข</InputLabel>
+              <InputLabel required>เลขบัตรประชาชนที่ต้องการแก้ไข</InputLabel>
               <input type="hidden" value={primaryId} />
               <TextField
                 fullWidth

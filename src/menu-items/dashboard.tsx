@@ -80,11 +80,28 @@ const dashboard: NavItemType = {
       id: 'Location_Analytics',
       title: <FormattedMessage id="Location Analytics" />,
       caption: <FormattedMessage id="ระบบรายงานสถานที่รับสิทธิ์" />,
-      type: 'item',
+      type: 'collapse',
       icon: icons.IconGraph,
-      breadcrumbs: false,
-      url: '/dashboard/location-analytics',
-      requiredPermission: 'MenuDashboardCampaign'
+      requiredPermission: 'MenuDashboardRedeem',
+
+      children: [
+        {
+          id: 'redeem_transaction_dasboard',
+          title: <FormattedMessage id="Dashboard" />,
+          type: 'item',
+          url: '/dashboard/location-analytics',
+          breadcrumbs: false,
+          requiredPermission: 'MenuDashboardRedeem'
+        },
+        {
+          id: 'report_location',
+          title: <FormattedMessage id="Report" />,
+          type: 'item',
+          url: '/report/location',
+          breadcrumbs: false,
+          requiredPermission: 'MenuReportLocation'
+        }
+      ]
     }
   ]
 };
