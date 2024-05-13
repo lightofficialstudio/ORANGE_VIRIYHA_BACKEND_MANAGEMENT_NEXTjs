@@ -40,7 +40,6 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
-import Avatar from 'ui-component/extended/Avatar';
 
 // third-party
 import Swal from 'sweetalert2';
@@ -79,12 +78,7 @@ const headCells: HeadCell[] = [
     label: 'โค้ด',
     align: 'left'
   },
-  {
-    id: 'image',
-    numeric: false,
-    label: 'รูปภาพ',
-    align: 'center'
-  },
+
   {
     id: 'name',
     numeric: false,
@@ -243,7 +237,6 @@ const BannerTable = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [rows, setRows] = React.useState<User_BackendType[]>([]);
   const { user_backend } = useSelector((state) => state.user_backend);
-  const baseUrl = process.env.BACKEND_VIRIYHA_APP_API_URL + 'image/banner/';
 
   React.useEffect(() => {
     dispatch(getUserBackend());
@@ -482,9 +475,7 @@ const BannerTable = () => {
                           {formatId(row.id)}
                         </Typography>
                       </TableCell>
-                      <TableCell align="center">
-                        <Avatar src={`${baseUrl}/${row.image}`} size="md" variant="rounded" alt="product images" />
-                      </TableCell>
+
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="left">{row.phonenumber}</TableCell>
                       <TableCell align="left">{row.email}</TableCell>

@@ -41,6 +41,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LinkIcon from '@mui/icons-material/Link';
+import PushPinIcon from '@mui/icons-material/PushPin';
+
 import AddIcon from '@mui/icons-material/AddTwoTone';
 import Link from 'next/link';
 // services
@@ -78,6 +80,12 @@ const headCells: HeadCell[] = [
     id: 'id',
     numeric: true,
     label: 'Code',
+    align: 'left'
+  },
+  {
+    id: 'pinned',
+    numeric: false,
+    label: 'ปักหมุด',
     align: 'left'
   },
   {
@@ -329,7 +337,51 @@ const SpecialCampaignTable = () => {
     const formattedId = id.toString().padStart(4, '0');
     return `SMC-${formattedId}`;
   };
-
+  // pinned campaign
+  const handlePinnedThisCampaign = (campaignIds: number) => {
+    Swal.fire({
+      title: 'ต้องการปักหมุดรายการ?',
+      text: 'หากปักหมุดรายการ จะทำให้รายการนี้แสดงขึ้นเป็นลำดับแรกๆ',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ปักหมุดทันที!',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          const header = {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+          axiosServices.post(`/api/campaign/normal/pinned`, { ids: campaignIds }, header).then((response: any) => {
+            if (response.data) {
+              Swal.fire({
+                title: 'ปักหมุดรายการนี้สำเร็จ!',
+                text: response.data.message,
+                icon: 'success',
+                confirmButtonText: 'รับทราบ!'
+              });
+              dispatch(getCampaignList());
+            }
+          });
+          setTimeout(() => {
+            dispatch(getCampaignList());
+          }, 1000);
+          setSelected([]);
+        } catch (error: any) {
+          setErrorMessage(error.message);
+          Swal.fire({
+            title: 'เกิดข้อผิดพลาดในการปักหมุดรายการนี้!',
+            text: errorMessage,
+            icon: 'error',
+            showCancelButton: false,
+            confirmButtonText: 'รับทราบ!'
+          });
+        }
+      }
+    });
+  };
   // delete
   const handleDelete = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (selected.length === 0) {
@@ -397,6 +449,7 @@ const SpecialCampaignTable = () => {
         <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
+              fullWidth
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -405,7 +458,7 @@ const SpecialCampaignTable = () => {
                 )
               }}
               onChange={handleSearch}
-              placeholder="ค้นหารายการ"
+              placeholder="ค้นหาสิทธิพิเศษ ด้วย ชื่อสิทธิพิเศษ หรือ โค้ดสิทธิพิเศษ"
               value={search}
               size="medium"
             />
@@ -470,6 +523,8 @@ const SpecialCampaignTable = () => {
                         />
                       </TableCell>
                       <TableCell align="left">{formatId(row.id)}</TableCell>
+                      <TableCell align="left">{row.pinned === true && <PushPinIcon sx={{ fontSize: '1.3rem' }} />}</TableCell>
+
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="left">{String(row.Campaign_Shop[0].Shop.name)}</TableCell>
                       <TableCell align="left">{format(new Date(row.startDate), 'dd/MM/yyyy')}</TableCell>
@@ -488,7 +543,7 @@ const SpecialCampaignTable = () => {
 
                       <TableCell align="center" sx={{ pr: 3 }}>
                         <Grid container justifyContent="space-between" alignItems="center" spacing={3}>
-                          <Grid item xs={12} sm={4}>
+                          <Grid item xs={12} sm={6} md={6}>
                             <Link href={`/campaign/special/detail/${row.id}`}>
                               <Tooltip title="แก้ไขสิทธิพิเศษ">
                                 <IconButton color="secondary" size="large">
@@ -497,7 +552,7 @@ const SpecialCampaignTable = () => {
                               </Tooltip>
                             </Link>
                           </Grid>
-                          <Grid item xs={12} sm={4}>
+                          <Grid item xs={12} sm={6} md={6}>
                             <Link href={`/campaign/special/clone/${row.id}`}>
                               <Tooltip title="คัดลอกสิทธิพิเศษ">
                                 <IconButton color="secondary" size="large">
@@ -506,10 +561,17 @@ const SpecialCampaignTable = () => {
                               </Tooltip>
                             </Link>
                           </Grid>
-                          <Grid item xs={12} sm={4}>
+                          <Grid item xs={12} sm={6} md={6}>
                             <Tooltip title="คัดลอกลิงก์">
                               <IconButton color="secondary" size="large">
                                 <LinkIcon sx={{ fontSize: '1.3rem' }} />
+                              </IconButton>
+                            </Tooltip>
+                          </Grid>
+                          <Grid item xs={12} sm={6} md={6}>
+                            <Tooltip title="ปักหมุด">
+                              <IconButton color="secondary" size="large" onClick={() => handlePinnedThisCampaign(row.id)}>
+                                <PushPinIcon sx={{ fontSize: '1.3rem' }} />
                               </IconButton>
                             </Tooltip>
                           </Grid>

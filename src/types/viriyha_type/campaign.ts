@@ -31,6 +31,7 @@ export type CampaignType = {
   updatedAt: Date;
   shopId: number[];
   branchId: number[];
+  pinned?: boolean;
   branch_condition: string;
   quotaRange: CampaignDate;
   Campaign_Image: CampaignImage[]; // ประกาศ type ด้านล่าง

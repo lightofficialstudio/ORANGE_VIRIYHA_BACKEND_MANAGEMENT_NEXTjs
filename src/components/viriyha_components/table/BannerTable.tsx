@@ -552,7 +552,7 @@ const BannerTable = () => {
                       </TableCell>
                       <TableCell align="center" sx={{ pr: 3 }}>
                         <Grid container justifyContent="center">
-                          <Grid item xs={12} sm={3}>
+                          <Grid item xs={12} sm={6}>
                             <Link href={`/admin/banners/edit/${row.id}`}>
                               <Tooltip title="แก้ไขข้อมูล">
                                 <IconButton color="secondary" size="large">
@@ -561,7 +561,7 @@ const BannerTable = () => {
                               </Tooltip>
                             </Link>
                           </Grid>
-                          <Grid item xs={12} sm={3}>
+                          <Grid item xs={12} sm={6}>
                             <Tooltip title="จัดการตำแหน่ง">
                               <IconButton
                                 color="secondary"
@@ -577,7 +577,7 @@ const BannerTable = () => {
                               </IconButton>
                             </Tooltip>
                           </Grid>
-                          <Grid item xs={12} sm={3}>
+                          <Grid item xs={12} sm={3} sx={{ display: 'none' }}>
                             <Tooltip title="คัดลอกลิงก์">
                               <IconButton color="secondary" size="large" onClick={() => copyToClipboard(row.link)}>
                                 <LinkIcon sx={{ fontSize: '1.3rem' }} />

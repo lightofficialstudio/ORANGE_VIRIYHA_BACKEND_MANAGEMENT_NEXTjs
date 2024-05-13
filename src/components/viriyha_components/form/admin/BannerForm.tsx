@@ -189,12 +189,12 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
       <MainCard>
         <MainCard title={titleMessage} content={true}>
           <Grid container spacing={3}>
-            <Grid item xs={6} md={6}>
+            <Grid item xs={6} md={12}>
               <SubCard title="รูปภาพ" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
-                      <img alt="User 1" src={PreviewImg} style={{ margin: '0 auto' }} width={600} height={250} />
+                      <img alt="User 1" src={PreviewImg} style={{ margin: '0 auto', marginTop: '20px' }} width={700} height={300} />
                     </Grid>
                     <Grid item>
                       <Button sx={{ display: 'none' }} variant="outlined" onClick={() => setOpenImageDialog(true)}>
@@ -228,7 +228,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                 </Grid>
               </SubCard>
             </Grid>
-            <Grid item xs={6} md={6}>
+            <Grid item xs={6} md={12}>
               <SubCard title={titleMessage}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>

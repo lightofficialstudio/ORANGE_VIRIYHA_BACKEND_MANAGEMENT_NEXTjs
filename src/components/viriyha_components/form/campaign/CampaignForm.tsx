@@ -38,6 +38,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
+import IosShareIcon from '@mui/icons-material/IosShare';
+
 import AddIcon from '@mui/icons-material/AddTwoTone';
 
 // project imports
@@ -113,9 +115,9 @@ const CodeOption = [
 ];
 
 const WebsiteTrafficPatternList = [
-  { label: 'อัตโนมัติ', value: 'Auto' },
-  { label: 'ปรับด้วยตัวเอง', value: 'Manual' },
-  { label: 'ปิดการแสดงผล', value: 'Close' }
+  { label: 'อัตโนมัติ', value: 'AUTO' },
+  { label: 'ปรับด้วยตัวเอง', value: 'MANUAL' },
+  { label: 'ปิดการแสดงผล', value: 'CLOSE' }
 ];
 
 // validation schema
@@ -169,7 +171,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [CategoryQuantity, setCategoryQuantity] = useState<number>();
   const [QuotaLimit, setQuotaLimit] = useState<number>(0);
   const [CategoryQuotaLimit, setCategoryQuotaLimit] = useState<number>();
-  const [WebsiteTrafficPattern, setWebsiteTrafficPattern] = useState<string>('Auto');
+  const [WebsiteTrafficPattern, setWebsiteTrafficPattern] = useState<string>('AUTO');
   const [WebsiteTrafficPatternValue, setWebsiteTrafficPatternValue] = useState<number>(0);
   const [Segment, setSegment] = useState<number[]>([]);
   const [Criteria, setCriteria] = useState<number[]>([]);
@@ -219,7 +221,12 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [codeQuatity, setCodeQuatity] = useState<number>(0);
   const [tempQuotaId, setTempQuotaId] = useState<number>(0);
   const [tempQuotaQuantity, setTempQuotaQuantity] = useState<number>(0);
-
+  // generate code table
+  const [codePage, setCodePage] = useState<number>(0);
+  const [rowsCodePerPage, setCodeRowsPerPage] = useState<number>(10);
+  // generate phone number table
+  const [phonePage, setPhonePage] = useState<number>(0);
+  const [rowsPhonePerPage, setPhoneRowsPerPage] = useState<number>(10);
   // modal
   const [QuotaModal, setQuotaModal] = useState(false);
 
@@ -355,7 +362,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        // window.location.href = `/campaign/${campaign_type}/`;
+        window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -504,7 +511,12 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         setShopId(data.Campaign_Shop[0].shopId);
         setPrimaryShopId(data.Campaign_Shop[0].id);
         setBranchId(data.Campaign_Shop[0].Campaign_Shop_Branch.map((item: any) => item.branchId));
-        setName(data.name);
+        // กรณีที่เป็นการโคลนข้อมูล ต้องทำให้ชื่อเป็นค่าว่าง
+        if (type === 'clone' || type === 'special_clone') {
+          setName('');
+        } else {
+          setName(data.name);
+        }
         setCategory(data.category_type_id);
         setStartDate(data.startDate.slice(0, 16));
         setEndDate(data.endDate.slice(0, 16));
@@ -821,6 +833,23 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0); // Reset to the first page with the new number of rows
   };
+  // code table
+  const handleChangeCodeRowsPerPage = (event: any) => {
+    setCodeRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleChangeCodePage = (_event: any, newPage: any) => {
+    setCodePage(newPage);
+  };
+  // phone number table
+  const handleChangePhoneRowsPerPage = (event: any) => {
+    setPhoneRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const handleChangePhonePage = (_event: any, newPage: any) => {
+    setPhonePage(newPage);
+  };
 
   const handleOpenEditQuotaModal = (id: string, quantity: number) => {
     setTempQuotaId(parseInt(id));
@@ -942,6 +971,29 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     reader.readAsArrayBuffer(file);
   };
 
+  // export to excel
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet([], {
+      header: ['ลำดับ', 'เลขบัตรประชาชน', 'การตรวจสอบ'],
+      skipHeader: false
+    });
+
+    XLSX.utils.sheet_add_json(
+      ws,
+      ArrayPhoneNumber.map((item, index) => ({
+        ลำดับ: index + 1,
+        เลขบัตรประชาชน: item.name,
+        การตรวจสอบ: item.validated
+      })),
+      { origin: -1, skipHeader: true }
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'IDCardData');
+    const fileName = `IDCardData_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   const handleOpenEditPhoneNumberModal = (id: number, phone_number: string) => {
     setTempPhoneNumberId(id);
     setTempPhoneNumber(phone_number);
@@ -1061,8 +1113,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                 onChange={(event: any) => {
                   setName(event.target.value);
                   formik.handleChange(event);
+                  formik.handleBlur(event);
                 }}
-                onBlur={formik.handleBlur}
                 error={formik.touched.Name && Boolean(formik.errors.Name)}
                 helperText={formik.touched.Name && formik.errors.Name}
               />
@@ -1489,7 +1541,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {codeExcelData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+              {codeExcelData.slice(codePage * rowsCodePerPage, codePage * rowsCodePerPage + rowsCodePerPage).map((item, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                     <b>{index + 1}</b>
@@ -1513,10 +1565,10 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
           rowsPerPageOptions={[5, 10, 30, { label: 'All', value: -1 }]}
           component="div"
           count={codeExcelData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPage={rowsCodePerPage}
+          page={codePage}
+          onPageChange={handleChangeCodePage}
+          onRowsPerPageChange={handleChangeCodeRowsPerPage}
         />
       </MainCard>
 
@@ -1536,6 +1588,11 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                 <IconButton size="large">
                   <SimCardDownloadIcon onClick={handlExcelFilePhoneNumberClick} />
                   <input type="file" style={{ display: 'none' }} id="excelFilePhoneNumber" onChange={handleExcelFilePhoneNumberChange} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="ส่งออกเอกสาร">
+                <IconButton size="large" onClick={exportToExcel}>
+                  <IosShareIcon />
                 </IconButton>
               </Tooltip>
 
@@ -1558,34 +1615,36 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {ArrayPhoneNumber.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((phone, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                      <b>{phone.id}</b>
-                    </StyledTableCell>
-                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                      <b>{phone.phoneNumber}</b>
-                    </StyledTableCell>
-                    <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
-                      <Tooltip title="แก้ไข">
-                        <IconButton
-                          size="large"
-                          onClick={(_event: any) => {
-                            handleOpenEditPhoneNumberModal(Number(phone.id), String(phone.phoneNumber));
-                          }}
-                        >
-                          <EditTwoToneIcon />
-                        </IconButton>
-                      </Tooltip>
+                {ArrayPhoneNumber.slice(phonePage * rowsPhonePerPage, phonePage * rowsPhonePerPage + rowsPhonePerPage).map(
+                  (phone, index) => (
+                    <StyledTableRow key={index}>
+                      <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                        <b>{phone.id}</b>
+                      </StyledTableCell>
+                      <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
+                        <b>{phone.phoneNumber}</b>
+                      </StyledTableCell>
+                      <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
+                        <Tooltip title="แก้ไข">
+                          <IconButton
+                            size="large"
+                            onClick={(_event: any) => {
+                              handleOpenEditPhoneNumberModal(Number(phone.id), String(phone.phoneNumber));
+                            }}
+                          >
+                            <EditTwoToneIcon />
+                          </IconButton>
+                        </Tooltip>
 
-                      <Tooltip title="ลบ">
-                        <IconButton size="large" onClick={() => handleDeletePhoneNumber(phone.id)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
+                        <Tooltip title="ลบ">
+                          <IconButton size="large" onClick={() => handleDeletePhoneNumber(phone.id)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  )
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -1593,10 +1652,10 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
             rowsPerPageOptions={[5, 10, 30, { label: 'All', value: -1 }]}
             component="div"
             count={ArrayPhoneNumber.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPage={rowsPhonePerPage}
+            page={phonePage}
+            onPageChange={handleChangePhonePage}
+            onRowsPerPageChange={handleChangePhoneRowsPerPage}
           />
         </MainCard>
       )}
