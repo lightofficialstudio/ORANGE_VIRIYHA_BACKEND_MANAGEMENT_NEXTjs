@@ -378,7 +378,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        // window.location.href = `/campaign/${campaign_type}/`;
+        window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -619,9 +619,10 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const handleRemoveImage = (index: number) => {
     // Update the images displayed
     setImages((prev) => prev.filter((_, i) => i !== index));
-
     // Update the fileImage state to match the previews
     setFileImage((prev) => prev.filter((_, i) => i !== index));
+
+    setArrayImageName((prev) => prev.filter((_, i) => i !== index));
   };
 
   // const handleQuotaTypeChange = (event: any, value: any) => {
@@ -690,6 +691,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         generateWeeklyQuotaTable();
       } else if (CategoryQuantity === 3) {
         generateMonthlyQuotaTable();
+      } else if (CategoryQuantity === 4) {
+        generateCampaignQuotaTable();
       }
     }
   };
@@ -822,6 +825,25 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         quantity: currentQuota
       });
     }
+
+    setQuotaRange(quotaTable);
+  };
+
+  const generateCampaignQuotaTable = () => {
+    if (codeQuatity > 0) {
+      setCodeQuatity(0);
+    }
+    const start = new Date(startDate as Date).getTime();
+    const end = new Date(endDate as Date).getTime();
+
+    let quotaTable: GenerateQuotaTableProps[] = [];
+    let currentQuota = Quantity;
+    quotaTable.push({
+      id: 1,
+      startDate: new Date(start),
+      endDate: new Date(end),
+      quantity: currentQuota
+    });
 
     setQuotaRange(quotaTable);
   };
@@ -1209,7 +1231,6 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                       setQuantity(0);
                     }
                   }}
-                  disabled={CategoryQuotaLimit === 4}
                   endAdornment={<InputAdornment position="end">สิทธิพิเศษ</InputAdornment>}
                 />
               </FormControl>
@@ -1223,6 +1244,9 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                     getOptionLabel={(option) => option.label}
                     onChange={(_event: any, value: any) => {
                       setCategoryQuantity(value?.id);
+                      if (value?.id) {
+                        setQuantity(0);
+                      }
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={quotaChoose.find((Item) => Item.id === CategoryQuantity) || null}
@@ -1255,7 +1279,6 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                     onChange={(_event: any, value: any) => {
                       setCategoryQuotaLimit(value?.id);
                       if (value?.id === 4) {
-                        setQuantity(0);
                         setQuotaLimit(0);
                       }
                     }}
