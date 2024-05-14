@@ -125,7 +125,7 @@ const WebsiteTrafficPatternList = [
 
 // validation schema
 const validationSchema = yup.object({
-  Name: yup.string().required('กรุณาใส่ชื่อแบนเนอร์ให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
+  // Name: yup.string().required('กรุณาใส่ชื่อให้ถูกต้อง หรือ กรอกให้ครบถ้วน'),
   startDate: yup.date().required('กรุณาใส่วันที่เริ่มต้น หรือ กรอกให้ครบถ้วน'),
   endDate: yup.date().required('กรุณาใส่วันที่สิ้นสุด หรือ กรอกให้ครบถ้วน')
 });
@@ -173,7 +173,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [Quantity, setQuantity] = useState<number>(0);
   const [CategoryQuantity, setCategoryQuantity] = useState<number>();
   const [QuotaLimit, setQuotaLimit] = useState<number>(0);
-  const [CategoryQuotaLimit, setCategoryQuotaLimit] = useState<number>();
+  const [CategoryQuotaLimit, setCategoryQuotaLimit] = useState<number>(0);
   const [WebsiteTrafficPattern, setWebsiteTrafficPattern] = useState<string>('AUTO');
   const [WebsiteTrafficPatternValue, setWebsiteTrafficPatternValue] = useState<number>(0);
   const [Segment, setSegment] = useState<number[]>([]);
@@ -198,7 +198,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   // validation
   const formik = useFormik({
     initialValues: {
-      Name: Name,
+      Name: '',
       startDate: startDate,
       endDate: endDate
     },
@@ -208,6 +208,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       } catch (error: any) {}
     }
   });
+
   // const [Status, setStatus] = useState('');
   console.log(codeExcelData, filePhoneNumberExcel);
 
@@ -296,20 +297,20 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     formData.append('createdById', String(createdById));
     formData.append('view_format', WebsiteTrafficPattern);
     formData.append('view', String(WebsiteTrafficPatternValue));
-
+    // ส่งข้อมูล Campaign Date
     quotaRange.forEach((item) => {
       formData.append('quotaRange', JSON.stringify(item));
     });
-    const ArrayCodeNumber: any = [];
-    codeExcelData.forEach((item) => {
-      ArrayCodeNumber.push(item.code);
+    // ส่งข้อมูลโค้ด Campaign Code
+    codeExcelData?.map((item: any) => {
+      formData.append('Campaign_Code', JSON.stringify(item));
     });
     if (CodeType === 2) {
       formData.append('codeType', 'MANUAL');
     } else {
       formData.append('codeType', 'AUTO');
     }
-    formData.append('Campaign_Code', ArrayCodeNumber.join(','));
+    // ส่งข้อมูไฟล์รูปภาพ
     fileImage.forEach((file) => {
       formData.append('file', file);
     });
@@ -377,7 +378,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = `/campaign/${campaign_type}/`;
+        // window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -488,6 +489,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       }
     };
 
+    // ดึงข้อมูล Campaign Date
     const CampaignDateList = async (campaignDates: Array<CampaignDate>) => {
       try {
         const campaignArray: CampaignDate[] = campaignDates.map((item: CampaignDate) => ({
@@ -501,6 +503,19 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         }));
         setQuotaRange(campaignArray);
         console.log(campaignArray);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    // ดึงข้อมูล Campaign Code
+    const CampaignCodeList = async (campaignCodes: any) => {
+      try {
+        const campaignArray: any = campaignCodes.map((item: any) => ({
+          id: item.id,
+          code: item.code,
+          campaignId: item.campaignId
+        }));
+        setCodeExcelData(campaignArray);
       } catch (error) {
         console.log(error);
       }
@@ -521,42 +536,32 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         const imgUrl = process.env.IMAGE_VIRIYHA_URL + '/images/campaign/';
         const response = await axiosServices.get(`/api/campaign/${campaign_type}/${primaryId}`);
         const data = response.data;
-        const shopId = data.Campaign_Shop[0].shopId;
+        const shopId = data?.Campaign_Shop[0]?.shopId;
         await BranchList(shopId);
-        setShopId(data.Campaign_Shop[0].shopId);
-        setPrimaryShopId(data.Campaign_Shop[0].id);
-        setBranchId(data.Campaign_Shop[0].Campaign_Shop_Branch.map((item: any) => item.branchId));
+        setShopId(data?.Campaign_Shop[0]?.shopId);
+        setPrimaryShopId(data?.Campaign_Shop[0]?.id);
+        setBranchId(data?.Campaign_Shop[0]?.Campaign_Shop_Branch?.map((item: any) => item.branchId));
         // กรณีที่เป็นการโคลนข้อมูล ต้องทำให้ชื่อเป็นค่าว่าง
         if (type === 'clone' || type === 'special_clone') {
           setName('');
         } else {
-          setName(data.name);
+          setName(data?.name);
         }
-        setCategory(data.category_type_id);
-        setStartDate(data.startDate.slice(0, 16));
-        setEndDate(data.endDate.slice(0, 16));
-        setQuantity(data.quantity);
-        setCategoryQuantity(parseInt(data.quantity_category));
-        setQuotaLimit(data.quota_quantity_limit);
-        setCategoryQuotaLimit(parseInt(data.quota_limit_by));
-        setSegment(data.segment);
-        setCriteria(data.criteria);
-        setDescription(data.description);
-        setCondition(data.condition);
-        setCodeType(data.codeType === 'MANUAL' ? 2 : 1);
-        setWebsiteTrafficPatternValue(data.view);
+        setCategory(data?.category_type_id);
+        setStartDate(data?.startDate.slice(0, 16));
+        setEndDate(data?.endDate.slice(0, 16));
+        setQuantity(data?.quantity);
+        setCategoryQuantity(parseInt(data?.quantity_category));
+        setQuotaLimit(data?.quota_quantity_limit);
+        setCategoryQuotaLimit(parseInt(data?.quota_limit_by));
+        setSegment(data?.segment);
+        setCriteria(data?.criteria);
+        setDescription(data?.description);
+        setCondition(data?.condition);
+        setCodeType(data?.codeType === 'MANUAL' ? 2 : 1);
+        setWebsiteTrafficPatternValue(data?.view);
 
-        if (data.Campaign_Code.length > 0) {
-          data.Campaign_Code.forEach((item: any) => {
-            setCodeExcelData([
-              ...codeExcelData,
-              {
-                id: item.id,
-                code: item.code
-              }
-            ]);
-          });
-        }
+        //  นำเลขบัตรประชาชนมาแสดงผล
         if (data.Campaign_Member.length > 0) {
           setArrayPhoneNumber(
             data.Campaign_Member.map((item: any) => ({
@@ -582,14 +587,14 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
         // อัพเดท state สำหรับ array image names
         setArrayImageName(newArrayImageName);
-
-        await CampaignDateList(data.Campaign_Date);
+        await CampaignDateList(data?.Campaign_Date);
+        await CampaignCodeList(data?.Campaign_Code);
       }
     };
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [primaryId]);
+  }, []);
 
   useEffect(() => {
     if (CategoryQuantity === 4) {
@@ -1143,11 +1148,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                 fullWidth
                 name="Name"
                 value={Name}
-                onChange={(event: any) => {
-                  setName(event.target.value);
-                  formik.handleChange(event);
-                  formik.handleBlur(event);
-                }}
+                onChange={(event: any) => setName(event.target.value)}
+                onBlur={formik.handleBlur}
                 error={formik.touched.Name && Boolean(formik.errors.Name)}
                 helperText={formik.touched.Name && formik.errors.Name}
               />
@@ -1589,13 +1591,15 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                         </Tooltip>
                       </Grid>
                       <Grid item>
-                        <Tooltip title="ลบโค้ด">
-                          <AnimateButton>
-                            <IconButton size="large" onClick={() => handleDeleteCode(item.id)}>
-                              <DeleteIcon />
-                            </IconButton>
-                          </AnimateButton>
-                        </Tooltip>
+                        {CodeType === 2 && (
+                          <Tooltip title="ลบโค้ด">
+                            <AnimateButton>
+                              <IconButton size="large" onClick={() => handleDeleteCode(item.id)}>
+                                <DeleteIcon />
+                              </IconButton>
+                            </AnimateButton>
+                          </Tooltip>
+                        )}
                       </Grid>
                     </Grid>
                   </StyledTableCell>
