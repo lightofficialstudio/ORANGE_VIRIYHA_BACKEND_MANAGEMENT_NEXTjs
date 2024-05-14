@@ -1244,9 +1244,6 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                     getOptionLabel={(option) => option.label}
                     onChange={(_event: any, value: any) => {
                       setCategoryQuantity(value?.id);
-                      if (value?.id) {
-                        setQuantity(0);
-                      }
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={quotaChoose.find((Item) => Item.id === CategoryQuantity) || null}
