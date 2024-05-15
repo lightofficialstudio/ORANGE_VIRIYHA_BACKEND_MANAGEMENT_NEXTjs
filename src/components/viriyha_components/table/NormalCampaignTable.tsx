@@ -249,6 +249,7 @@ const NormalCampaignTable = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
+  const [searchShop, setSearchShop] = React.useState<string>('');
   const [rows, setRows] = React.useState<CampaignType[]>([]);
   const { campaign } = useSelector((state) => state.campaign);
 
@@ -286,6 +287,22 @@ const NormalCampaignTable = () => {
     } else {
       setRows(campaign);
     }
+  };
+
+  const handleSearchShop = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
+    const newString = event?.target.value.trim().toLowerCase(); // Trim and convert to lower case once.
+    setSearchShop(newString || '');
+
+    if (!newString) {
+      setRows(campaign);
+      return;
+    }
+
+    const newRows = rows.filter((row: KeyedObject) => {
+      return row?.Campaign_Shop[0]?.Shop?.name.toLowerCase().includes(newString);
+    });
+
+    setRows(newRows);
   };
 
   const handleRequestSort = (event: React.SyntheticEvent<Element, Event>, property: string) => {
@@ -464,6 +481,7 @@ const NormalCampaignTable = () => {
               size="medium"
             />
           </Grid>
+
           <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
             <Tooltip title="ลบ">
               <IconButton size="large" onClick={handleDelete}>
@@ -484,6 +502,21 @@ const NormalCampaignTable = () => {
                 </Fab>
               </Tooltip>
             </Link>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                )
+              }}
+              onChange={handleSearchShop}
+              placeholder="ค้นหาด้วย ร้านค้าที่เข้าร่วม"
+              value={searchShop}
+              size="medium"
+            />
           </Grid>
         </Grid>
       </CardContent>

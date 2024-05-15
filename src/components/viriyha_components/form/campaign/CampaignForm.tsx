@@ -142,6 +142,7 @@ interface GenerateQuotaTableProps {
   startDate: Date;
   endDate: Date;
   quantity: number;
+  used_quantity: number;
 }
 
 type ImageType = {
@@ -497,6 +498,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
           startDate: new Date(item.startDate),
           endDate: new Date(item.endDate),
           quantity: item.quantity,
+          used_quantity: item.used_quantity,
           campaignId: item.campaignId,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt
@@ -739,7 +741,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         id: i,
         startDate: currentDate,
         endDate: endDate,
-        quantity: currentQuota
+        quantity: currentQuota,
+        used_quantity: currentQuota
       });
     }
 
@@ -780,7 +783,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         id: i,
         startDate: weekStart,
         endDate: weekEnd,
-        quantity: quota
+        quantity: quota,
+        used_quantity: quota
       });
     }
 
@@ -822,7 +826,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         id: i,
         startDate: monthStart,
         endDate: monthEnd,
-        quantity: currentQuota
+        quantity: currentQuota,
+        used_quantity: currentQuota
       });
     }
 
@@ -842,7 +847,8 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       id: 1,
       startDate: new Date(start),
       endDate: new Date(end),
-      quantity: currentQuota
+      quantity: currentQuota,
+      used_quantity: currentQuota
     });
 
     setQuotaRange(quotaTable);
@@ -1496,7 +1502,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                   <TableCell>{formatDate(quota.endDate)}</TableCell>
 
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                    {quota.quantity}
+                    {quota.used_quantity}
                     <b>/{quota.quantity}</b>
                   </StyledTableCell>
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
