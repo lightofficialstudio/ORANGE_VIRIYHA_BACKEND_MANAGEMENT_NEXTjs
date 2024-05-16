@@ -867,6 +867,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       setCodeQuatity(total);
       setQuotaModal(false);
       quotaRange[index].quantity = Number(quantity);
+      quotaRange[index].used_quantity = Number(quantity);
     }
   };
   // table
@@ -1232,7 +1233,6 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                   value={Quantity}
                   onChange={(event: any) => {
                     setQuantity(event.target.value);
-
                     if (event.target.value < 0) {
                       setQuantity(0);
                     }
