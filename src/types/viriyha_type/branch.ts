@@ -14,7 +14,13 @@ export type BranchType = {
   status: string;
   description?: string;
   createdById?: number;
+  place: PlaceType;
   createdAt?: Date;
   updatedAt?: Date;
   createdBy?: UserType;
+};
+
+export type PlaceType = {
+  id: number;
+  name: string;
 };

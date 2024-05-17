@@ -76,7 +76,7 @@ const DashboardColumnGraph = ({ data }: any) => {
         'Content-Type': 'application/json'
       }
     });
-    setCompareData(
+    setCompareDataOptions(
       response.data.Campaign_Count.map((option: any) => ({
         CampaignId: option.CampaignId,
         CampaignName: option.CampaignName,

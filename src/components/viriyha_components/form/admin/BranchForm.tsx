@@ -31,9 +31,12 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
   const context = React.useContext(JWTContext);
   const [titleShop, setTitleShop] = useState('');
   const [BranchName, setBranchName] = useState('');
+  const [PlaceId, setPlaceId] = useState('');
   const [Latitude, setLatitude] = useState('');
   const [Longitude, setLongitude] = useState('');
   const [Status, setStatus] = useState('');
+  // ตัวเลือก
+  const [provinceOption, setProvinceOption] = useState([] as any[]);
   const MadeById = context?.user?.userInfo?.id;
   if (!MadeById) {
     window.location.reload();
@@ -47,6 +50,11 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
       axiosServices.get(`/api/shop/${shopId}`).then((response) => {
         setTitleShop(response.data.name);
       });
+
+      // ดึงข้อมูลจังหวัดมาแสดงผล
+      axiosServices.get('/api/province').then((response) => {
+        setProvinceOption(response.data);
+      });
     }
     if (branchId) {
       axiosServices.get(`/api/branch/${branchId}`).then((response) => {
@@ -55,6 +63,7 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
         setLatitude(response.data.latitude);
         setLongitude(response.data.longitude);
         setStatus(response.data.status);
+        setPlaceId(response.data.place_id);
       });
     }
   }, [branchId, shopId]);
@@ -73,6 +82,7 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
     const formData = new FormData();
     formData.append('shopId', shopId ?? '');
     formData.append('name', BranchName);
+    formData.append('place_id', PlaceId);
     formData.append('latitude', Latitude);
     formData.append('longitude', Longitude);
     formData.append('status', Status);
@@ -112,7 +122,7 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
             <Grid item xs={6} md={12}>
               <SubCard title={`${titleMessage} ภายใต้ร้านค้า [${titleShop}]`}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <InputLabel required>ชื่อสาขา</InputLabel>
                     <TextField
                       fullWidth
@@ -124,8 +134,21 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
                     />
                   </Grid>
 
+                  <Grid item xs={6}>
+                    <InputLabel required>จังหวัด</InputLabel>
+                    <Autocomplete
+                      options={provinceOption}
+                      getOptionLabel={(option) => (option ? option.name : '')}
+                      value={provinceOption.find((option) => option.id === PlaceId) || null}
+                      onChange={(event, newValue) => {
+                        setPlaceId(newValue ? newValue.id : '');
+                      }}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </Grid>
+
                   <Grid item md={6} xs={12}>
-                    <InputLabel required>ละติจูด</InputLabel>
+                    <InputLabel>ละติจูด</InputLabel>
                     <TextField
                       fullWidth
                       placeholder=""
@@ -137,7 +160,7 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
                   </Grid>
 
                   <Grid item md={6} xs={12}>
-                    <InputLabel required>ลองติจูด</InputLabel>
+                    <InputLabel>ลองติจูด</InputLabel>
                     <TextField
                       fullWidth
                       placeholder=""

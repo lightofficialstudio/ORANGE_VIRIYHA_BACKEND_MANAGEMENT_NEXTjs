@@ -90,6 +90,12 @@ const headCells: HeadCell[] = [
     align: 'left'
   },
   {
+    id: 'place',
+    numeric: false,
+    label: 'จังหวัด',
+    align: 'left'
+  },
+  {
     id: 'latitude',
     numeric: false,
     label: 'ละติจูด',
@@ -226,7 +232,6 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
   const paramShopId = parseInt(shopId);
   // import varaible
   const [branchExcelFile, setBranchExcelFile] = React.useState<File | null>(null);
-  const [branchExcelData, setBranchExcelData] = React.useState<BranchType[]>([]);
   const createdById = context?.user?.userInfo?.id as number;
   if (!createdById) {
     window.location.reload();
@@ -344,18 +349,16 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
         // Skip the first row explicitly if needed
         id: item[0],
         name: item[1],
-        latitude: item[2],
-        longitude: item[3],
+        place: item[2],
+        latitude: item[3],
+        longitude: item[4],
         status: 'ACTIVE'
       }));
-      setBranchExcelData(arrayBranch);
-      setRows(arrayBranch);
+      // setBranchExcelData(arrayBranch);
+      // setRows(arrayBranch);
       handleSubmitExcelFileBranch(arrayBranch);
     };
     reader.readAsArrayBuffer(file);
-    if (branchExcelData.length > 0) {
-      handleSubmitExcelFileBranch(branchExcelData);
-    }
   };
 
   const handleSubmitExcelFileBranch = async (branchExcelData: BranchType[]) => {
@@ -393,7 +396,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
 
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet([], {
-      header: ['ลำดับ', 'สาขา', 'ละติจูด', 'ลองติจูด'],
+      header: ['ลำดับ', 'สาขา', 'จังหวัด', 'ละติจูด', 'ลองติจูด'],
       skipHeader: false
     });
 
@@ -402,6 +405,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
       rows.map((item, index) => ({
         ลำดับ: index + 1,
         สาขา: item.name,
+        จังหวัด: item.place?.name,
         ละติจูด: item.latitude,
         ลองติจูด: item.longitude
       })),
@@ -498,7 +502,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={branchExcelData.length}
+            rowCount={rows.length}
             theme={theme}
             selected={selected}
           />
@@ -542,6 +546,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
                           {row.name}
                         </Typography>
                       </TableCell>
+                      <TableCell align="center">{row.place?.name}</TableCell>
                       <TableCell align="center">{row.longitude}</TableCell>
                       <TableCell align="center">{row.latitude}</TableCell>
                       <TableCell align="center">
@@ -577,7 +582,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={branchExcelData.length}
+        count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
