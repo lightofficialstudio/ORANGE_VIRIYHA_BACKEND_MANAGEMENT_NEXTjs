@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { format } from 'date-fns';
 import * as XLSX from 'xlsx';
+
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
@@ -20,20 +21,27 @@ import {
   TextField,
   Toolbar,
   Tooltip,
-  Typography
+  Typography,
+  Autocomplete,
+  Chip,
+  Button
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+// components
+import InputLabel from 'ui-component/extended/Form/InputLabel';
+import ErrorDialog from '../modal/status/ErrorDialog';
 
 // project imports
-
 import { useDispatch, useSelector } from 'store';
 import { getLocationTransaction } from 'store/slices/viriyha/location';
 // assets
-
 import SearchIcon from '@mui/icons-material/Search';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 import { LocationTransactionType } from 'types/viriyha_type/location';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import axiosServices from 'utils/axios';
+// types
+import { CampaignType } from 'types/viriyha_type/campaign';
 
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
@@ -183,7 +191,16 @@ function EnhancedTableHead({
 }
 
 // ==============================|| ORDER LIST ||============================== //
-
+type searchType = {
+  id: string;
+  name: string;
+};
+const searchByOptions: searchType[] = [
+  {
+    id: 'used_code',
+    name: 'โค้ดที่ใช้งาน'
+  }
+];
 const LocationTable = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -192,26 +209,65 @@ const LocationTable = () => {
   const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
-  const [search, setSearch] = React.useState<string>('');
+  // const [search, setSearch] = React.useState<string>('');
   const [rows, setRows] = React.useState<LocationTransactionType[]>([]);
   const { location_transaction } = useSelector((state) => state.location_transaction);
-
+  // variable
+  const [conditionSearch, setConditionSearch] = React.useState<boolean>(false);
+  const [searchBy, setSearchBy] = React.useState<string>('โค้ดที่ใช้งาน');
+  // const [searchById, setSearchById] = React.useState<string>('');
+  const [campaignOption, setCampaignOption] = React.useState<CampaignType[]>([]);
+  const [startDate, setStartDate] = React.useState<string>();
+  const [endDate, setEndDate] = React.useState<string>();
+  const [campaignId, setCampaignId] = React.useState<number>();
+  // condition
+  const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  // temp data
+  const [tempData, setTempData] = React.useState<LocationTransactionType[]>([]);
+  const [highestUsageProvince, setHighestUsageProvince] = React.useState<string>('');
+  const [lowestUsageProvince, setLowestUsageProvince] = React.useState<string>('');
   React.useEffect(() => {
     dispatch(getLocationTransaction());
   }, [dispatch]);
+
+  // ให้แสดงตัวเลือก แคมเปญ
   React.useEffect(() => {
-    setRows(location_transaction);
+    const campaignOption: any[] = location_transaction.map((campaign: any) => ({
+      id: campaign.id,
+      name: campaign.name
+    }));
+    setCampaignOption(campaignOption);
   }, [location_transaction]);
+
+  // ค้นหาจังหวัดที่มีการใช้งานสูงสุด และ ต่ำสุด
+  React.useEffect(() => {
+    if (rows.length > 0) {
+      const placeCounts: Record<string, number> = {};
+      rows.forEach((row) => {
+        const placeName = row.location_name;
+        if (placeName) {
+          if (!placeCounts[placeName]) {
+            placeCounts[placeName] = 0;
+          }
+          placeCounts[placeName]++;
+        }
+      });
+      const sortedPlaces = Object.entries(placeCounts).sort((a, b) => b[1] - a[1]);
+      setHighestUsageProvince(sortedPlaces[0]?.[0] || '');
+      setLowestUsageProvince(sortedPlaces[sortedPlaces.length - 1]?.[0] || '');
+    }
+  }, [rows]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
     const newString = event?.target.value;
-    setSearch(newString || '');
+    // setSearch(newString || '');
 
     if (newString) {
       const newRows = rows.filter((row: KeyedObject) => {
         let matches = true;
 
-        const properties = ['latitude', 'longitude'];
+        const properties = ['used_code'];
         let containsQuery = false;
 
         properties.forEach((property) => {
@@ -227,7 +283,7 @@ const LocationTable = () => {
       });
       setRows(newRows);
     } else {
-      setRows(location_transaction);
+      setRows(tempData);
     }
   };
 
@@ -276,7 +332,7 @@ const LocationTable = () => {
         ละติจูด: item.latitude,
         ลองจิจูด: item.longitude,
         สถานที่กดรับสิทธิ์: '-',
-        รับสิทธิ์เมื่อวันที่: format(new Date(item.usedAt), 'd MMM yyyy')
+        รับสิทธิ์เมื่อวันที่: format(new Date(item.usedAt), 'dd MMM yyyy')
       })),
       { origin: -1, skipHeader: true }
     );
@@ -285,26 +341,164 @@ const LocationTable = () => {
     const fileName = `LocationTransactionData_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
     XLSX.writeFile(wb, fileName);
   };
+  const handleSubmit = async () => {
+    if (!campaignId) {
+      setErrorMessage('กรุณาเลือกแคมเปญ');
+      setOpenErrorDialog(true);
+    } else if (!startDate || !endDate) {
+      setErrorMessage('กรุณากรอกวันที่เริ่มต้นและสิ้นสุด');
+      setOpenErrorDialog(true);
+    }
+    const formData = new FormData();
+
+    formData.append('startDate', startDate?.toString() ?? '');
+    formData.append('endDate', endDate?.toString() ?? '');
+    formData.append('campaignId', String(campaignId));
+
+    const response = await axiosServices.post('api/location_transaction/search', formData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 200) {
+      const data = response.data;
+      const campaign = data.Campaign_Code.flatMap((code: any) =>
+        code.Campaign_Transaction.flatMap((transaction: any) => ({
+          id: transaction.id,
+          used_code: transaction?.code?.code,
+          latitude: transaction?.latitude,
+          longitude: transaction?.longitude,
+          location_name: transaction.place_id ? transaction.place.name : 'Unknown',
+          usedAt: transaction.usedAt
+        }))
+      );
+      console.log(campaign);
+      setRows(campaign);
+
+      setTempData(campaign);
+      setConditionSearch(true);
+      if (response.data.length === 0) {
+        setErrorMessage('ไม่พบข้อมูล');
+        setOpenErrorDialog(true);
+        setConditionSearch(false);
+      }
+    }
+  };
   return (
     <>
       <CardContent>
+        <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
+
         <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                )
-              }}
-              onChange={handleSearch}
-              placeholder="ค้นหาสถานที่กดรับสิทธิ์"
-              value={search}
-              size="medium"
-            />
+          <Grid item xs={12} sm={8} container spacing={2} sx={conditionSearch ? { display: '' } : { display: 'none' }}>
+            <Grid item xs={4}>
+              <Autocomplete
+                id="combo-box-demo"
+                options={searchByOptions}
+                getOptionLabel={(option) => option.name}
+                value={searchByOptions.find((option) => option.name === searchBy)}
+                onChange={(event, newValue) => {
+                  setSearchBy(newValue?.name ?? '');
+                  // setSearchById(newValue?.id ?? '');
+                }}
+                renderInput={(params) => <TextField {...params} label="ค้นหาโดย" variant="outlined" />}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  )
+                }}
+                onChange={handleSearch}
+                placeholder={`ค้นหารายการโดย ${searchBy}`}
+                size="medium"
+                variant="outlined"
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
+          <Grid item xs={12} sm={8} container spacing={2}>
+            <Grid item xs={6}>
+              <InputLabel>แคมเปญ</InputLabel>
+              <Autocomplete
+                disablePortal
+                options={campaignOption}
+                getOptionLabel={(option) => option.name}
+                onChange={(event, newValue) => {
+                  setCampaignId(newValue?.id);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </Grid>
+            <Grid item xs={6} sx={{ textAlign: 'right', alignItems: 'center' }}></Grid>
+          </Grid>
+
+          <Grid item xs={6} md={4} sx={{ textAlign: 'right', alignItems: 'center' }}>
+            {' '}
+            <Chip label={`ค้นหารายการรับสิทธิ์เจอทั้งหมด : ${rows.length} รายการ`} color="primary" sx={{ marginBottom: '5px' }} />
+            <Chip label={`จังหวัดที่มีการใช้งานสูงสุด : ${highestUsageProvince}`} color="success" sx={{ marginBottom: '5px' }} />
+            <Chip label={`จังหวัดที่มีการใช้งานต่ำสุด : ${lowestUsageProvince}`} color="error" />
+          </Grid>
+
+          <Grid item xs={12} sm={8} container spacing={2}>
+            <Grid item xs={6}>
+              <InputLabel>วันที่เริ่มต้น</InputLabel>
+              <TextField
+                fullWidth
+                type="date"
+                value={startDate}
+                size="medium"
+                variant="outlined"
+                onChange={(event: any) => {
+                  setStartDate(event.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <InputLabel>วันที่สิ้นสุด</InputLabel>
+              <TextField
+                fullWidth
+                type="date"
+                value={endDate}
+                size="medium"
+                variant="outlined"
+                onChange={(event: any) => {
+                  const newEndDate = event.target.value;
+                  if (newEndDate <= (startDate ?? '')) {
+                    setEndDate('');
+                    setErrorMessage('วันที่เริ่มต้นต้องน้อยกว่าวันที่สิ้นสุด');
+                    setOpenErrorDialog(true);
+                  } else {
+                    setEndDate(newEndDate);
+                  }
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={8} container spacing={2}>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                onClick={handleSubmit}
+                variant="contained"
+                type="button"
+                component="button"
+                sx={{
+                  background: theme.palette.dark.main,
+                  '&:hover': { background: theme.palette.success.dark }
+                }}
+              >
+                ค้นหา
+              </Button>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12} sm={4} sx={{ textAlign: 'right' }}>
             <Tooltip title="ส่งออกเอกสาร">
               <IconButton size="large" onClick={exportToExcel}>
                 <IosShareIcon />
@@ -346,12 +540,13 @@ const LocationTable = () => {
                         </Typography>
                       </TableCell>
 
-                      <TableCell align="left">{row.code.code}</TableCell>
-                      <TableCell align="center">{row.latitude}</TableCell>
-                      <TableCell align="center">{row.longitude}</TableCell>
-                      <TableCell align="center">-</TableCell>
+                      <TableCell align="center">{row?.used_code}</TableCell>
+                      <TableCell align="center">{row?.latitude}</TableCell>
+                      <TableCell align="center">{row?.longitude}</TableCell>
+                      <TableCell align="left">{row?.location_name}</TableCell>
+                      <TableCell align="right">{row.usedAt ? format(new Date(row?.usedAt), 'dd MMM yyyy') : ''}</TableCell>
 
-                      <TableCell align="right">{format(new Date(row.usedAt), 'E, MMM d yyyy')}</TableCell>
+                      {/* <TableCell align="right">{format(new Date(row.usedAt), 'E, MMM d yyyy')}</TableCell> */}
                     </TableRow>
                   );
                 })}

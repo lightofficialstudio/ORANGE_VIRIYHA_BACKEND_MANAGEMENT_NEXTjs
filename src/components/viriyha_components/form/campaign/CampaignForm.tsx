@@ -168,6 +168,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
   const [BranchCondition, setBranchCondition] = useState<string>('include');
   const [BranchId, setBranchId] = useState<number[]>([]);
   const [Name, setName] = useState<string>('');
+  const [NameCall, setNameCall] = useState<string>('');
   const [Category, setCategory] = useState<number>();
   const [startDate, setStartDate] = React.useState<Date | null>(new Date());
   const [endDate, setEndDate] = React.useState<Date | null>();
@@ -275,6 +276,10 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       setErrorMessage('กรุณาตรวจสอบเลขบัตรประชาชนให้ถูกต้อง');
       setOpenErrorDialog(true);
       return;
+    } else if (NameCall === '') {
+      setErrorMessage('กรุณาตั้งชื่อเรียกสิทธิพิเศษ (กรณีใช้งานสำหรับหลังบ้าน)');
+      setOpenErrorDialog(true);
+      return;
     }
     // form append section
     formData.append('shopId', String(ShopId));
@@ -282,6 +287,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     formData.append('branchId', BranchId.join(','));
     formData.append('branch_condition', BranchCondition);
     formData.append('name', Name);
+    formData.append('name_call', NameCall);
     formData.append('category_type_id', String(Category));
     formData.append('startDate', startDate ? startDate.toString() : '');
     formData.append('endDate', endDate ? endDate.toString() : '');
@@ -1183,6 +1189,20 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                 helperText={formik.touched.Name && formik.errors.Name}
               />
             </Grid>
+            <Grid item xs={12} md={6}>
+              <InputLabel required>ชื่อเรียกสิทธิพิเศษ (สำหรับเรียกใช้งานที่หลังบ้าน)</InputLabel>
+              <TextField
+                required
+                inputProps={{ maxLength: 100 }}
+                fullWidth
+                name="NameCall"
+                value={NameCall}
+                onChange={(event: any) => setNameCall(event.target.value)}
+                onBlur={formik.handleBlur}
+                error={formik.touched.Name && Boolean(formik.errors.Name)}
+                helperText={formik.touched.Name && formik.errors.Name}
+              />
+            </Grid>
 
             <Grid item md={6} xs={12}>
               <InputLabel required>หมวดหมู่สิทธิพิเศษ</InputLabel>
@@ -1201,7 +1221,6 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                 </Grid>
               </Grid>{' '}
             </Grid>
-            <Grid xs={6} md={6} />
             <Grid item xs={12} md={6}>
               <InputLabel required>วันที่เริ่มต้น</InputLabel>
               <TextField

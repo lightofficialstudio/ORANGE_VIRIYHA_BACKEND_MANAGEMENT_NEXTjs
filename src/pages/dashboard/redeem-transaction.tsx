@@ -9,7 +9,7 @@ import Page from 'components/ui-component/Page';
 import { gridSpacing } from 'store/constant';
 import DashboardLightCard from 'components/viriyha_components/dashboard/DashboardLightCard';
 import MainCard from 'ui-component/cards/MainCard';
-import DashboardColumnGraph from 'components/viriyha_components/dashboard/DashboardColumnGraph';
+import DashboardRedeemGraph from 'components/viriyha_components/dashboard/DashboardRedeemGraph';
 import axiosServices from 'utils/axios';
 
 const DashboardRedeemTransaction = () => {
@@ -65,7 +65,7 @@ const DashboardRedeemTransaction = () => {
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12} md={12}>
           <MainCard title="กราฟการใช้งานสิทธิพิเศษ">
-            <DashboardColumnGraph data={data?.Campaign_Count} />
+            <DashboardRedeemGraph data={data?.Campaign_Count} />
           </MainCard>
         </Grid>
       </Grid>

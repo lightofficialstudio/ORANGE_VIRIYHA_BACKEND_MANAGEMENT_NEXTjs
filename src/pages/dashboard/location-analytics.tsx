@@ -13,27 +13,70 @@ import DashboardLocationGraph from 'components/viriyha_components/dashboard/Dash
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState<any>({});
+
   const context = useContext(JWTContext);
   const MadeById = context?.user?.userInfo?.id;
-
   // variable
+  const [maxPlace, setMaxPlace] = useState<string>('');
+  const [countMaxPlace, setCountMaxPlace] = useState<number>(0);
+  const [minPlace, setMinPlace] = useState<string>('');
+  const [countMinPlace, setCountMinPlace] = useState<number>(0);
 
   if (!MadeById) {
     window.location.reload();
   }
 
+  const processData = (data: any) => {
+    const placeCount: Record<string, number> = {};
+    data.forEach((data: any) => {
+      data.Campaign_Code?.forEach((campaign: any) => {
+        campaign.Campaign_Transaction.forEach((transaction: any) => {
+          const placeName = transaction.place?.name;
+          if (placeName) {
+            if (!placeCount[placeName]) {
+              placeCount[placeName] = 0;
+            }
+            placeCount[placeName]++;
+          }
+        });
+      });
+    });
+
+    let maxPlace = '';
+    let minPlace = '';
+    let maxCount = 0;
+    let minCount = Infinity;
+
+    for (const place in placeCount) {
+      if (placeCount[place] > maxCount) {
+        maxCount = placeCount[place];
+        maxPlace = place;
+      }
+      if (placeCount[place] < minCount) {
+        minCount = placeCount[place];
+        minPlace = place;
+      }
+    }
+
+    setMaxPlace(maxPlace);
+    setMinPlace(minPlace);
+    setCountMaxPlace(maxCount);
+    setCountMinPlace(minCount);
+  };
+
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const response = await axiosServices.get('/api/dashboard/website');
-        setData(response.data);
+        const response = await axiosServices.get('/api/location_transaction');
+        const responseData = response?.data;
+        setData(responseData);
+        processData(responseData);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
       setLoading(false);
     };
     fetchDashboard();
-    console.log(data);
   }, []);
 
   return (
@@ -44,15 +87,15 @@ const Dashboard = () => {
             <Grid item lg={6} md={6} sm={6} xs={12}>
               <DashboardCard
                 isLoading={isLoading}
-                param={data.All_Viewed?.total_view.toLocaleString()}
-                titleMessage={'จังหวัดที่มีการเข้าชมสูงสุด : กรุงเทพมหานคร '}
+                param={countMaxPlace.toString()}
+                titleMessage={`จังหวัดที่มีการเข้าชมสูงสุด : ${maxPlace}`}
               />
             </Grid>
             <Grid item lg={6} md={6} sm={6} xs={12}>
               <DashboardCard
                 isLoading={isLoading}
-                param={data.All_Viewed?.total_unique_view.toLocaleString()}
-                titleMessage={'จังหวัดที่มีการเข้าชมต่ำสุด : สมุทรสาคร'}
+                param={countMinPlace.toString()}
+                titleMessage={`จังหวัดที่มีการเข้าชมต่ำสุด : ${minPlace}`}
               />
             </Grid>
           </Grid>
@@ -60,7 +103,7 @@ const Dashboard = () => {
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12} md={12}>
-              <DashboardLocationGraph titleMessage={'กราฟการเข้าชมแคมเปญ'} data={data.campaigns} />
+              <DashboardLocationGraph titleMessage={'กราฟการเข้าชมแคมเปญ'} data={data} />
             </Grid>
           </Grid>
         </Grid>

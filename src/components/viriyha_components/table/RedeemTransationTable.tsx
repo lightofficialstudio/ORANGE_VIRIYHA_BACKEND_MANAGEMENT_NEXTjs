@@ -27,10 +27,8 @@ import { visuallyHidden } from '@mui/utils';
 import * as XLSX from 'xlsx';
 
 // project imports
-import { useDispatch, useSelector } from 'store';
+import { useSelector } from 'store';
 // project data
-import { CampaignType } from 'types/viriyha_type/campaign';
-import { getCampaignTransaction } from 'store/slices/viriyha/campaign';
 import { ArrangementOrder, EnhancedTableHeadProps, KeyedObject, GetComparator, HeadCell, EnhancedTableToolbarProps } from 'types';
 
 // assets
@@ -58,10 +56,10 @@ function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
 const getComparator: GetComparator = (order, orderBy) =>
   order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
-function stableSort(array: CampaignType[], comparator: (a: CampaignType, b: CampaignType) => number) {
-  const stabilizedThis = array?.map((el: CampaignType, index: number) => [el, index]);
+function stableSort(array: any[], comparator: (a: any, b: any) => number) {
+  const stabilizedThis = array?.map((el: any, index: number) => [el, index]);
   stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0] as CampaignType, b[0] as CampaignType);
+    const order = comparator(a[0] as any, b[0] as any);
     if (order !== 0) return order;
     return (a[1] as number) - (b[1] as number);
   });
@@ -221,18 +219,17 @@ const searchByOptions: searchType[] = [
 
 const RedeemTransactionTable = () => {
   const theme = useTheme();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [order, setOrder] = React.useState<ArrangementOrder>('asc');
   const [orderBy, setOrderBy] = React.useState<string>('id');
   const [selected, setSelected] = React.useState<number[]>([]);
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(25);
   const [search, setSearch] = React.useState<string>('');
-  const [rows, setRows] = React.useState<CampaignType[]>([]);
-  const [transactionLength, setTransactionLength] = React.useState<number>(0);
+  const [rows, setRows] = React.useState<any[]>([]);
   const { campaign } = useSelector((state) => state.campaign);
   // variable
-  const [campaignOption, setCampaignOption] = React.useState<CampaignType[]>([]);
+  const [campaignOption, setCampaignOption] = React.useState<any[]>([]);
   const [campaignId, setCampaignId] = React.useState<number>();
   const [searchBy, setSearchBy] = React.useState<string>('โค้ดที่ใช้งาน');
   const [searchById, setSearchById] = React.useState<string>('');
@@ -242,13 +239,15 @@ const RedeemTransactionTable = () => {
   // condition
   const [openErrorDialog, setOpenErrorDialog] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
+  // data
+  const [searchData, setSearchData] = React.useState<any[]>([]);
 
+  // React.useEffect(() => {
+  //   dispatch(getCampaignTransaction());
+  // }, [dispatch]);
   React.useEffect(() => {
-    dispatch(getCampaignTransaction());
-  }, [dispatch]);
-  React.useEffect(() => {
-    setRows(campaign);
-  }, [campaign]);
+    setRows(searchData);
+  }, [searchData]);
   React.useEffect(() => {
     const fetchData = async () => {
       try {
@@ -269,16 +268,6 @@ const RedeemTransactionTable = () => {
     };
     fetchData();
   }, []);
-  React.useEffect(() => {
-    let transactionCount = 0;
-    rows.forEach((row) => {
-      row.Campaign_Code.forEach((campaign) => {
-        transactionCount += campaign.Campaign_Transaction.length;
-      });
-    });
-
-    setTransactionLength(transactionCount); // Update state with total count
-  }, [rows]);
 
   const handleRequestSort = (event: React.SyntheticEvent<Element, Event>, property: string) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -331,7 +320,7 @@ const RedeemTransactionTable = () => {
   };
 
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - transactionLength) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   // function
   const formatId = (id: number): string => {
@@ -393,7 +382,22 @@ const RedeemTransactionTable = () => {
     });
 
     if (response.status === 200) {
-      setRows(response.data);
+      setSearchData(
+        response.data.flatMap((data: any) =>
+          data.Campaign_Code.flatMap((campaign_code: any) =>
+            campaign_code.Campaign_Transaction.map((transaction: any) => {
+              return {
+                id: transaction.id,
+                id_card: transaction.id_card,
+                name: transaction.name,
+                surname: transaction.surname,
+                code: campaign_code.code,
+                usedAt: transaction.usedAt
+              };
+            })
+          )
+        )
+      );
       setConditionSearch(true);
       if (response.data.length === 0) {
         setErrorMessage('ไม่พบข้อมูล');
@@ -455,7 +459,7 @@ const RedeemTransactionTable = () => {
             </Grid>
             <Grid item xs={6} sx={{ textAlign: 'right', alignItems: 'center' }}></Grid>
           </Grid>
-          <Chip label={`ประวัติการใช้งานสิทธิ์ทั้งหมด : ${transactionLength} รายการ`} color="primary" />
+          <Chip label={`ประวัติการใช้งานสิทธิ์ทั้งหมด : ${rows.length} รายการ`} color="primary" />
 
           <Grid item xs={12} sm={8} container spacing={2}>
             <Grid item xs={6}>
@@ -529,7 +533,7 @@ const RedeemTransactionTable = () => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={transactionLength}
+            rowCount={rows.length}
             theme={theme}
             selected={selected}
           />
@@ -540,30 +544,17 @@ const RedeemTransactionTable = () => {
                 .map((row, index) => {
                   // Check if row is an expected object
                   if (typeof row !== 'object') return null;
-
-                  return row.Campaign_Code.map((campaign, campaignIndex) =>
-                    campaign.Campaign_Transaction.map((transaction, transactionIndex) => {
-                      const isItemSelected = isSelected(transaction.id);
-
-                      // Logic and JSX for TableRow
-                      return (
-                        <TableRow
-                          hover
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={`${campaignIndex}-${transactionIndex}`}
-                          selected={isItemSelected}
-                        >
-                          <TableCell align="left">{formatId(transaction.id)}</TableCell>
-                          <TableCell align="left">{censorIdCard(transaction.id_card)}</TableCell>
-                          <TableCell align="left">{transaction.name}</TableCell>
-                          <TableCell align="left">{transaction.surname}</TableCell>
-                          <TableCell align="left">{campaign.code}</TableCell>
-                          <TableCell align="left">{transaction.usedAt}</TableCell>
-                        </TableRow>
-                      );
-                    })
+                  const isItemSelected = isSelected(row.id);
+                  // Logic and JSX for TableRow
+                  return (
+                    <TableRow hover aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
+                      <TableCell align="left">{formatId(row.id)}</TableCell>
+                      <TableCell align="left">{censorIdCard(row.id_card)}</TableCell>
+                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="left">{row.surname}</TableCell>
+                      <TableCell align="left">{row.code}</TableCell>
+                      <TableCell align="left">{row.usedAt}</TableCell>
+                    </TableRow>
                   );
                 })}
             {emptyRows > 0 && (
@@ -579,7 +570,7 @@ const RedeemTransactionTable = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={transactionLength}
+        count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

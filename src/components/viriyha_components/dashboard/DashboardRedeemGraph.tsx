@@ -20,22 +20,19 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 //     name: 'รายเดือน'
 //   }
 // ];
-const DashboardColumnGraph = ({ data }: any) => {
+const DashboardRedeemGraph = ({ data }: any) => {
   const [comparisonType, setComparisonType] = useState<string>('Campaign');
   const [compareDataOptions, setCompareDataOptions] = useState<any>([]);
   // condition
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   // variable
-  const [startDate, setStartDate] = useState<string>();
-  const [endDate, setEndDate] = useState<string>();
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [compareData, setCompareData] = useState<any[]>([]);
-  // Mockup brand data
-  const mockBrands = [
-    { id: 'brandA', name: 'Brand A', transactions: 50 },
-    { id: 'brandB', name: 'Brand B', transactions: 75 },
-    { id: 'brandC', name: 'Brand C', transactions: 25 }
-  ];
+  // temp data
+  const [campaignData, setCampaignData] = useState<any[]>([]);
+  const [brandData, setBrandData] = useState<any[]>([]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'N/A'; // Return 'N/A' or some placeholder if the date is not valid
@@ -45,19 +42,24 @@ const DashboardColumnGraph = ({ data }: any) => {
   };
 
   useEffect(() => {
-    if (comparisonType === 'Campaign' && data) {
+    if (comparisonType === 'Campaign') {
       setCompareDataOptions(
-        data.map((option: any) => ({
+        campaignData.map((option: any) => ({
           CampaignId: option.CampaignId,
           CampaignName: option.CampaignName,
           Transaction_Count: option.Transaction_Count
         }))
       );
-      console.log(compareDataOptions);
     } else if (comparisonType === 'Brand') {
-      setCompareDataOptions(mockBrands);
+      setCompareDataOptions(
+        brandData.map((option: any) => ({
+          CampaignId: option.CampaignId,
+          CampaignName: option.CampaignName,
+          Transaction_Count: option.Transaction_Count
+        }))
+      );
     }
-  }, [data, comparisonType]);
+  }, [data, comparisonType, campaignData, brandData]);
 
   const handleSubmit = async () => {
     if (!startDate || !endDate) {
@@ -76,88 +78,62 @@ const DashboardColumnGraph = ({ data }: any) => {
         'Content-Type': 'application/json'
       }
     });
-    setCompareDataOptions(
-      response.data.Campaign_Count.map((option: any) => ({
-        CampaignId: option.CampaignId,
-        CampaignName: option.CampaignName,
-        Transaction_Count: option.Transaction_Count
-      }))
+    setCompareData([]);
+    // แทนตัวแปรสำหรับ Campaign
+    setCampaignData(
+      response.data.Campaign_Count.map((campaign: any) => {
+        return {
+          CampaignId: campaign.CampaignId,
+          CampaignName: campaign.CampaignName,
+          Transaction_Count: campaign.Transaction_Count
+        };
+      })
+    );
+    // แทนตัวแปรสำหรับ Brand
+    setBrandData(
+      response.data.Shop_Summary.map((brand: any) => {
+        return {
+          CampaignId: brand.CampaignId,
+          CampaignName: brand.ShopName,
+          Transaction_Count: brand.Total_Transaction_Count
+        };
+      })
     );
   };
 
   const chartOptions = {
-    chart: {
-      id: 'bar-chart',
-      type: 'bar' as const, // Ensuring the type is exactly 'bar'
-      height: 350,
-      toolbar: {
-        show: true
-      }
-    },
     title: {
-      text: `Reedem Transaction ตั้งแต่วันที่ ${formatDate(startDate || '')} ถึง ${formatDate(endDate || '')}`,
+      text: `Redeem Transaction  - กราฟรายงานสถานที่รับสิทธิ์ ตั้งแต่ ${formatDate(startDate)} ถึง ${formatDate(endDate)}`,
       align: 'center',
       style: {
         fontSize: '20px',
         fontWeight: 'bold'
       }
     },
-
+    chart: {
+      type: 'bar',
+      height: 350
+    },
+    xaxis: {
+      categories: compareData.map((item: any) => item.CampaignName)
+    },
     plotOptions: {
       bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        endingShape: 'rounded',
-        dataLabels: {
-          position: 'top' // Position them on top of the bars
-        }
+        horizontal: true
       }
     },
     dataLabels: {
-      enabled: true, // Enable data labels to show them on the bars
+      enabled: true,
       formatter: function (val: number) {
         return val.toFixed(0); // Format numbers to show as integers
-      },
-      offsetY: -20,
-      style: {
-        fontSize: '18px',
-        colors: ['#304758']
-      }
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent']
-    },
-    xaxis: {
-      categories: compareData.map((option: any) => option.CampaignName),
-      labels: {
-        rotate: -90, // Rotate labels to 90 degrees for vertical display
-        rotateAlways: true,
-        maxHeight: 500, // Optionally adjust to ensure labels do not overlap
-        style: {
-          fontSize: '12px', // Adjust font size if necessary for visibility
-          cssClass: 'lineSeedTH' // Custom CSS class for further styling if needed
-        }
       }
     },
     yaxis: {
-      title: {
-        text: 'Transactions'
-      },
       labels: {
-        formatter: (val: number) => `${Math.round(val)}` // Ensure Y-axis labels are integers
+        formatter: function (val: any) {
+          return typeof val === 'number' ? val.toFixed(0) : val; // Ensure y-axis labels are integers
+        }
       }
-    },
-    fill: {
-      opacity: 1
-    },
-    tooltip: {
-      enabled: false // Disable tooltips as labels are always visible
-    },
-    legend: {
-      show: true,
-      position: 'bottom' as 'bottom'
     }
   };
 
@@ -170,7 +146,7 @@ const DashboardColumnGraph = ({ data }: any) => {
 
   const handleComparisonChange = (event: any, newValue: any) => {
     setComparisonType(newValue);
-    setCompareData([]); // Clear the selected options when the type changes
+    setCompareData([]);
   };
 
   return (
@@ -251,7 +227,20 @@ const DashboardColumnGraph = ({ data }: any) => {
       </Grid>
 
       <ReactApexChart
-        options={{ ...chartOptions, title: { ...chartOptions.title, align: 'center' } }}
+        options={{
+          ...chartOptions,
+          title: {
+            text: `Redeem Transaction - กราฟรายงานสถานที่รับสิทธิ์ ตั้งแต่วันที่ ${formatDate(startDate || '')} ถึง ${formatDate(
+              endDate || ''
+            )}`,
+            align: 'center',
+            style: {
+              fontSize: '20px',
+              fontWeight: 'bold'
+            }
+          },
+          chart: { type: 'bar', height: 350, width: 1200 }
+        }}
         type="bar"
         series={series}
         height={700}
@@ -261,4 +250,4 @@ const DashboardColumnGraph = ({ data }: any) => {
   );
 };
 
-export default DashboardColumnGraph;
+export default DashboardRedeemGraph;

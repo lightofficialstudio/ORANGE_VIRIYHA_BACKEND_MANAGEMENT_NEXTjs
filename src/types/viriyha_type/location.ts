@@ -12,6 +12,14 @@ export type LocationTransactionType = {
   latitude: number;
   longitude: number;
   status: string;
-  usedAt: Date;
   code: CampaignCode;
+  place: PlaceType;
+  used_code?: string;
+  location_name?: string;
+  usedAt: Date;
+};
+
+export type PlaceType = {
+  id: number;
+  name: string;
 };
