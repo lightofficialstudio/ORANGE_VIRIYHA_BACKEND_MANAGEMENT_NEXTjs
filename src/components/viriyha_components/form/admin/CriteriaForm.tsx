@@ -129,7 +129,7 @@ const CriteriaForm = ({ titleMessage, confirmMessage, primaryId }: CriteriaFormP
                     <InputLabel required>ชื่อ Criteria</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="เช่น Bronze หรือ Silver หรือ Gold หรือ Platinum หรือ Diamond หรือ VIP หรือ ฯลฯ"
+                      placeholder="เช่น ประกันรถยนต์, ประกันสุขภาพ"
                       value={Name}
                       name="Name"
                       onChange={(event: any) => {

@@ -8,8 +8,8 @@ import SegmentForm from 'components/viriyha_components/form/admin/SegmentForm';
 
 const SegmentCreatePage = () => {
   return (
-    <Page title="สร้างกลุ่มการตลาด (Create Segment)">
-      <SegmentForm titleMessage={'สร้างกลุ่มการตลาด (Create Segment)'} confirmMessage={'สร้างข้อมูลใหม่'} />
+    <Page title="สร้าง Segment">
+      <SegmentForm titleMessage={'สร้าง Segment'} confirmMessage={'ยืนยัน'} />
     </Page>
   );
 };

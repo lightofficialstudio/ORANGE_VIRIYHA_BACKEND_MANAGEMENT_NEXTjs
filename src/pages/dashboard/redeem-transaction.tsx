@@ -64,7 +64,7 @@ const DashboardRedeemTransaction = () => {
       </Grid>
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12} md={12}>
-          <MainCard title="กราฟการใช้งานสิทธิพิเศษ">
+          <MainCard title="กราฟแสดงการรับสิทธิ์">
             <DashboardRedeemGraph data={data?.Campaign_Count} />
           </MainCard>
         </Grid>

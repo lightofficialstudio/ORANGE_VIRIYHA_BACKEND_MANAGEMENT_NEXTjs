@@ -73,7 +73,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'โค้ด',
+    label: 'Segment ID',
     align: 'left'
   },
   {
@@ -91,13 +91,13 @@ const headCells: HeadCell[] = [
   {
     id: 'createdBy',
     numeric: true,
-    label: 'ผู้ที่สร้าง',
+    label: 'ผู้สร้าง',
     align: 'center'
   },
   {
     id: 'updatedBy',
     numeric: true,
-    label: 'ผู้ที่แก้ไขล่าสุด',
+    label: 'แก้ไขล่าสุด',
     align: 'center'
   },
   {

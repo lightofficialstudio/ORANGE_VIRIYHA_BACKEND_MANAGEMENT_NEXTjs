@@ -319,7 +319,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
               <SubCard title={titleMessage}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <InputLabel required>ชื่อผู้เข้าใช้งานระบบ</InputLabel>
+                    <InputLabel required>ชื่อผู้ใช้งาน (Username)</InputLabel>
                     <TextField
                       fullWidth
                       placeholder="Username"
@@ -336,10 +336,10 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                   </Grid>
 
                   <Grid item xs={12}>
-                    <InputLabel required>อีเมล</InputLabel>
+                    <InputLabel required>E-mail</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="viriyha@mail.com"
+                      placeholder="E-mail@viriyah.co.th เท่านั้น"
                       name="Email"
                       value={Email}
                       onChange={(event: any) => {
@@ -402,12 +402,12 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                   </Grid>
 
                   <Grid item xs={12}>
-                    <InputLabel>รายละเอียด</InputLabel>
+                    <InputLabel>รายละเอียดเพิ่มเติม</InputLabel>
                     <TextField
                       multiline
                       rows={3}
                       fullWidth
-                      placeholder="เช่น สิ่งที่อยากบันทึกเก็บไว้"
+                      placeholder="เช่น สิ่งที่ต้องการบันทึกเก็บไว้"
                       value={Description}
                       onChange={(event: any) => {
                         setDescription(event.target.value);
@@ -419,7 +419,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
             </Grid>
           </Grid>
         </MainCard>
-        <SubCard title={'จัดการสิทธิ์การใช้งานระบบ'}>
+        <SubCard title={'จัดการสิทธิ์การใช้งาน'}>
           <MainCard
             content={false}
             secondary={
@@ -432,7 +432,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
               <Table sx={{ minWidth: 320 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell sx={{ pl: 3 }}>หัวข้อ</StyledTableCell>
+                    <StyledTableCell sx={{ pl: 3 }}>ฟังก์ชั่นงาน</StyledTableCell>
                     <StyledTableCell align="left">ระดับสิทธิ์การใช้งาน</StyledTableCell>
                   </TableRow>
                 </TableHead>
@@ -447,7 +447,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Web Analytics
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuWebAnalytics === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -468,7 +468,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Campaign
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuDashboardCampaign === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -489,7 +489,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Redeem
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuDashboardRedeem === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -516,7 +516,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Banner
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuAdminBanner === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -537,7 +537,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Category
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuAdminCategory === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -556,9 +556,9 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                   </StyledTableRow>
                   <StyledTableRow>
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
-                      - Shop
+                      - Brand
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuAdminShop === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -579,7 +579,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Segment
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuAdminSegment === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -601,7 +601,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Criteria
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuAdminCriteria === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -622,7 +622,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Frontend Users
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuAdminFrontendUsers === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -643,7 +643,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Backend Users
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuAdminBackendUsers === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -670,7 +670,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Normal Campaign
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuCampaignNormal === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -691,7 +691,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Special Campaign
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuCampaignSpecial === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -718,7 +718,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Attempt
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuReportAttempt === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -739,7 +739,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Location
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuReportLocation === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -767,7 +767,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Error Message
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuConfigErrorMessage === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}
@@ -795,7 +795,7 @@ const BackendUserForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFo
                     <StyledTableCell sx={{ pl: 3 }} component="th" scope="row">
                       - Error Logs
                     </StyledTableCell>
-                    <StyledTableCell align="right">
+                    <StyledTableCell align="right" style={{ backgroundColor: MenuLogsErrorLogs === 1 ? 'green' : 'red' }}>
                       <Autocomplete
                         options={Permission}
                         getOptionLabel={(option) => (option ? option.name : '')}

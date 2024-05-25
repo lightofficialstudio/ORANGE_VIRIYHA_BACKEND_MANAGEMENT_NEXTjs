@@ -214,7 +214,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                         อัพโหลดรูปภาพ
                       </Button> */}
                       <InputLabel style={{ textAlign: 'left' }} required>
-                        รูปภาพ
+                        อัพโหลดรูปภาพ
                       </InputLabel>
                       <TextField
                         fullWidth
@@ -232,10 +232,10 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
               <SubCard title={titleMessage}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <InputLabel required>ชื่อแบนเนอร์</InputLabel>
+                    <InputLabel required>ชื่อ Banner</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="เช่น แบนเนอร์โรงพยาบาลวิริยะ"
+                      placeholder="เช่น Banner แคมเปญ Privileges @Central"
                       value={Name}
                       name="Name"
                       onChange={(event: any) => {
@@ -267,7 +267,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                   </Grid>
 
                   <Grid item xs={12}>
-                    <InputLabel>ลิงก์สิทธิพิเศษ</InputLabel>
+                    <InputLabel>url link</InputLabel>
                     <TextField
                       fullWidth
                       placeholder="เช่น www.viriyah.co.th/privilege/1"

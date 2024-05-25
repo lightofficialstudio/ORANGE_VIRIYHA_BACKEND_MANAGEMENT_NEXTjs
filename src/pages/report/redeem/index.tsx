@@ -12,8 +12,8 @@ import RedeemTransactionTable from 'components/viriyha_components/table/RedeemTr
 
 const RedeemTransactionPage = () => {
   return (
-    <Page title="ประวัติการใช้งานโค้ดสิทธิพิเศษ">
-      <MainCard title="ประวัติการใช้งานโค้ดสิทธิพิเศษ (Redeem Transaction)" content={false}>
+    <Page title="รายงานการใช้สิทธิพิเศษ (Redemption Report)">
+      <MainCard title="รายงานการใช้สิทธิพิเศษ (Redemption Report)" content={false}>
         {/* table */}
         <RedeemTransactionTable />
       </MainCard>

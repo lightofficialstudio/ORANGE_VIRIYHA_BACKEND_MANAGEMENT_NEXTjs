@@ -60,7 +60,7 @@ const Dashboard = () => {
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12} md={12}>
-              <DashboardWebAnalyticsGraph titleMessage={'กราฟการเข้าชมแคมเปญ'} data={data.campaigns} />
+              <DashboardWebAnalyticsGraph titleMessage={'กราฟแสดงการเข้าชมเว็บไซต์'} data={data.campaigns} />
             </Grid>
           </Grid>
         </Grid>

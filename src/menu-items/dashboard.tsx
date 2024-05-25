@@ -25,8 +25,8 @@ const dashboard: NavItemType = {
   children: [
     {
       id: 'Web_Anylytics',
-      title: <FormattedMessage id="Web Analytics" />,
-      caption: <FormattedMessage id="ระบบรายงานเว็บไซต์" />,
+      title: <FormattedMessage id="Web Report" />,
+      caption: <FormattedMessage id="รายงานเกี่ยวกับเว็บไซต์" />,
       type: 'collapse',
       icon: icons.IconGraph,
       requiredPermission: 'MenuWebAnalytics',
@@ -52,7 +52,7 @@ const dashboard: NavItemType = {
     {
       id: 'Redeem_Transaction',
       title: <FormattedMessage id="Redeem Transaction" />,
-      caption: <FormattedMessage id="ระบบรายงานการรับสิทธิ์" />,
+      caption: <FormattedMessage id="สถิติการรับสิทธิ์" />,
       type: 'collapse',
       icon: icons.IconGraph,
       requiredPermission: 'MenuDashboardRedeem',

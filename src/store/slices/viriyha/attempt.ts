@@ -24,7 +24,7 @@ const slice = createSlice({
       state.error = action.payload;
     },
 
-    // GET ERROR LOG
+    // GET
     getAttemptTransactionSuccess(state, action) {
       state.attempt_transaction = action.payload;
     }

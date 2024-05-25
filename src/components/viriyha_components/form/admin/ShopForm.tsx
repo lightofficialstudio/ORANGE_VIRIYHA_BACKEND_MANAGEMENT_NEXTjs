@@ -169,7 +169,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
         <MainCard title={titleMessage} content={true}>
           <Grid container spacing={3}>
             <Grid item xs={6} md={4}>
-              <SubCard title="รูปภาพ" contentSX={{ textAlign: 'center' }}>
+              <SubCard title="อัพโหลดรูปภาพ" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
@@ -187,7 +187,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
                       {/* <Button variant="contained" size="small">
                         อัพโหลดรูปภาพ
                       </Button> */}
-                      <InputLabel style={{ textAlign: 'left' }}>รูปภาพ</InputLabel>
+                      <InputLabel style={{ textAlign: 'left' }}>Logo</InputLabel>
                       <TextField
                         fullWidth
                         type="file"
@@ -204,10 +204,10 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
               <SubCard title={titleMessage}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <InputLabel required>ชื่อร้านค้า</InputLabel>
+                    <InputLabel required>ชื่อแบรนด์</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="เช่น KFC"
+                      placeholder="เช่น Central"
                       value={Name}
                       name="Name"
                       onChange={(event: any) => {

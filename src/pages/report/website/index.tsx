@@ -12,8 +12,8 @@ import WebsiteAnalyzedTable from '../../../components/viriyha_components/table/W
 
 const WebsiteAnalyzedPage = () => {
   return (
-    <Page title="รายงานเว็บไซต์ (Website Analyzed)">
-      <MainCard title="รายงานเว็บไซต์ (Website Analyzed)" content={false}>
+    <Page title="รายงานเกี่ยวกับเว็บไซต์ (Website Report)">
+      <MainCard title="รายงานเกี่ยวกับเว็บไซต์ (Website Report)" content={false}>
         {/* table */}
         <WebsiteAnalyzedTable />
       </MainCard>

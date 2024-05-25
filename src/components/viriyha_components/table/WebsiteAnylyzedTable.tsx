@@ -27,7 +27,6 @@ import {
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
-import Chip from 'ui-component/extended/Chip';
 import { useDispatch, useSelector } from 'store';
 // project data
 import { CampaignType } from 'types/viriyha_type/campaign';
@@ -77,7 +76,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'โค้ด',
+    label: 'รหัสรับสิทธิ์',
     align: 'left'
   },
   {
@@ -89,28 +88,28 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อสิทธิพิเศษ',
+    label: 'สิทธิพิเศษ',
     align: 'left'
   },
   {
     id: 'shop_name',
     numeric: false,
-    label: 'การเข้าชม (view)',
+    label: 'จำนวนครั้งที่เข้าชม (Total View)',
     align: 'left'
   },
   {
     id: 'start_Date',
     numeric: false,
-    label: 'การเข้าชมเฉพาะ (unqiue view)',
+    label: 'จำนวนคนที่เข้าชม (Unique View)',
     align: 'left'
-  },
-
-  {
-    id: 'status',
-    numeric: false,
-    label: 'สถานะ',
-    align: 'center'
   }
+
+  // {
+  //   id: 'status',
+  //   numeric: false,
+  //   label: 'สถานะ',
+  //   align: 'center'
+  // }
 ];
 
 // ==============================|| TABLE HEADER TOOLBAR ||============================== //
@@ -304,7 +303,7 @@ const WebsiteAnalyzedTable = () => {
 
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet([], {
-      header: ['ลำดับ', 'โค้ด', 'ชื่อสิทธิพิเศษ', 'การเข้าชม (view)', 'การเข้าชมเฉพาะ (unqiue view)', 'สถานะ'],
+      header: ['ลำดับ', 'รหัสรับสิทธิ์', 'สิทธิพิเศษ', 'จำนวนครั้งที่เข้าชม (Total View)', 'จำนวนคนที่เข้าชม (Unique View)'],
       skipHeader: false
     });
 
@@ -312,11 +311,11 @@ const WebsiteAnalyzedTable = () => {
       ws,
       rows.map((item, index) => ({
         ลำดับ: index + 1,
-        โค้ด: formatId(item.id),
-        ชื่อสิทธิพิเศษ: item.name,
-        'การเข้าชม (view)': item.view,
-        'การเข้าชมเฉพาะ (unqiue view)': item.unique_view,
-        สถานะ: item.status === `ACTIVE` ? 'เปิดการใช้งาน' : item.status === `INACTIVE` ? 'ปิดการใช้งาน' : 'ยังไม่ได้ตั้งค่า'
+        รหัสรับสิทธิ์: formatId(item.id),
+        สิทธิพิเศษ: item.name,
+        'จำนวนครั้งที่เข้าชม (Total View)': item.view,
+        'จำนวนคนที่เข้าชม (Unique View)': item.unique_view
+        // สถานะ: item.status === `ACTIVE` ? 'เปิดการใช้งาน' : item.status === `INACTIVE` ? 'ปิดการใช้งาน' : 'ยังไม่ได้ตั้งค่า'
       })),
       { origin: -1, skipHeader: true }
     );
@@ -411,11 +410,6 @@ const WebsiteAnalyzedTable = () => {
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="center">{row.view}</TableCell>
                       <TableCell align="center">{row.unique_view}</TableCell>
-                      <TableCell align="right">
-                        {row.status === `ACTIVE` && <Chip label="เปิดการใช้งาน" size="small" chipcolor="success" />}
-                        {row.status === `INACTIVE` && <Chip label="ปิดการใช้งาน" size="small" chipcolor="orange" />}
-                        {row.status === null && <Chip label="ยังไม่ได้ตั้งค่า" size="small" chipcolor="error" />}
-                      </TableCell>
                     </TableRow>
                   );
                 })}

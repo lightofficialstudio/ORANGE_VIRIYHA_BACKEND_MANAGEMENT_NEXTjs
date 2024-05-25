@@ -175,7 +175,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
         <MainCard title={titleMessage} content={true}>
           <Grid container spacing={3}>
             <Grid item xs={6} md={4}>
-              <SubCard title="รูปภาพ" contentSX={{ textAlign: 'center' }}>
+              <SubCard title="อัพโหลดรููปภาพ" contentSX={{ textAlign: 'center' }}>
                 <Grid container spacing={2}>
                   <Grid container spacing={3} justifyContent="center" alignItems="center">
                     <Grid item>
@@ -193,7 +193,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                       {/* <Button variant="contained" size="small">
                         อัพโหลดรูปภาพ
                       </Button> */}
-                      <InputLabel style={{ textAlign: 'left' }}>รูปภาพ</InputLabel>
+                      <InputLabel style={{ textAlign: 'left' }}>อัพโหลดรููปภาพ</InputLabel>
                       <TextField
                         fullWidth
                         type="file"
@@ -214,7 +214,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                     <TextField
                       fullWidth
                       name="Name"
-                      placeholder="เช่น ร้านค้า,ท่องเที่ยว,อาหารและเครื่องดื่ม"
+                      placeholder="เช่น อาหารและเครื่องดื่ม"
                       value={Name}
                       onChange={(event: any) => {
                         setName(event.target.value);
@@ -226,7 +226,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <InputLabel required>ลำดับการแสดงผล</InputLabel>
+                    <InputLabel required>ตำแหน่ง</InputLabel>
                     <TextField
                       fullWidth
                       type="number"

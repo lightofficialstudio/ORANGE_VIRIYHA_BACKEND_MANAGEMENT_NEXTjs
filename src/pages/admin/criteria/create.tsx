@@ -8,8 +8,8 @@ import CriteriaForm from 'components/viriyha_components/form/admin/CriteriaForm'
 
 const CriteriaCreatePage = () => {
   return (
-    <Page title="สร้างการแบ่งกลุ่ม (Create Criteria)">
-      <CriteriaForm titleMessage={'การแบ่งกลุ่ม (Create Criteria)'} confirmMessage={'สร้างข้อมูล'} />
+    <Page title="สร้างกำหนดกลุ่มผลิตภัณฑ์ (Criteria)">
+      <CriteriaForm titleMessage={'กำหนดกลุ่มผลิตภัณฑ์ (Criteria)'} confirmMessage={'ยืนยัน'} />
     </Page>
   );
 };

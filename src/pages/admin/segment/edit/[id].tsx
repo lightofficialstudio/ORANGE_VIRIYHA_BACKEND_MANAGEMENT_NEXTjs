@@ -10,8 +10,8 @@ const SegmentEditPage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Page title="แก้ไขกลุ่มการตลาด (Edit Segment)">
-      <SegmentForm titleMessage={'แก้ไขกลุ่มการตลาด (Edit Segment)'} confirmMessage={'แก้ไขข้อมูล'} primaryId={id as string} />
+    <Page title="แก้ไข Segment">
+      <SegmentForm titleMessage={'แก้ไข Segment'} confirmMessage={'แก้ไขข้อมูล'} primaryId={id as string} />
     </Page>
   );
 };

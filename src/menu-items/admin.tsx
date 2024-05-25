@@ -48,8 +48,8 @@ const admin: NavItemType = {
     },
     {
       id: 'shop_management',
-      title: <FormattedMessage id="Shop Management" />,
-      caption: <FormattedMessage id="จัดการร้านค้า" />,
+      title: <FormattedMessage id="Brand Management" />,
+      caption: <FormattedMessage id="สร้างแบรนด์" />,
       type: 'item',
       url: '/admin/shop',
       icon: icons.IconBuildingStore,
@@ -59,7 +59,7 @@ const admin: NavItemType = {
     {
       id: 'segment_management',
       title: <FormattedMessage id="Segment" />,
-      caption: <FormattedMessage id="จัดการกลุ่มการตลาด" />,
+      caption: <FormattedMessage id="กำหนดกลุ่มลูกค้า" />,
       type: 'item',
       url: '/admin/segment',
       icon: icons.IconAdjustments,
@@ -69,7 +69,7 @@ const admin: NavItemType = {
     {
       id: 'criteria_management',
       title: <FormattedMessage id="Criteria" />,
-      caption: <FormattedMessage id="จัดการกลุ่มเป้าหมาย" />,
+      caption: <FormattedMessage id="กำหนดกลุ่มผลิตภัณฑ์" />,
       type: 'item',
       url: '/admin/criteria',
       icon: icons.IconVectorTriangle,

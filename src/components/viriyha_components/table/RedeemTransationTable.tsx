@@ -72,13 +72,13 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'โค้ด',
+    label: 'Log ID',
     align: 'left'
   },
   {
     id: 'id_card',
     numeric: false,
-    label: 'รหัสบัตรประชาชนผู้ใช้งาน',
+    label: 'ID Card',
     align: 'left'
   },
   {
@@ -96,13 +96,13 @@ const headCells: HeadCell[] = [
   {
     id: 'code',
     numeric: false,
-    label: 'โค้ดที่ใช้งาน',
+    label: 'รหัสรับสิทธิ์',
     align: 'left'
   },
   {
     id: 'usedAt',
     numeric: false,
-    label: 'ใช้งานเมื่อวันที่',
+    label: 'วันที่รับสิทธิ์',
     align: 'left'
   }
 ];
@@ -213,7 +213,7 @@ const searchByOptions: searchType[] = [
   },
   {
     id: 'used_code',
-    name: 'โค้ดที่ใช้งาน'
+    name: 'รหัสรับสิทธิ์'
   }
 ];
 
@@ -231,7 +231,7 @@ const RedeemTransactionTable = () => {
   // variable
   const [campaignOption, setCampaignOption] = React.useState<any[]>([]);
   const [campaignId, setCampaignId] = React.useState<number>();
-  const [searchBy, setSearchBy] = React.useState<string>('โค้ดที่ใช้งาน');
+  const [searchBy, setSearchBy] = React.useState<string>('รหัสรับสิทธิ์');
   const [searchById, setSearchById] = React.useState<string>('');
   const [startDate, setStartDate] = React.useState<string>();
   const [endDate, setEndDate] = React.useState<string>();
@@ -338,7 +338,7 @@ const RedeemTransactionTable = () => {
 
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet([], {
-      header: ['ลำดับ', 'โค้ด', 'รหัสบัตรประชาชนผู้ใช้งาน', 'ชื่อ', 'นามสกุล', 'โค้ดที่ใช้งาน', 'ใช้งานเมื่อวันที่'],
+      header: ['ลำดับ', 'Log ID', 'ID Card', 'ชื่อ', 'นามสกุล', 'รหัสรับสิทธิ์', 'วันที่รับสิทธิ์'],
       skipHeader: false
     });
 
@@ -346,12 +346,12 @@ const RedeemTransactionTable = () => {
       ws,
       rows.map((item, index) => ({
         ลำดับ: index + 1,
-        โค้ด: formatId(item.Campaign_Code[0]?.id),
+        Log_ID: formatId(item.Campaign_Code[0]?.id),
         รหัสบัตรประชาชนผู้ใช้งาน: censorIdCard(item.Campaign_Code[0]?.Campaign_Transaction[0]?.id_card),
         ชื่อ: item.Campaign_Code[0]?.Campaign_Transaction[0]?.name,
         นามสกุล: item.Campaign_Code[0]?.Campaign_Transaction[0]?.surname,
-        โค้ดที่ใช้งาน: item.Campaign_Code[0]?.code,
-        ใช้งานเมื่อวันที่: item.Campaign_Code[0]?.Campaign_Transaction[0]?.usedAt
+        รหัสรับสิทธิ์: item.Campaign_Code[0]?.code,
+        วันที่รับสิทธิ์: item.Campaign_Code[0]?.Campaign_Transaction[0]?.usedAt
       })),
       { origin: -1, skipHeader: true }
     );

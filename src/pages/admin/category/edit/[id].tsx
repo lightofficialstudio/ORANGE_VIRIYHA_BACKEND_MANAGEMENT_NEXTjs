@@ -13,9 +13,9 @@ const EditCategoryPage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Page title="แก้ไขหมวดหมู่ (Edit Category)">
+    <Page title="แก้ไขหมวดหมู่">
       <GoBackButton Link={`/admin/category/`} />
-      <CategoryForm titleMessage={'แก้ไขหมวดหมู่ (Edit Category)'} confirmMessage={'แก้ไขหมวดหมู่'} categoryId={id as string} />
+      <CategoryForm titleMessage={'แก้ไขหมวดหมู่'} confirmMessage={'ยืนยัน'} categoryId={id as string} />
     </Page>
   );
 };

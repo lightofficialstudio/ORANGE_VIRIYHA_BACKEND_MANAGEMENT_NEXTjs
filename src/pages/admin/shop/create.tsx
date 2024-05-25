@@ -8,8 +8,8 @@ import ShopForm from 'components/viriyha_components/form/admin/ShopForm';
 
 const ShopCreatePage = () => {
   return (
-    <Page title="สร้างร้านค้า (Create Shop)">
-      <ShopForm titleMessage={'สร้างร้านค้า (Create Shop)'} confirmMessage={'สร้างร้านค้า'} />
+    <Page title="สร้างแบรนด์">
+      <ShopForm titleMessage={'สร้างแบรนด์'} confirmMessage={'ยืนยัน'} />
     </Page>
   );
 };

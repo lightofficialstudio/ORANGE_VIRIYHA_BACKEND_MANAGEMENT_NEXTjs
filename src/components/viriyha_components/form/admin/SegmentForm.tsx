@@ -122,7 +122,7 @@ const SegmentForm = ({ titleMessage, confirmMessage, primaryId }: SegmentFormPro
                     <InputLabel required>ชื่อ Segment</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="เช่น Bronze หรือ Silver หรือ Gold หรือ Platinum หรือ Diamond หรือ VIP หรือ ฯลฯ"
+                      placeholder="เช่น Gold, Silver"
                       value={Name}
                       name="Name"
                       onChange={(event: any) => {

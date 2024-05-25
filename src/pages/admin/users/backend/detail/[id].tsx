@@ -14,10 +14,10 @@ const BannerCreatePage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Page title="สร้างแบนเนอร์">
+    <Page title="แก้ไขผู้ใช้งาน">
       <GoBackButton Link={`/admin/users/backend/`} />
       <MainCard>
-        <BackendUserForm titleMessage={'สร้างผู้ใช้ใหม่'} confirmMessage={'สร้างข้อมูล'} primaryId={id as string} />
+        <BackendUserForm titleMessage={'แก้ไขผู้ใช้งาน'} confirmMessage={'ยืนยัน'} primaryId={id as string} />
       </MainCard>
     </Page>
   );

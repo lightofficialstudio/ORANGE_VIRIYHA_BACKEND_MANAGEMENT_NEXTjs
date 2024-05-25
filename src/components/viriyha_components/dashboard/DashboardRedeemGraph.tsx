@@ -199,7 +199,7 @@ const DashboardRedeemGraph = ({ data }: any) => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <InputLabel>ตัวเลือก</InputLabel>
+          <InputLabel>เปรียบเทียบโดย</InputLabel>
           <Autocomplete
             multiple
             options={compareDataOptions}

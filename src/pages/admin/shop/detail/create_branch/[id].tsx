@@ -15,8 +15,8 @@ const CreateBranchPage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Page title="สร้างสาขา (Create Branch)">
-      <BranchForm confirmMessage={'สร้างสาขา '} titleMessage={'สร้างสาขา '} shopId={id as string} />
+    <Page title="สร้างสาขา ภายใต้แบรนด์">
+      <BranchForm confirmMessage={'ยืนยัน '} titleMessage={'สร้างสาขา '} shopId={id as string} />
     </Page>
   );
 };

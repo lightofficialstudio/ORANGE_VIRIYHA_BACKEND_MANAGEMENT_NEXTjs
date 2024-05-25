@@ -12,10 +12,10 @@ import BannerForm from 'components/viriyha_components/form/admin/BannerForm';
 
 const BannerCreatePage = () => {
   return (
-    <Page title="สร้างแบนเนอร์">
+    <Page title="สร้าง Banner">
       <GoBackButton Link={`/admin/banners/`} />
       <MainCard>
-        <BannerForm titleMessage={'สร้างแบนเนอร์ (Create Banner)'} confirmMessage={'สร้างแบนเนอร์'} />
+        <BannerForm titleMessage={'สร้าง Banner'} confirmMessage={'สร้าง Banner'} />
       </MainCard>
     </Page>
   );

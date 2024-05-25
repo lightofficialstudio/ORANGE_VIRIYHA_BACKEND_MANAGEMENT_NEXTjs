@@ -80,7 +80,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'ID',
+    label: 'Branch ID',
     align: 'left'
   },
   {
@@ -396,7 +396,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
 
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet([], {
-      header: ['ลำดับ', 'สาขา', 'จังหวัด', 'ละติจูด', 'ลองติจูด'],
+      header: ['ลำดับ', 'สาขา', 'จังหวัด', 'ละติจูด', 'ลองจิจูด'],
       skipHeader: false
     });
 
@@ -407,7 +407,7 @@ const BranchListTable = ({ shopId }: BranchListTableProps) => {
         สาขา: item.name,
         จังหวัด: item.place?.name,
         ละติจูด: item.latitude,
-        ลองติจูด: item.longitude
+        ลองจิจูด: item.longitude
       })),
       { origin: -1, skipHeader: true }
     );

@@ -75,7 +75,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'โค้ด',
+    label: 'User ID',
     align: 'left'
   },
 
@@ -94,7 +94,7 @@ const headCells: HeadCell[] = [
   {
     id: 'email',
     numeric: false,
-    label: 'อีเมลล์',
+    label: 'E-mail',
     align: 'left'
   },
   {
@@ -106,13 +106,13 @@ const headCells: HeadCell[] = [
   {
     id: 'createdAt',
     numeric: true,
-    label: 'สร้างเมื่อวันที่',
+    label: 'วันที่สร้าง',
     align: 'right'
   },
   {
     id: 'created_by',
     numeric: true,
-    label: 'ผู้ที่สร้าง',
+    label: 'ผู้สร้าง',
     align: 'center'
   },
   {

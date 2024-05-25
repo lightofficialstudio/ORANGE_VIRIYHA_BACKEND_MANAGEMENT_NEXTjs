@@ -90,7 +90,7 @@ export default function ModalChangePosition({ isOpen, isClose, onSave, title, pr
                   ตำแหน่งปัจจุบัน : {position}
                 </Typography>
               </Grid>
-              <InputLabel required>ตำแหน่งที่ต้องการแก้ไข</InputLabel>
+              <InputLabel required>ตำแหน่งใหม่</InputLabel>
               <TextField
                 fullWidth
                 required

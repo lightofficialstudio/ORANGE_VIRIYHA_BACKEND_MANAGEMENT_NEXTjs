@@ -120,13 +120,13 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
         <MainCard title={titleMessage} content={true}>
           <Grid container spacing={3}>
             <Grid item xs={6} md={12}>
-              <SubCard title={`${titleMessage} ภายใต้ร้านค้า [${titleShop}]`}>
+              <SubCard title={`${titleMessage} ภายใต้แบรนด์ [${titleShop}]`}>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <InputLabel required>ชื่อสาขา</InputLabel>
                     <TextField
                       fullWidth
-                      placeholder="เช่น KFC นวลจันทร์ , McDonald พระราม 2"
+                      placeholder="เช่น Central ชิดลม"
                       value={BranchName}
                       onChange={(event: any) => {
                         setBranchName(event.target.value);
@@ -160,7 +160,7 @@ const BranchForm = ({ titleMessage, confirmMessage, shopId, branchId }: BranchFo
                   </Grid>
 
                   <Grid item md={6} xs={12}>
-                    <InputLabel>ลองติจูด</InputLabel>
+                    <InputLabel>ลองจิจูด</InputLabel>
                     <TextField
                       fullWidth
                       placeholder=""

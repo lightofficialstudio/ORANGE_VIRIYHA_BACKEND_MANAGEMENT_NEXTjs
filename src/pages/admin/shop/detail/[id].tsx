@@ -21,10 +21,10 @@ const ShopDetailPage = () => {
   return (
     <Page title="รายละเอียดของร้านค้า (Shop Detail)">
       <GoBackButton Link={'/admin/shop/'} />
-      <ShopForm titleMessage={'แก้ไขข้อมูลร้านค้า (Edit Shop)'} confirmMessage={'แก้ไขข้อมูลสาขา'} shopId={id as string} />
+      <ShopForm titleMessage={'แก้ไขแบรนด์'} confirmMessage={'ยืนยัน'} shopId={id as string} />
       {/* table */}
       <Grid mt={5}></Grid>
-      <MainCard title="สาขาทั้งหมด (Branch)" content={false}>
+      <MainCard title="สาขา (Branch)" content={false}>
         <BranchListTable shopId={id as string} />
       </MainCard>
     </Page>

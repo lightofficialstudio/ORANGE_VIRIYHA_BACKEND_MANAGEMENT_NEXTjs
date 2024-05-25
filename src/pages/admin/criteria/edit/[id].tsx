@@ -10,8 +10,8 @@ const CriteriaCreatePage = () => {
   const rounter = useRouter();
   const { id } = rounter.query;
   return (
-    <Page title="แก้ไขการแบ่งกลุ่ม (Edit Criteria)">
-      <CriteriaForm titleMessage={'แก้ไขการแบ่งกลุ่ม (Edit Criteria)'} confirmMessage={'สร้างข้อมูล'} primaryId={id as string} />
+    <Page title="แก้ไขการกำหนดกลุ่มผลิตภัณฑ์ (Criteria)">
+      <CriteriaForm titleMessage={'แก้ไขการกำหนดกลุ่มผลิตภัณฑ์ (Criteria)'} confirmMessage={'ยืนยัน'} primaryId={id as string} />
     </Page>
   );
 };

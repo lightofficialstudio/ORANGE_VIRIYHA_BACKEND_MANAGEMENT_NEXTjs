@@ -84,7 +84,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'โค้ด',
+    label: 'Banner ID',
     align: 'left'
   },
   {
@@ -102,20 +102,20 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อแบนเนอร์',
+    label: 'ชื่อ Banner',
     align: 'left'
   },
 
   {
     id: 'updatedAt',
     numeric: true,
-    label: 'วันที่แก้ไขล่าสุด',
+    label: 'แก้ไขล่าสุด',
     align: 'right'
   },
   {
     id: 'created_by',
     numeric: true,
-    label: 'ผู้ที่สร้าง',
+    label: 'ผู้สร้าง',
     align: 'center'
   },
   {
