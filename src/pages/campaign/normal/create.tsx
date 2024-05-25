@@ -14,7 +14,7 @@ import CampaignForm from 'components/viriyha_components/form/campaign/CampaignFo
 const CreateCampaignPage = () => (
   <Page title="Normal campaign create">
     <Typography variant="body2">
-      <CampaignForm title={'สร้างสิทธิพิเศษ'} type={'normal'} />
+      <CampaignForm title={'สร้างแคมเปญ'} type={'normal'} />
     </Typography>
   </Page>
 );

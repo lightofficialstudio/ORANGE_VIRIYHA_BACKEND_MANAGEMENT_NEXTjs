@@ -1093,7 +1093,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         <form>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12} md={6} lg={6}>
-              <SubCard title="ร้านค้าที่เข้าร่วม">
+              <SubCard title="แบรนด์">
                 <Grid container direction="column" spacing={3}>
                   <Grid item>
                     <Autocomplete
@@ -1176,7 +1176,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
             </Grid>
 
             <Grid item xs={12} md={12}>
-              <InputLabel required>ชื่อสิทธิพิเศษ</InputLabel>
+              <InputLabel required>สิทธิพิเศษ</InputLabel>
               <TextField
                 required
                 inputProps={{ maxLength: 100 }}
@@ -1205,7 +1205,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
             </Grid>
 
             <Grid item md={6} xs={12}>
-              <InputLabel required>หมวดหมู่สิทธิพิเศษ</InputLabel>
+              <InputLabel required>หมวดหมู่</InputLabel>
               <Grid container direction="column" spacing={3}>
                 <Grid item>
                   <Autocomplete

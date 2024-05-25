@@ -27,7 +27,7 @@ const campaign: NavItemType = {
       title: <FormattedMessage id="Normal Campaign" />,
       type: 'item',
       url: '/campaign/normal',
-      caption: <FormattedMessage id="สิทธิพิเศษ (ธรรมดา)" />,
+      caption: <FormattedMessage id="สร้างแคมเปญทั่วไป" />,
       icon: icons.IconBrandCampaignmonitor,
       breadcrumbs: false,
       requiredPermission: 'MenuCampaignNormal'
@@ -35,7 +35,7 @@ const campaign: NavItemType = {
     {
       id: 'special_campaign',
       title: <FormattedMessage id="Special Campaign" />,
-      caption: <FormattedMessage id="สิทธิพิเศษ (พิเศษ)" />,
+      caption: <FormattedMessage id="สร้างแคมเปญรูปแบบพิเศษ" />,
       type: 'item',
       url: '/campaign/special',
       icon: icons.IconBrandCampaignmonitor,

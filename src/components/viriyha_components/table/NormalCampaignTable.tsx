@@ -78,7 +78,7 @@ const headCells: HeadCell[] = [
   {
     id: 'id',
     numeric: true,
-    label: 'Code',
+    label: 'Campaign ID',
     align: 'left'
   },
   {
@@ -90,13 +90,13 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'ชื่อสิทธิพิเศษ',
+    label: 'สิทธิพิเศษ',
     align: 'left'
   },
   {
     id: 'shop_name',
     numeric: false,
-    label: 'ร้านค้าที่เข้าร่วม',
+    label: 'แบรนด์',
     align: 'left'
   },
   {
@@ -127,13 +127,13 @@ const headCells: HeadCell[] = [
   {
     id: 'updatedBy',
     numeric: true,
-    label: 'ผู้ที่อัพเดทล่าสุด',
+    label: 'ผู้แก้ไขล่าสุด',
     align: 'right'
   },
   {
     id: 'createdAt',
     numeric: true,
-    label: 'วันที่อัพเดทล่าสุด',
+    label: 'แก้ไขล่าสุด',
     align: 'right'
   }
 ];
