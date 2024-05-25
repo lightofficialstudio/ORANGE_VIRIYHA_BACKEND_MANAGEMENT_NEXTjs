@@ -9,7 +9,7 @@ import ErrorDialog from '../modal/status/ErrorDialog';
 // api
 import axiosServices from 'utils/axios';
 
-const optionRank = [
+export const optionRank = [
   { id: 'asc', name: ' อันดับจังหวัดที่มีการใช้งานสูงสุด' },
   { id: 'desc', name: ' อันดับจังหวัดที่มีการใช้งานต่ำสุด' }
 ];
@@ -172,6 +172,7 @@ const DashboardLocationGraph = ({ titleMessage, data }: any) => {
             renderInput={(params) => <TextField {...params} />}
           />
         </Grid>
+
         <Grid item xs={6} md={2} marginBottom={2}>
           <InputLabel>จัดอันดับ</InputLabel>
           <TextField
@@ -254,8 +255,6 @@ const DashboardLocationGraph = ({ titleMessage, data }: any) => {
             }}
             type="bar"
             series={series}
-            height={700}
-            width={1100}
           />{' '}
         </Grid>
       </Grid>

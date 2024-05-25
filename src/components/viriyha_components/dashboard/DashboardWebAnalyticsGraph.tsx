@@ -4,15 +4,16 @@ import { Autocomplete, Grid, InputLabel, TextField } from '@mui/material';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
+// components
 import MainCard from 'ui-component/cards/MainCard';
 import ErrorDialog from '../modal/status/ErrorDialog';
 
 const optionRank = [
   { id: 'All', name: 'ทั้งหมด' },
-  { id: 'Top_View', name: '10 อันดับยอดวิวรายครั้งสูงสุด' },
-  { id: 'Bottom_View', name: '10 อันดับยอดวิวรายครั้งต่ำสุด' },
-  { id: 'Top_Unique_View', name: '10 อันดับยอดวิวรายคนสูงสุด' },
-  { id: 'Bottom_Unique_View', name: '10 อันดับยอดวิวรายคนสูงสุด' }
+  { id: 'Top_View', name: 'อันดับยอดวิวรายครั้งสูงสุด' },
+  { id: 'Bottom_View', name: 'อันดับยอดวิวรายครั้งต่ำสุด' },
+  { id: 'Top_Unique_View', name: 'อันดับยอดวิวรายคนสูงสุด' },
+  { id: 'Bottom_Unique_View', name: 'อันดับยอดวิวรายคนสูงสุด' }
 ];
 
 const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
@@ -23,6 +24,7 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
   // variable
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [rank, setRank] = useState<string>('All');
+  const [rankValue, setRankValue] = useState<number>(10);
   const [selectedCampaigns, setSelectedCampaigns] = useState<any>([]);
 
   const processData = (campaignData: any) => {
@@ -41,7 +43,7 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
     } else if (rank === 'Bottom_Unique_View') {
       processedData = processedData.sort((a, b) => a.unique_view - b.unique_view);
     }
-    processedData = processedData.slice(0, 10);
+    processedData = processedData.slice(0, rankValue);
     return processedData;
   };
 
@@ -51,11 +53,11 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
       setCampaignOptions(data);
       setErrorMessage('');
     }
-  }, [rank, data, campaigns]);
+  }, [rank, data, campaigns, rankValue]);
 
   const chartOptions = {
     title: {
-      text: `Website Analytics - กราฟเปรียบเทียบการเข้าชมแคมเปญ`,
+      text: `Web report dashboard - รายงานเกี่ยวกับเว็บไซต์`,
       align: 'center',
       style: {
         fontSize: '20px',
@@ -119,8 +121,20 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
             renderInput={(params) => <TextField {...params} />}
           />
         </Grid>
-        <Grid item xs={12} md={6} marginBottom={5}>
+        <Grid item xs={6} md={2} marginBottom={2}>
           <InputLabel>จัดอันดับ</InputLabel>
+          <TextField
+            fullWidth
+            type="number"
+            placeholder="โปรดระบุอันดับที่ต้องการจัด"
+            value={rankValue}
+            onChange={(event) => {
+              setRankValue(parseInt(event.target.value));
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={4} marginBottom={5}>
+          <InputLabel>เปรียบเทียบโดย</InputLabel>
           <Autocomplete
             fullWidth
             options={optionRank}
@@ -136,8 +150,6 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
           options={{ ...chartOptions, title: { align: 'center' }, chart: { type: 'bar', height: 350 } }}
           type="bar"
           series={series}
-          height={700}
-          width={1100}
         />{' '}
       </Grid>
     </MainCard>

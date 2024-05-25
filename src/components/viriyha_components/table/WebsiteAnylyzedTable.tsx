@@ -41,10 +41,10 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 const optionRank = [
   { id: 'All', name: 'ทั้งหมด' },
-  { id: 'Top_View', name: '10 อันดับยอดวิวรายครั้งสูงสุด' },
-  { id: 'Bottom_View', name: '10 อันดับยอดวิวรายครั้งต่ำสุด' },
-  { id: 'Top_Unique_View', name: '10 อันดับยอดวิวรายคนสูงสุด' },
-  { id: 'Bottom_Unique_View', name: '10 อันดับยอดวิวรายคนต่ำสุด' }
+  { id: 'Top_View', name: 'อันดับยอดวิวรายครั้งสูงสุด' },
+  { id: 'Bottom_View', name: 'อันดับยอดวิวรายครั้งต่ำสุด' },
+  { id: 'Top_Unique_View', name: 'อันดับยอดวิวรายคนสูงสุด' },
+  { id: 'Bottom_Unique_View', name: 'อันดับยอดวิวรายคนต่ำสุด' }
 ];
 // table sort
 function descendingComparator(a: KeyedObject, b: KeyedObject, orderBy: string) {
