@@ -88,7 +88,7 @@ const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
-    label: 'สิทธิพิเศษ',
+    label: 'แคมเปญ',
     align: 'left'
   },
   {
@@ -407,7 +407,7 @@ const WebsiteAnalyzedTable = () => {
                           }
                         })}
                       </TableCell>
-                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="left">{row.name_called}</TableCell>
                       <TableCell align="center">{row.view}</TableCell>
                       <TableCell align="center">{row.unique_view}</TableCell>
                     </TableRow>

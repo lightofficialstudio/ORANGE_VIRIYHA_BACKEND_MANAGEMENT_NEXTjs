@@ -68,7 +68,7 @@ const DashboardLocationGraph = ({ titleMessage, data }: any) => {
       setCampaignOptions(
         data.map((campaign: any) => ({
           id: campaign.id,
-          name: campaign.name
+          name: campaign.name_called ?? 'โปรดระบุชื่อแคมเปญ'
         }))
       );
     } else {

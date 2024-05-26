@@ -287,7 +287,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     formData.append('branchId', BranchId.join(','));
     formData.append('branch_condition', BranchCondition);
     formData.append('name', Name);
-    formData.append('name_call', NameCall);
+    formData.append('name_called', NameCall);
     formData.append('category_type_id', String(Category));
     formData.append('startDate', startDate ? startDate.toString() : '');
     formData.append('endDate', endDate ? endDate.toString() : '');
@@ -385,7 +385,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
 
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        window.location.href = `/campaign/${campaign_type}/`;
+        // window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -546,6 +546,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
         const data = response.data;
         const shopId = data?.Campaign_Shop[0]?.shopId;
         await BranchList(shopId);
+        setNameCall(data?.name_called);
         setShopId(data?.Campaign_Shop[0]?.shopId);
         setPrimaryShopId(data?.Campaign_Shop[0]?.id);
         setBranchId(data?.Campaign_Shop[0]?.Campaign_Shop_Branch?.map((item: any) => item.branchId));
@@ -1190,7 +1191,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
               />
             </Grid>
             <Grid item xs={12} md={6}>
-              <InputLabel required>ชื่อเรียกสิทธิพิเศษ (สำหรับเรียกใช้งานที่หลังบ้าน)</InputLabel>
+              <InputLabel required>แคมเปญ</InputLabel>
               <TextField
                 required
                 inputProps={{ maxLength: 100 }}

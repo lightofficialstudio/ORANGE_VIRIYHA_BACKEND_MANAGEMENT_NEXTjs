@@ -69,7 +69,7 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
       height: 350
     },
     xaxis: {
-      categories: selectedCampaigns.map((c: any) => c.name)
+      categories: selectedCampaigns.map((c: any) => (c.name_call ? c.name_call : c.name))
     },
     plotOptions: {
       bar: {
@@ -98,7 +98,6 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
   return (
     <MainCard title={titleMessage}>
       <ErrorDialog open={openErrorDialog} handleClose={() => setOpenErrorDialog(false)} errorMessage={errorMessage} />
-
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} marginBottom={2}>
           <InputLabel>แคมเปญ</InputLabel>
@@ -106,13 +105,13 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
             fullWidth
             multiple
             options={campaignOptions}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => (option.name_called ? option.name_called : option.name)}
             value={campaigns}
             onChange={(event, newValue: any) => {
               setCampaigns(
                 newValue.map((data: any) => ({
                   id: data.id,
-                  name: data.name,
+                  name: data.name_called ? data.name_called : data.name,
                   view: data.view,
                   unique_view: data.unique_view
                 }))
@@ -146,11 +145,13 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
             renderInput={(params) => <TextField {...params} />}
           />
         </Grid>
-        <ReactApexChart
-          options={{ ...chartOptions, title: { align: 'center' }, chart: { type: 'bar', height: 350 } }}
-          type="bar"
-          series={series}
-        />{' '}
+        <Grid item xs={12} md={12} lg={12}>
+          <ReactApexChart
+            options={{ ...chartOptions, title: { align: 'center' }, chart: { type: 'bar', height: 350 } }}
+            type="bar"
+            series={series}
+          />{' '}
+        </Grid>
       </Grid>
     </MainCard>
   );

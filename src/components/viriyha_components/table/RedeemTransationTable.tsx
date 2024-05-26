@@ -256,7 +256,7 @@ const RedeemTransactionTable = () => {
         response.data.forEach((element: any) => {
           campaignArray.push({
             id: element.id,
-            name: element.name
+            name: element.name_called ?? 'โปรดกรอกชื่อแคมเปญ'
           });
         });
         setCampaignOption(campaignArray);

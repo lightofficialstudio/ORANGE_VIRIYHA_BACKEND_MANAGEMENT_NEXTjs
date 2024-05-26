@@ -8,7 +8,8 @@ export interface CampaignStateProps {
 
 export type CampaignType = {
   id: number;
-  name: string;
+  name?: string;
+  name_called?: string;
   type: string;
   view: number;
   unique_view: number;

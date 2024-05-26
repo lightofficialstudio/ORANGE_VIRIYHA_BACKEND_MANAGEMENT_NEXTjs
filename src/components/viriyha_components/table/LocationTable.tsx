@@ -235,7 +235,7 @@ const LocationTable = () => {
   React.useEffect(() => {
     const campaignOption: any[] = location_transaction.map((campaign: any) => ({
       id: campaign.id,
-      name: campaign.name
+      name: campaign.name_called ?? 'โปรดระบุชื่อแคมเปญ'
     }));
     setCampaignOption(campaignOption);
   }, [location_transaction]);
@@ -428,7 +428,7 @@ const LocationTable = () => {
               <Autocomplete
                 disablePortal
                 options={campaignOption}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option: CampaignType) => option.name ?? ''} // Fix: Change the type of getOptionLabel prop
                 onChange={(event, newValue) => {
                   setCampaignId(newValue?.id);
                 }}
@@ -440,9 +440,21 @@ const LocationTable = () => {
 
           <Grid item xs={6} md={4} sx={{ textAlign: 'right', alignItems: 'center' }}>
             {' '}
-            <Chip label={`ค้นหารายการรับสิทธิ์เจอทั้งหมด : ${rows.length} รายการ`} color="primary" sx={{ marginBottom: '5px' }} />
-            <Chip label={`จังหวัดที่มีการใช้งานสูงสุด : ${highestUsageProvince}`} color="success" sx={{ marginBottom: '5px' }} />
-            <Chip label={`จังหวัดที่มีการใช้งานต่ำสุด : ${lowestUsageProvince}`} color="error" />
+            <Chip
+              label={`ค้นหารายการรับสิทธิ์เจอทั้งหมด : ${rows.length} รายการ`}
+              color="primary"
+              sx={{ marginBottom: '5px', display: rows.length > 0 ? '' : 'none' }}
+            />
+            <Chip
+              label={`จังหวัดที่มีการใช้งานสูงสุด : ${highestUsageProvince}`}
+              color="success"
+              sx={{ marginBottom: '5px', display: rows.length > 0 ? '' : 'none' }}
+            />
+            <Chip
+              label={`จังหวัดที่มีการใช้งานต่ำสุด : ${lowestUsageProvince}`}
+              color="error"
+              sx={{ display: rows.length > 0 ? '' : 'none' }}
+            />
           </Grid>
 
           <Grid item xs={12} sm={8} container spacing={2}>
