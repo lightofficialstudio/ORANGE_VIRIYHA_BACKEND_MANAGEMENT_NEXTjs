@@ -16,8 +16,8 @@ const icons = {
 
 const campaign: NavItemType = {
   id: 'campaign',
-  title: <FormattedMessage id="Campaign" />,
-  caption: <FormattedMessage id="สิทธิพิเศษ" />,
+  title: <FormattedMessage id="Campaign Management" />,
+  caption: <FormattedMessage id="สร้างแคมเปญ" />,
   icon: icons.IconSquarePlus,
   type: 'group',
   requiredPermission: 'MenuAdminBanner',

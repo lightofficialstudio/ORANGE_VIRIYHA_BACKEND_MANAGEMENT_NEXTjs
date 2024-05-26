@@ -199,7 +199,7 @@ const CategoryForm = ({ titleMessage, confirmMessage, categoryId }: CategoryForm
                         type="file"
                         name="shopImage"
                         onChange={handleImageChange}
-                        helperText={'*รูปภาพต้องมีขนาด 251 x 331 Pixel และขนาดไม่เกิน 4MB'}
+                        // helperText={'*รูปภาพต้องมีขนาด 251 x 331 Pixel และขนาดไม่เกิน 4MB'}
                       ></TextField>
                     </AnimateButton>
                   </Grid>

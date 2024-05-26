@@ -27,15 +27,14 @@ const report: NavItemType = {
   children: [
     {
       id: 'report_attempt',
-      title: <FormattedMessage id="Attempt" />,
-      caption: <FormattedMessage id="ประวัติการพยายามเข้ารับสิทธิ์" />,
+      title: <FormattedMessage id="Attempt Redeem" />,
+      caption: <FormattedMessage id="จำนวนกดรับสิทธิ์ทั้งหมด" />,
       type: 'item',
       url: '/report/attempt',
       icon: icons.IconFocus2,
       breadcrumbs: false,
       requiredPermission: 'MenuReportAttempt'
-    },
-    
+    }
   ]
 };
 

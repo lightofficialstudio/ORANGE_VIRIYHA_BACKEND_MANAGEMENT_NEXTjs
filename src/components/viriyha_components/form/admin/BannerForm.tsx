@@ -221,7 +221,7 @@ const BannerForm = ({ titleMessage, confirmMessage, primaryId }: CategoryFormPro
                         type="file"
                         name="bannerImg"
                         onChange={handleImageChange}
-                        helperText={'*รูปภาพต้องมีขนาด 1374 x 542 Pixel และขนาดไม่เกิน 4MB'}
+                        // helperText={'*รูปภาพต้องมีขนาด 1374 x 542 Pixel และขนาดไม่เกิน 4MB'}
                       ></TextField>
                     </AnimateButton>
                   </Grid>

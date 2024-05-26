@@ -193,7 +193,7 @@ const ShopForm = ({ titleMessage, confirmMessage, shopId }: ShopFormProps) => {
                         type="file"
                         name="shopImage"
                         onChange={handleImageChange}
-                        helperText={'*รูปภาพต้องมีขนาด 300 x 300 Pixel และขนาดไม่เกิน 4MB'}
+                        // helperText={'*รูปภาพต้องมีขนาด 300 x 300 Pixel และขนาดไม่เกิน 4MB'}
                       ></TextField>
                     </AnimateButton>
                   </Grid>

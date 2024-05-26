@@ -23,8 +23,8 @@ const logs: NavItemType = {
   children: [
     {
       id: 'config_error',
-      title: <FormattedMessage id="Error Message" />,
-      caption: <FormattedMessage id="ปรับปรุงข้อความล้มเหลว" />,
+      title: <FormattedMessage id="Error Message Config" />,
+      caption: <FormattedMessage id="ปรับแต่งข้อความ Error" />,
       type: 'item',
       url: '/config/error',
       icon: icons.IconMessage,

@@ -53,6 +53,7 @@ const DashboardWebAnalyticsGraph = ({ titleMessage, data }: any) => {
       setCampaignOptions(data);
       setErrorMessage('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rank, data, campaigns, rankValue]);
 
   const chartOptions = {

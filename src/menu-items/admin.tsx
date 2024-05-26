@@ -79,7 +79,7 @@ const admin: NavItemType = {
     {
       id: 'user_management',
       title: <FormattedMessage id="User Management" />,
-      caption: <FormattedMessage id="จัดการผู้ใช้งาน" />,
+      caption: <FormattedMessage id="ระบบจัดการผู้ใช้งาน" />,
       icon: icons.IconUser,
       breadcrumbs: false,
       type: 'item',
