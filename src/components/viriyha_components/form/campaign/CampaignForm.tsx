@@ -254,6 +254,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     setOpenSuccessDialog(false);
   };
 
+  // todo : ส่งข้อมูลไปยัง API
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // validated section
@@ -268,16 +269,28 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       setErrorMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
       setOpenErrorDialog(true);
       return;
-    } else if (!createdById) {
+    }
+    // * ตรวจสอบว่ามีข้อมูล "ชื่อผู้สร้าง" หรือไม่
+    else if (!createdById) {
       setErrorMessage('กรุณาเกิดรีเฟรชหน้านี้ใหม่อีกครั้ง เนื่องจากเกิดข้อผิดพลาดไม่สามารถระบุตัวตนผู้ทำรายการได้');
       setOpenErrorDialog(true);
       return;
-    } else if (errorIdCardCount > 0) {
+    }
+    // * ตรวจสอบว่ามีข้อมูล "เบอร์โทรศัพท์" หรือไม่
+    else if (errorIdCardCount > 0) {
       setErrorMessage('กรุณาตรวจสอบเลขบัตรประชาชนให้ถูกต้อง');
       setOpenErrorDialog(true);
       return;
-    } else if (NameCall === '') {
+    }
+    // * ตรวจสอบว่ามีข้อมูล "ชื่อเรียกสิทธิพิเศษ" หรือไม่
+    else if (NameCall === '') {
       setErrorMessage('กรุณาตั้งชื่อเรียกสิทธิพิเศษ (กรณีใช้งานสำหรับหลังบ้าน)');
+      setOpenErrorDialog(true);
+      return;
+    }
+    // * ตรวจสอบว่ามีข้อมูลโค้ดสิทธิพิเศษหรือไม่
+    else if (codeExcelData.length === 0) {
+      setErrorMessage('ตารางโค้ดสิทธิพิเศษ ต้องมีอย่างน้อย 1 โค้ด โปรดตรวจสอบอีกครั้ง');
       setOpenErrorDialog(true);
       return;
     }
@@ -382,10 +395,10 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
       } else {
         response = null;
       }
-
+      // todo : หากมีการสร้างสำเร็จให้ทำการเปลี่ยนหน้าไปยังหน้า campaign ที่ต้องการ
       if (response && response.status === 200) {
         setOpenSuccessDialog(true);
-        // window.location.href = `/campaign/${campaign_type}/`;
+        window.location.href = `/campaign/${campaign_type}/`;
       } else {
         setOpenErrorDialog(true);
         setErrorMessage(response ? response.statusText : 'Unknown error occurred');
@@ -964,6 +977,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     }
   };
 
+  // todo : สร้างฟังก์ชันสำหรับการลบข้อมูลโค้ด
   const handleDeleteCode = (id: number) => {
     const filteredData = codeExcelData.filter((item) => item.id !== id);
     setCodeExcelData(filteredData);
@@ -1623,6 +1637,7 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                   <StyledTableCell sx={{ pl: 3 }} component="th" scope="row" align="right">
                     <Grid container sx={{ textAlign: 'right' }} justifyContent={'end'}>
                       <Grid item>
+                        {/* edit code */}
                         <Tooltip title="แก้ไขโค้ด">
                           <AnimateButton>
                             <IconButton
@@ -1637,15 +1652,14 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                         </Tooltip>
                       </Grid>
                       <Grid item>
-                        {CodeType === 2 && (
-                          <Tooltip title="ลบโค้ด">
-                            <AnimateButton>
-                              <IconButton size="large" onClick={() => handleDeleteCode(item.id)}>
-                                <DeleteIcon />
-                              </IconButton>
-                            </AnimateButton>
-                          </Tooltip>
-                        )}
+                        {/* delete code */}
+                        <Tooltip title="ลบโค้ด">
+                          <AnimateButton>
+                            <IconButton size="large" onClick={() => handleDeleteCode(item.id)}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </AnimateButton>
+                        </Tooltip>
                       </Grid>
                     </Grid>
                   </StyledTableCell>
