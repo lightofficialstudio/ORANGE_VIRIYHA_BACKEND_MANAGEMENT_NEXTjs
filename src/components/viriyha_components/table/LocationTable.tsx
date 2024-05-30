@@ -369,7 +369,7 @@ const LocationTable = () => {
           used_code: transaction?.code?.code,
           latitude: transaction?.latitude,
           longitude: transaction?.longitude,
-          location_name: transaction.place_id ? transaction.place.name : 'Unknown',
+          location_name: transaction.place_id ? transaction.place.name : 'ไม่ทราบ',
           usedAt: transaction.usedAt
         }))
       );
@@ -556,7 +556,7 @@ const LocationTable = () => {
                       <TableCell align="center">{row?.latitude}</TableCell>
                       <TableCell align="center">{row?.longitude}</TableCell>
                       <TableCell align="left">{row?.location_name}</TableCell>
-                      <TableCell align="right">{row.usedAt ? format(new Date(row?.usedAt), 'dd MMM yyyy') : ''}</TableCell>
+                      <TableCell align="right">{row.usedAt ? format(new Date(row?.usedAt), 'dd/M/yyyy') : ''}</TableCell>
 
                       {/* <TableCell align="right">{format(new Date(row.usedAt), 'E, MMM d yyyy')}</TableCell> */}
                     </TableRow>

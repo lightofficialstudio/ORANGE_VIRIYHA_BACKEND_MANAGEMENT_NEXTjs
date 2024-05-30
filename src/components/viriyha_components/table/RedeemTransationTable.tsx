@@ -1,5 +1,5 @@
 import * as React from 'react';
-// import { format } from 'date-fns';
+import { format } from 'date-fns';
 // material-ui
 import { useTheme, Theme } from '@mui/material/styles';
 import {
@@ -103,7 +103,7 @@ const headCells: HeadCell[] = [
     id: 'usedAt',
     numeric: false,
     label: 'วันที่รับสิทธิ์',
-    align: 'left'
+    align: 'right'
   }
 ];
 
@@ -553,7 +553,7 @@ const RedeemTransactionTable = () => {
                       <TableCell align="left">{row.name}</TableCell>
                       <TableCell align="left">{row.surname}</TableCell>
                       <TableCell align="left">{row.code}</TableCell>
-                      <TableCell align="left">{row.usedAt}</TableCell>
+                      <TableCell align="right">{row.usedAt ? format(new Date(row?.usedAt), 'dd/M/yyyy') : ''}</TableCell>
                     </TableRow>
                   );
                 })}

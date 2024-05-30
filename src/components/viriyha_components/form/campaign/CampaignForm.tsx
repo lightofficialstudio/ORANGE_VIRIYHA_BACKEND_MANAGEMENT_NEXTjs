@@ -115,6 +115,7 @@ const maxQuotaPerPerson = [
 const CodeOption = [
   { label: 'เพิ่มโค้ดโดยอัตโนมัติ', id: 1 },
   { label: 'เพิ่มโค้ดโดยตัวเอง', id: 2 }
+  // { label: 'เพิ่มโค้ดเท่ากับจำนวนสิทธิพิเศษ', id: 3 }
 ];
 
 const WebsiteTrafficPatternList = [
@@ -964,18 +965,32 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
     reader.readAsArrayBuffer(file);
   };
 
+  // todo : สร้างฟังก์ชันสำหรับการเพิ่มข้อมูลโค้ดโดยอัตโนมัติ จำนวน 1 โค้ด (เอาไว้ใช้ซ้ำ)
   const handleAutoGenerateCode = () => {
     // ตรวจสอบก่อนว่า codeExcelData มีข้อมูลหรือยัง
     if (codeExcelData.length === 0) {
       const codeList = [
         {
-          id: 1,
           code: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
         }
       ];
       setCodeExcelData(codeList); // บันทึก array ใหม่ลงใน state
     }
   };
+
+  // todo : สร้างฟังก์ชันสำหรับการเพิ่มข้อมูลโค้ดโดยอัตโนมัติ จำนวน x โค้ด ตามจำนวนสิทธิ์ที่กำหนด
+  // const handleAutoGenerateCodeByQuantity = () => {
+  //   if (codeExcelData.length === 0) {
+  //     const codeList = [];
+  //     for (let i = 1; i <= Quantity; i++) {
+  //       codeList.push({
+  //         id: i,
+  //         code: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  //       });
+  //     }
+  //     setCodeExcelData(codeList);
+  //   }
+  // };
 
   // todo : สร้างฟังก์ชันสำหรับการลบข้อมูลโค้ด
   const handleDeleteCode = (id: number) => {
@@ -1597,6 +1612,9 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                     } else if (value?.id == 2) {
                       setCodeExcelData([]);
                     }
+                    //  else if (value?.id == 3) {
+                    //   handleAutoGenerateCodeByQuantity();
+                    // }
 
                     // handleOpenCodeExcel();
                   }}
@@ -1604,6 +1622,20 @@ const CampaignForm = ({ primaryId, title, type }: CampaignFormProps) => {
                   value={CodeOption.find((Item) => Item.id === CodeType) || null}
                   renderInput={(params) => <TextField {...params} label="การกำหนดโค้ด" />}
                 />
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  type="button"
+                  onClick={handleAutoGenerateCode}
+                  component="button" // Add the component prop with the value "button"
+                  sx={{
+                    background: theme.palette.dark.main,
+                    '&:hover': { background: theme.palette.success.dark }
+                  }}
+                >
+                  สร้างโค้ดใหม่
+                </Button>
               </Grid>
             </Grid>{' '}
           </Grid>
